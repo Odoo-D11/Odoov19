@@ -24,23 +24,30 @@ class DigestDigest(models.Model):
 
     # Digest description
     name = fields.Char(string='Name', required=True, translate=True)
-    user_ids = fields.Many2many('res.users', string='Recipients', domain="[('share', '=', False)]")
+    user_ids = fields.Many2many(
+        'res.users', string='Recipients', domain="[('share', '=', False)]")
     periodicity = fields.Selection([('daily', 'Daily'),
                                     ('weekly', 'Weekly'),
                                     ('monthly', 'Monthly'),
                                     ('quarterly', 'Quarterly')],
                                    string='Periodicity', default='daily', required=True)
     next_run_date = fields.Date(string='Next Mailing Date')
-    currency_id = fields.Many2one(related="company_id.currency_id", string='Currency', readonly=False)
-    company_id = fields.Many2one('res.company', string='Company', default=lambda self: self.env.company.id)
+    currency_id = fields.Many2one(
+        related="company_id.currency_id", string='Currency', readonly=False)
+    company_id = fields.Many2one(
+        'res.company', string='Company', default=lambda self: self.env.company.id)
     available_fields = fields.Char(compute='_compute_available_fields')
-    is_subscribed = fields.Boolean('Is user subscribed', compute='_compute_is_subscribed')
-    state = fields.Selection([('activated', 'Activated'), ('deactivated', 'Deactivated')], string='Status', readonly=True, default='activated')
+    is_subscribed = fields.Boolean(
+        'Is user subscribed', compute='_compute_is_subscribed')
+    state = fields.Selection([('activated', 'Activated'), ('deactivated',
+                             'Deactivated')], string='Status', readonly=True, default='activated')
     # First base-related KPIs
     kpi_res_users_connected = fields.Boolean('Connected Users')
-    kpi_res_users_connected_value = fields.Integer(compute='_compute_kpi_res_users_connected_value')
+    kpi_res_users_connected_value = fields.Integer(
+        compute='_compute_kpi_res_users_connected_value')
     kpi_mail_message_total = fields.Boolean('Messages Sent')
-    kpi_mail_message_total_value = fields.Integer(compute='_compute_kpi_mail_message_total_value')
+    kpi_mail_message_total_value = fields.Integer(
+        compute='_compute_kpi_mail_message_total_value')
 
     @api.depends('user_ids')
     def _compute_is_subscribed(self):
@@ -144,7 +151,8 @@ class DigestDigest(models.Model):
           periodicity of digests. Purpose is to slow down digest whose users
           do not connect to avoid spam;
         """
-        to_slowdown = self._check_daily_logs() if update_periodicity else self.env['digest.digest']
+        to_slowdown = self._check_daily_logs(
+        ) if update_periodicity else self.env['digest.digest']
 
         for digest in self:
             for user in digest.user_ids:
@@ -224,12 +232,14 @@ class DigestDigest(models.Model):
 
     @api.model
     def _cron_send_digest_email(self):
-        digests = self.search([('next_run_date', '<=', fields.Date.today()), ('state', '=', 'activated')])
+        digests = self.search(
+            [('next_run_date', '<=', fields.Date.today()), ('state', '=', 'activated')])
         for digest in digests:
             try:
                 digest.action_send()
             except MailDeliveryException as e:
-                _logger.warning('MailDeliveryException while sending digest %d. Digest is now scheduled for next cron update.', digest.id)
+                _logger.warning(
+                    'MailDeliveryException while sending digest %d. Digest is now scheduled for next cron update.', digest.id)
 
     def _get_unsubscribe_token(self, user_id):
         """Generate a secure hash for this digest and user. It allows to
@@ -264,7 +274,8 @@ class DigestDigest(models.Model):
         invalid_fields = []
         kpis = [
             dict(kpi_name=field_name,
-                 kpi_fullname=self.env['ir.model.fields']._get(self._name, field_name).field_description,
+                 kpi_fullname=self.env['ir.model.fields']._get(
+                     self._name, field_name).field_description,
                  kpi_action=False,
                  kpi_col1=dict(),
                  kpi_col2=dict(),
@@ -275,8 +286,10 @@ class DigestDigest(models.Model):
         kpis_actions = self._compute_kpis_actions(company, user)
 
         for col_index, (tf_name, tf) in enumerate(self._compute_timeframes(company)):
-            digest = self.with_context(start_datetime=tf[0][0], end_datetime=tf[0][1]).with_user(user).with_company(company)
-            previous_digest = self.with_context(start_datetime=tf[1][0], end_datetime=tf[1][1]).with_user(user).with_company(company)
+            digest = self.with_context(start_datetime=tf[0][0], end_datetime=tf[0][1]).with_user(
+                user).with_company(company)
+            previous_digest = self.with_context(
+                start_datetime=tf[1][0], end_datetime=tf[1][1]).with_user(user).with_company(company)
             for index, field_name in enumerate(digest_fields):
                 kpi_values = kpis[index]
                 kpi_values['kpi_action'] = kpis_actions.get(field_name)
@@ -292,8 +305,10 @@ class DigestDigest(models.Model):
                     continue
                 margin = self._get_margin_value(compute_value, previous_value)
                 if self._fields['%s_value' % field_name].type == 'monetary':
-                    converted_amount = tools.misc.format_decimalized_amount(compute_value)
-                    compute_value = self._format_currency_amount(converted_amount, company.currency_id)
+                    converted_amount = tools.misc.format_decimalized_amount(
+                        compute_value)
+                    compute_value = self._format_currency_amount(
+                        converted_amount, company.currency_id)
                 elif self._fields['%s_value' % field_name].type == 'float':
                     compute_value = "%.2f" % compute_value
 
@@ -350,13 +365,13 @@ class DigestDigest(models.Model):
                   new_perioridicy_str=new_perioridicy_str)
             )
         elif self.periodicity == 'daily' and user.has_group('base.group_erp_manager'):
-            preferences.append(Markup('<p>%s<br /><a href="%s" target="_blank" style="color:#017e84; font-weight: bold;">%s</a></p>') % (
+            preferences.append(Markup('<p>%s<br /><a href="%s" target="_blank" style="color:#02143f; font-weight: bold;">%s</a></p>') % (
                 _('Prefer a broader overview?'),
                 f'/digest/{self.id:d}/set_periodicity?periodicity=weekly',
                 _('Switch to weekly Digests')
             ))
         if user.has_group('base.group_erp_manager'):
-            preferences.append(Markup('<p>%s<br /><a href="%s" target="_blank" style="color:#017e84; font-weight: bold;">%s</a></p>') % (
+            preferences.append(Markup('<p>%s<br /><a href="%s" target="_blank" style="color:#02143f; font-weight: bold;">%s</a></p>') % (
                 _('Want to customize this email?'),
                 f'/odoo/{self._name}/{self.id:d}',
                 _('Choose the metrics you care about')
@@ -385,13 +400,13 @@ class DigestDigest(models.Model):
             (_('Last 24 hours'), (
                 (start_datetime + relativedelta(days=-1), start_datetime),
                 (start_datetime + relativedelta(days=-2), start_datetime + relativedelta(days=-1)))
-            ), (_('Last 7 Days'), (
+             ), (_('Last 7 Days'), (
                 (start_datetime + relativedelta(weeks=-1), start_datetime),
                 (start_datetime + relativedelta(weeks=-2), start_datetime + relativedelta(weeks=-1)))
             ), (_('Last 30 Days'), (
                 (start_datetime + relativedelta(months=-1), start_datetime),
                 (start_datetime + relativedelta(months=-2), start_datetime + relativedelta(months=-1)))
-            )
+                )
         ]
 
     # ------------------------------------------------------------
@@ -440,12 +455,13 @@ class DigestDigest(models.Model):
     def _get_kpi_fields(self):
         return [field_name for field_name, field in self._fields.items()
                 if field.type == 'boolean' and field_name.startswith(('kpi_', 'x_kpi_', 'x_studio_kpi_')) and self[field_name]
-               ]
+                ]
 
     def _get_margin_value(self, value, previous_value=0.0):
         margin = 0.0
         if (value != previous_value) and (value != 0.0 and previous_value != 0.0):
-            margin = float_round((float(value-previous_value) / previous_value or 1) * 100, precision_digits=2)
+            margin = float_round(
+                (float(value-previous_value) / previous_value or 1) * 100, precision_digits=2)
         return margin
 
     def _check_daily_logs(self):

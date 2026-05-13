@@ -54,7 +54,7 @@ import { loadCssFromBundle } from "@mail/utils/common/misc";
  * @extends {Component<Props, Env>}
  */
 export class Message extends Component {
-    // This is the darken version of #71639e
+    // This is the darken version of #02143f
     static SHADOW_LINK_COLOR = "#66598f";
     static SHADOW_HIGHLIGHT_COLOR = "#e99d00bf";
     static SHADOW_LINK_HOVER_COLOR = "#564b79";
@@ -194,7 +194,7 @@ export class Message extends Component {
                         this.message.showTranslation
                             ? this.message.richTranslationValue
                             : this.props.messageSearch?.highlight(this.message.richBody) ??
-                                  this.message.richBody
+                            this.message.richBody
                     );
                     this.prepareMessageBody(bodyEl);
                     this.shadowRoot.appendChild(bodyEl);
@@ -235,17 +235,17 @@ export class Message extends Component {
                 : false;
         const moreAction = moreActions?.length
             ? this.messageActions.more({
-                  actions: moreActions,
-                  dropdownMenuClass: "o-mail-Message-moreMenu",
-                  dropdownPosition: this.isAlignedRight
-                      ? this.message.threadAsNewest
-                          ? "left-end"
-                          : "left-start"
-                      : this.message.threadAsNewest
-                      ? "right-end"
-                      : "right-start",
-                  name: this.expandText,
-              })
+                actions: moreActions,
+                dropdownMenuClass: "o-mail-Message-moreMenu",
+                dropdownPosition: this.isAlignedRight
+                    ? this.message.threadAsNewest
+                        ? "left-end"
+                        : "left-start"
+                    : this.message.threadAsNewest
+                        ? "right-end"
+                        : "right-start",
+                name: this.expandText,
+            })
             : undefined;
         const actions = moreAction ? [...quickActions, moreAction] : quickActions;
         if (this.isAlignedRight) {
@@ -323,7 +323,7 @@ export class Message extends Component {
         return (
             this.message.subtype_id?.description &&
             this.message.subtype_id.description.toLowerCase() !==
-                htmlToTextContentInline(this.message.body || "").toLowerCase()
+            htmlToTextContentInline(this.message.body || "").toLowerCase()
         );
     }
 
