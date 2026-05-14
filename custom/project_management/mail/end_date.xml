@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="email_template_project_end_date_notification" model="mail.template">
+            <field name="name">Notificación de proyectos próximos a finalizar</field>
+            <field name="model_id" ref="project_management.model_project_management"/>
+            <field name="subject">Proyectos próximos a finalizar</field>
+            <field name="email_from">odoo@tsg.net.co</field>
+            <field name="body_html" type="html">
+                <p>Hola,</p>
+                <p>Los siguientes proyectos están próximos a finalizar en 5 días:</p>
+                <ul>
+                    <t t-foreach="object" t-as="project">
+                        <li>
+                            <strong>
+                                <t t-esc="project.name"/>
+                            </strong> -
+                            Fecha de fin: <t t-esc="project.end_date"/>
+                        </li>
+                    </t>
+                </ul>
+                <p>Por favor, revisa los detalles y toma las acciones necesarias.</p>
+                <p>Gracias,</p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

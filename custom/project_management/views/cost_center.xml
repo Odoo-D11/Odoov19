@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_form_inherit_cost_center" model="ir.ui.view">
+            <field name="name">view.inherit.cost.center</field>
+            <field name="model">cost.center</field>
+            <field name="inherit_id" ref="accounting.view_form_cost_center"/>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet/div[hasclass('form-title-responsive')]/div[@name='project_id']"
+                    position="inside">
+                    <field name="project_id"
+                        groups="project_management.group_consult_project_management"
+                        placeholder="¿Qué proyecto está relacionado con esta cuenta analítica? Ej. (Administración, etc.. )"
+                        options="{'no_open': True, 'no_create': True}"
+                        class="text-primary"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,17 @@
+.o_partner_project_list_view table thead > tr > th[data-name="partner_id"] {
+    width: 80% !important;
+}
+
+.o_partner_project_list_view .o_list_button {
+    width: 20% !important;
+
+    div {
+        flex-wrap: nowrap !important;
+    }
+}
+
+.o_partner_project_list_view tbody > tr > td {
+    button {
+        width: 100% !important;
+    }
+}

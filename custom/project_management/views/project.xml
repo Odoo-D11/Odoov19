@@ -1,0 +1,63 @@
+<odoo>
+  <data>
+
+    <record id="view_project_management_list" model="ir.ui.view">
+      <field name="name">project.management.list</field>
+      <field name="model">project.management</field>
+      <field name="arch" type="xml">
+        <list string="Project Management" duplicate="false">
+          <field name="display_name" string="Nombre"/>
+          <field name="prefix" string="Prefijo"/>
+          <field name="team_id" string="Equipo"/>
+        </list>
+      </field>
+    </record>
+
+    <record id="view_project_management_form" model="ir.ui.view">
+      <field name="name">project.management.form</field>
+      <field name="model">project.management</field>
+      <field name="arch" type="xml">
+        <form string="Project Management" duplicate="false">
+          <header>
+            <button name="action_create_cost_centers"
+              string="Crear Centros de Costo"
+              type="object"
+              class="btn-primary"
+              groups="project_management.group_manager_project_management"/>
+          </header>
+          <sheet>
+            <div class="row">
+              <div class="col-lg-7">
+                <span style="font-weight: 500; color: #212529;">
+                  Nombre
+                </span>
+                <div class="form-title-responsive mb-4 text-truncate">
+                  <h1>
+                    <field name="name"
+                      placeholder="Ej. Contraloría General..." class="o_field_char o_field_title"/>
+                  </h1>
+                  <div>
+                    <field name="prefix" class="text-primary"
+                      placeholder="Prefijo del proyecto. Ej. CG..."/>
+                  </div>
+                </div>
+                <group>
+                  <field name="code" placeholder="Ej. 30, 13333, etc..."/>
+                  <field name="category_id" options="{'no_create': True, 'no_open': True}"
+                    placeholder="Ej. Administrativo, Proyecto, etc."/>
+                  <field name="team_id" options="{'no_create': True, 'no_open': True}"
+                    placeholder="Ej. Operaciones, Gerencia, etc."/>
+                </group>
+              </div>
+              <div class="col-lg-5 d-flex">
+                <div class="o_timeline_sidebar flex-grow-1"/>
+              </div>
+            </div>
+          </sheet>
+          <chatter/>
+        </form>
+      </field>
+    </record>
+
+  </data>
+</odoo>

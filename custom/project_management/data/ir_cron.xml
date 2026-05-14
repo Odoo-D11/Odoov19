@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+    <data noupdate="1">
+
+        <record id="ir_cron_notify_accounting" model="ir.cron">
+            <field name="name">Notificar proyectos que estan proximos a finalizar (Equipo:
+                Contabilidad)</field>
+            <field name="model_id" ref="project_management.model_project_management"/>
+            <field name="state">code</field>
+            <field name="code">env['project.management'].notify_accounting_team()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active">True</field>
+        </record>
+
+    </data>
+</odoo>

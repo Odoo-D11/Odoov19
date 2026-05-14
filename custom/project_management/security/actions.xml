@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="project_management_action" model="ir.actions.act_window">
+        <field name="name">Proyectos</field>
+        <field name="res_model">project.management</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crea un nuevo proyecto
+            </p>
+            <p> Un <b class="text-primary">proyecto</b> es una iniciativa temporal con un objetivo
+                específico, que requiere planificación y ejecución. Permite gestionar recursos,
+                tareas y plazos para alcanzar metas definidas. Utiliza esta sección para crear,
+                gestionar y hacer seguimiento de tus <b
+                    class="text-primary">proyectos</b> de manera eficiente.</p>
+        </field>
+    </record>
+
+    <record id="project_team_action" model="ir.actions.act_window">
+        <field name="name">Equipos</field>
+        <field name="res_model">project.team</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crea un nuevo equipo de proyecto
+            </p>
+            <p> Un <b class="text-primary">equipo de proyecto</b> es un grupo de usuarios que
+                trabajan juntos para alcanzar los objetivos de un proyecto específico. Utiliza esta
+                sección para crear, gestionar y hacer seguimiento de tus <b class="text-primary">equipos
+                de
+                    proyecto</b> de manera eficiente.</p>
+        </field>
+    </record>
+
+
+    <record id="project_category_action" model="ir.actions.act_window">
+        <field name="name">Categorías</field>
+        <field name="res_model">project.category</field>
+        <field name="view_mode">list</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crea una nueva categoría
+            </p>
+            <p> Una <b class="text-primary">categoría</b> es una clasificación que agrupa proyectos
+                con características similares. Utiliza esta sección para crear, gestionar y hacer
+                seguimiento de tus <b class="text-primary">categorías</b>.</p>
+        </field>
+    </record>
+
+    <menuitem
+        id="menu_root"
+        name="Proyectos"
+        action="project_management_action"
+        sequence="70"
+        web_icon="project_management,static/description/icon.png"
+        groups="project_management.group_consult_project_management"
+    />
+
+    <menuitem
+        id="menu_project"
+        name="Proyectos"
+        parent="project_management.menu_root"
+        action="project_management.project_management_action"
+        sequence="1"
+    />
+
+    <menuitem
+        id="menu_project_configuration"
+        name="Configuración"
+        parent="project_management.menu_root"
+        sequence="10"
+        groups="project_management.group_manager_project_management"
+    />
+
+    <menuitem
+        id="menu_project_team"
+        name="Equipos"
+        parent="project_management.menu_project_configuration"
+        action="project_management.project_team_action"
+        sequence="2"
+    />
+
+
+    <menuitem
+        id="menu_project_category"
+        name="Categorías"
+        parent="project_management.menu_project_configuration"
+        action="project_management.project_category_action"
+        sequence="4"
+    />
+
+</odoo>

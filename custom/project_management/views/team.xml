@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+    <data>
+
+        <record id="view_project_team_list" model="ir.ui.view">
+            <field name="name">team.list</field>
+            <field name="model">project.team</field>
+            <field name="arch" type="xml">
+                <list string="Equipos de Proyecto (TSG)" duplicate="false">
+                    <field name="name"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_project_team_form" model="ir.ui.view">
+            <field name="name">team.form</field>
+            <field name="model">project.team</field>
+            <field name="arch" type="xml">
+                <form string="Equipos de Proyecto (TSG)" duplicate="false">
+                    <sheet>
+                        <b style="font-weight: 500;">
+                            Nombre
+                        </b>
+                        <div class="form-title-responsive">
+                            <h1>
+                                <field name="name" placeholder="Ej. Gerencia, Operaciones, etc."
+                                    class="text-primary"/>
+                            </h1>
+                            <div/>
+                        </div>
+                        <separator string="Integrantes"/>
+                        <p class="text-muted">
+                            Los integrantes del equipo pueden ser empleados o miembros de la
+                            empresa. Puedes agregar, editar o eliminar integrantes desde la sección
+                            correspondiente en este formulario. Asegúrate de que todos los
+                            integrantes estén correctamente asignados para facilitar la gestión de
+                            gastos y responsabilidades.
+                        </p>
+                        <field name="member_ids">
+                            <list editable="bottom">
+                                <field name="employee_id" string="Nombre"
+                                    options="{'no_create': True, 'no_open': True}"
+                                    placeholder="Ej. Dwight Schrute, Jim Halpert, etc."/>
+                            </list>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>
