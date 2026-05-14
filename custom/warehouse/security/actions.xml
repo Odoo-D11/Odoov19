@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="action_view_warehouse_dashboard" model="ir.actions.client">
+            <field name="name">Dashboard</field>
+            <field name="tag">warehouse_dashboard</field>
+        </record>
+
+        <record id="action_view_warehouse_transfer_incoming" model="ir.actions.act_window">
+            <field name="name">Órdenes de Ingreso</field>
+            <field name="res_model">warehouse.picking</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('operation_type', '=', 'incoming')]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No hay órdenes de ingreso registradas aún.
+                </p>
+                <p>Las <b class="text-primary">órdenes de ingreso</b> son documentos que autorizan y
+                    registran la recepción de productos en el almacén. Estas órdenes detallan los
+                    productos que se esperan recibir, sus cantidades y las fechas previstas de
+                    llegada. Gestiona eficientemente las entradas de inventario y asegura un control
+                    adecuado de los productos recibidos.</p>
+            </field>
+        </record>
+
+        <record id="action_view_warehouse_transfer_outgoing" model="ir.actions.act_window">
+            <field name="name">Órdenes de Entrega</field>
+            <field name="res_model">warehouse.picking</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('operation_type', '=', 'outgoing')]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No hay órdenes de entrega registradas aún.
+                </p>
+                <p>Las <b class="text-primary">órdenes de entrega</b> son documentos que autorizan y
+                    registran la salida de productos del almacén hacia los clientes. Estas órdenes
+                    detallan los productos que se van a enviar, sus cantidades y las fechas
+                    previstas de entrega. Gestiona eficientemente las salidas de inventario y
+                    asegura un control adecuado de los productos despachados.</p>
+            </field>
+        </record>
+
+        <record id="action_view_warehouse_transfer_internal" model="ir.actions.act_window">
+            <field name="name">Transferencias Internas</field>
+            <field name="res_model">warehouse.picking</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('operation_type', '=', 'internal')]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No hay transferencias internas registradas aún.
+                </p>
+                <p>Las <b class="text-primary">transferencias internas</b> son movimientos de
+                    productos entre diferentes ubicaciones dentro del mismo almacén o entre
+                    almacenes pertenecientes a la misma empresa. Estas transferencias permiten
+                    optimizar la gestión del inventario, facilitando la redistribución de productos
+                    según las necesidades operativas y mejorando la eficiencia logística.</p>
+            </field>
+        </record>
+
+        <record id="action_view_warehouse_physical_inventory" model="ir.actions.act_window">
+            <field name="name">Inventario Físico</field>
+            <field name="res_model">warehouse.quant</field>
+            <field name="view_mode">list</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No hay inventarios físicos registrados aún.
+                </p>
+                <p>El <b class="text-primary">inventario físico</b> es el proceso de contar y
+                    registrar manualmente las existencias reales de productos en el almacén. Este
+                    procedimiento es esencial para verificar la precisión del inventario registrado
+                    en el sistema, identificar discrepancias y asegurar una gestión eficiente del
+                    stock. Realiza inventarios físicos periódicos para mantener la integridad de los
+                    datos y optimizar las operaciones logísticas.</p>
+            </field>
+        </record>
+
+        <record id="action_view_warehouse_scrap_management" model="ir.actions.act_window">
+            <field name="name">Chatarra</field>
+            <field name="res_model">warehouse.scrap</field>
+            <field name="view_mode">list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No hay registros de chatarra aún.
+                </p>
+                <p>La <b class="text-primary">gestión de chatarra</b> implica el manejo adecuado de
+                    productos o materiales que ya no son útiles o que han sido dañados y deben ser
+                    retirados del inventario. Este proceso incluye la identificación, registro y
+                    disposición de la chatarra, asegurando el cumplimiento de las normativas
+                    ambientales y de seguridad. Implementa procedimientos claros para la gestión de
+                    chatarra y minimiza el impacto ambiental.</p>
+            </field>
+        </record>
+
+
+        <record id="action_view_warehouse_product" model="ir.actions.act_window">
+            <field name="name">Productos</field>
+            <field name="res_model">warehouse.product</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{'search_default_filter_type_product': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No hay productos registrados aún.
+                </p>
+                <p>Los <b class="text-primary">productos</b> son <b class="text-primary">bienes</b>, <b
+                        class="text-primary">servicios</b> o <b class="text-primary">unidades</b>
+                    que se registran para gestionar <b class="text-primary">inventarios</b>, <b
+                        class="text-primary">movimientos</b> y <b class="text-primary">transacciones</b>.
+                    Defínelos con precisión (<b class="text-primary">tipo</b>: producto o servicio, <b
+                        class="text-primary">unidad de medida</b>, <b class="text-primary">Referencia
+                    única</b>, <b class="text-primary">precio</b> y <b class="text-primary">
+                    categoría</b>) para facilitar <b class="text-primary">compras</b>, <b
+                        class="text-primary">ventas</b> y <b class="text-primary">logística</b>.
+                    Gestiona cantidades por <b class="text-primary">ubicación</b> y <b
+                        class="text-primary">niveles de stock</b>, y habilita <b
+                        class="text-primary">trazabilidad</b> por <b class="text-primary">lotes</b>
+                    o <b class="text-primary">números de serie</b> cuando sea necesario. Añade <b
+                        class="text-primary">descripciones</b> claras e <b class="text-primary">información
+                    comercial</b> y de <b class="text-primary">costos</b> para mantener <b
+                        class="text-primary">datos consistentes</b> y obtener <b
+                        class="text-primary">informes fiables</b>.</p>
+            </field>
+        </record>
+
+        <record id="action_view_warehouse_batch_lot_serial" model="ir.actions.act_window">
+            <field name="name">Lotes / Nro. de Serie</field>
+            <field name="res_model">warehouse.lot.serial</field>
+            <field name="view_mode">list,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No hay lotes o números de serie registrados aún.
+                </p>
+                <p>Los <b class="text-primary">lotes</b> y <b class="text-primary">números de serie</b>
+                    son identificadores únicos asignados a productos para garantizar su trazabilidad
+                    y control dentro del inventario. Los lotes agrupan productos fabricados o
+                    adquiridos en un mismo ciclo, mientras que los números de serie identifican
+                    unidades individuales. Utiliza estos identificadores para rastrear el historial,
+                    la ubicación y el estado de los productos, facilitando la gestión de
+                    devoluciones, garantías y cumplimiento normativo.</p>
+            </field>
+        </record>
+
+        <record id="action_view_warehouse_product_category" model="ir.actions.act_window">
+            <field name="name">Categorías</field>
+            <field name="res_model">warehouse.product.category</field>
+            <field name="view_mode">list</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No hay categorías de productos registradas aún.
+                </p>
+                <p>Las <b class="text-primary">categorías de productos</b> son utilizadas para
+                    organizar y clasificar los productos dentro del sistema. Permiten una mejor
+                    gestión y búsqueda de productos, facilitando la navegación y el control de
+                    inventarios. Crea categorías específicas para agrupar productos similares y
+                    mejorar la eficiencia en la gestión de inventarios.</p>
+            </field>
+        </record>
+
+        <record id="action_view_warehouse_uom" model="ir.actions.act_window">
+            <field name="name">Unidades de Medida</field>
+            <field name="res_model">warehouse.uom</field>
+            <field name="view_mode">list</field>
+            <field name="domain">[]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No hay unidades de medida registradas aún.
+                </p>
+                <p>Las <b class="text-primary">unidades de medida</b> son esenciales para definir
+                    cómo se cuantifican los productos en el sistema. Permiten especificar la
+                    cantidad de productos en términos de unidades, peso, volumen u otras medidas
+                    relevantes. Configura unidades de medida adecuadas para tus productos y
+                    asegúrate de mantener la consistencia en su uso para facilitar la gestión de
+                    inventarios y transacciones comerciales.</p>
+            </field>
+        </record>
+
+
+        <menuitem
+            id="menu_warehouse_root"
+            name="Inventario"
+            sequence="140"
+            action="action_view_warehouse_dashboard"
+            groups="warehouse.group_consult_warehouse"
+            web_icon="warehouse,static/description/icon.png"
+        />
+
+        <menuitem
+            id="menu_warehouse_dashboard"
+            name="Dashboard"
+            parent="menu_warehouse_root"
+            action="action_view_warehouse_dashboard"
+            sequence="1"
+        />
+
+        <menuitem
+            id="menu_warehouse_operations"
+            name="Operaciones"
+            parent="menu_warehouse_root"
+            sequence="2"
+        />
+
+        <menuitem
+            id="menu_warehouse_transfers"
+            name="Transferencias"
+            parent="menu_warehouse_operations"
+            sequence="1"
+        />
+
+        <menuitem
+            id="menu_warehouse_transfer_incoming"
+            name="Ingresos"
+            parent="menu_warehouse_transfers"
+            action="action_view_warehouse_transfer_incoming"
+            sequence="1"
+        />
+
+        <menuitem
+            id="menu_warehouse_transfer_outgoing"
+            name="Entregas"
+            parent="menu_warehouse_transfers"
+            action="action_view_warehouse_transfer_outgoing"
+            sequence="2"
+        />
+
+        <menuitem
+            id="menu_warehouse_transfer_internal"
+            name="Internas"
+            parent="menu_warehouse_transfers"
+            action="action_view_warehouse_transfer_internal"
+            sequence="3"
+        />
+
+        <menuitem
+            id="menu_warehouse_inventory_adjustments"
+            name="Ajustes"
+            parent="menu_warehouse_operations"
+            sequence="4"
+        />
+
+        <menuitem
+            id="menu_warehouse_physical_inventory"
+            name="Inventario físico"
+            parent="menu_warehouse_inventory_adjustments"
+            action="action_view_warehouse_physical_inventory"
+            sequence="1"
+        />
+
+        <menuitem
+            id="menu_warehouse_scrap_management"
+            name="Chatarra"
+            parent="menu_warehouse_inventory_adjustments"
+            action="action_view_warehouse_scrap_management"
+            sequence="2"
+        />
+
+        <menuitem
+            id="menu_warehouse_product"
+            name="Productos"
+            parent="menu_warehouse_root"
+            sequence="3"
+        />
+
+        <menuitem
+            id="menu_warehouse_product_management"
+            name="Productos"
+            parent="menu_warehouse_product"
+            action="action_view_warehouse_product"
+            sequence="1"
+        />
+
+        <menuitem
+            id="menu_warehouse_batch_lot_serial"
+            name="Lotes / Nro. de Serie"
+            parent="menu_warehouse_product"
+            action="action_view_warehouse_batch_lot_serial"
+            sequence="2"
+        />
+
+        <menuitem
+            id="menu_warehouse_reports"
+            name="Informes"
+            parent="menu_warehouse_root"
+            sequence="4"
+        />
+
+        <menuitem
+            id="menu_warehouse_configuration"
+            name="Configuración"
+            parent="menu_warehouse_root"
+            sequence="90"
+        />
+
+
+        <menuitem
+            id="menu_warehouse_product_category"
+            name="Categorías"
+            parent="menu_warehouse_configuration"
+            action="action_view_warehouse_product_category"
+            sequence="1"
+        />
+
+        <menuitem
+            id="menu_warehouse_uom"
+            name="Unidades de Medida"
+            parent="menu_warehouse_configuration"
+            action="action_view_warehouse_uom"
+            sequence="2"
+        />
+
+    </data>
+</odoo>

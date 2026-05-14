@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_warehouse_product_variant_form" model="ir.ui.view">
+            <field name="name">warehouse.product.variant.form</field>
+            <field name="model">warehouse.product.variant</field>
+            <field name="arch" type="xml">
+                <form string="Variante">
+                    <sheet>
+                        <group>
+                            <field name="product_id" readonly="1"/>
+                            <field name="name" string="Nombre de la variante"/>
+                            <field name="estimated_price"/>
+                            <field name="currency_id" column_invisible="1"/>
+                        </group>
+
+                        <separator string="Alias"/>
+                        <p class="text-muted">
+                            Agrega aquí los nombres con los que los usuarios suelen solicitar
+                            esta variante. El sistema usará estos alias para reconocerla
+                            automáticamente la próxima vez.
+                        </p>
+                        <field name="alias_ids" nolabel="1">
+                            <list editable="bottom">
+                                <field name="name"
+                                    placeholder="Ej. Toner HP negro, Cartucho laser HP, HP 85A..."/>
+                            </list>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

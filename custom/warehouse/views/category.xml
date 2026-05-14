@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_warehouse_product_category_list" model="ir.ui.view">
+            <field name="name">warehouse.product.category.list</field>
+            <field name="model">warehouse.product.category</field>
+            <field name="arch" type="xml">
+                <list string="Categorías de Producto" duplicate="false" editable="bottom" sample="1">
+                    <field name="name" placeholder="Ej. Electrónicos, Ferretería, etc..."/>
+                    <field name="prefix" placeholder="Ej. [EE], [FE], [SU], etc..."/>
+                    <field name="color" widget="color_picker" string="Color"/>
+                </list>
+            </field>
+        </record>
+
+    </data>
+</odoo>

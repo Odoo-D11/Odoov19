@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_warehouse_uom_list" model="ir.ui.view">
+            <field name="name">warehouse.uom.list</field>
+            <field name="model">warehouse.uom</field>
+            <field name="arch" type="xml">
+                <list string="Unidades de Medida en Almacén" duplicate="false" editable="bottom">
+                    <field name="name" placeholder="Ej. Unidad, Litro, Metro, etc..."/>
+                    <field name="category_id" options="{'no_create': True, 'no_open': True}"
+                        placeholder="Ej. Unidades, Volumen, Longitud, etc..."/>
+                </list>
+            </field>
+        </record>
+
+    </data>
+</odoo>
