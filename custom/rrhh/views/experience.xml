@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="hr_experience_view_form" model="ir.ui.view">
+            <field name="name">hr.experience.form</field>
+            <field name="model">hr.experience</field>
+            <field name="arch" type="xml">
+                <form string="Experiencia laboral" create="0" delete="0">
+                    <sheet>
+                        <span style="font-weight: 500; color: #212529;">
+                            Cargo
+                        </span>
+                        <div class="form-title-responsive">
+                            <h1>
+                                <field name="position" class="text-primary"
+                                    placeholder="Ej. Director de Ventas..."/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="enterprise" placeholder="Ej. Caser Seguros..."/>
+                                <field name="city_id" placeholder="Ej. Bogotá (opcional)"
+                                    options="{'no_create': True, 'no_open': True}"/>
+                            </group>
+                            <group>
+                                <label for="start_date" string="Inicio"/>
+                                <div class="o_row">
+                                    <field name="start_date"/>
+                                    <i class="fa fa-long-arrow-right mx-2" title="Hasta"/>
+                                    <field name="end_date"
+                                        placeholder="Dejar vacío si es trabajo actual"/>
+                                </div>
+                            </group>
+                        </group>
+                        <field name="description"
+                            placeholder="Describe las responsabilidades y logros..."/>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

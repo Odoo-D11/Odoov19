@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- ===== Contenedor principal ===== -->
+    <t t-name="rrhh.CertificationListRenderer"
+       t-inherit="web.ListRenderer"
+       t-inherit-mode="primary">
+
+        <xpath expr="//table" position="attributes">
+            <attribute name="t-attf-class" add="table-borderless {{ !showTable ? 'd-none' : '' }}" remove="table-striped" separator=" "/>
+        </xpath>
+
+        <!-- Cabecera invisible que fija los anchos de columna -->
+        <xpath expr="//thead/tr" position="replace">
+            <tr style="visibility: hidden; height: 0;">
+                <th style="width: 20px; min-width: 20px;"/>
+                <th class="w-100"/>
+                <th t-if="isEditable" class="o_list_actions_header" style="width: 32px; min-width: 32px;"/>
+            </tr>
+        </xpath>
+
+        <xpath expr="//tfoot" position="replace"/>
+
+        <!-- Estado vacío -->
+        <xpath expr="//table" position="after">
+            <t t-if="!showTable and isEditable">
+                <div class="o_cert_empty mt-2">
+                    <p class="text-muted mb-2">No hay certificaciones registradas. ¿Por qué no añades una?</p>
+                    <button type="button"
+                            class="btn btn-secondary"
+                            t-on-click="() => props.onAdd({})">
+                        Nuevo
+                    </button>
+                </div>
+            </t>
+        </xpath>
+
+    </t>
+
+    <!-- ===== Loop de filas ===== -->
+    <t t-name="rrhh.CertificationListRenderer.Rows"
+       t-inherit="web.ListRenderer.Rows"
+       t-inherit-mode="primary">
+
+        <xpath expr="//t[@t-if='!list.isGrouped']" position="replace">
+            <t t-if="!list.isGrouped">
+                <t t-foreach="list.records" t-as="record" t-key="record.id">
+                    <t t-call="{{ constructor.recordRowTemplate }}"/>
+                </t>
+
+                <tr t-if="isEditable" class="o_cert_add_row">
+                    <td/>
+                    <td class="o_cert_add_cell">
+                        <button type="button"
+                                class="btn btn-secondary"
+                                t-on-click="() => props.onAdd({})">
+                            Nuevo
+                        </button>
+                    </td>
+                </tr>
+            </t>
+        </xpath>
+
+    </t>
+
+    <!-- ===== Fila individual ===== -->
+    <t t-name="rrhh.CertificationListRenderer.RecordRow"
+       t-inherit="web.ListRenderer.RecordRow"
+       t-inherit-mode="primary">
+
+        <xpath expr="//t[@t-foreach='getColumns(record)']" position="replace">
+            <t t-set="data" t-value="record.data"/>
+
+            <td class="o_cert_timeline_cell position-relative pe-lg-2">
+                <div class="o_cert_dot rounded-circle bg-primary position-relative"/>
+            </td>
+
+            <td class="o_data_cell pt-0"
+                t-on-click="(ev) => this.onCellClicked(record, null, ev)"
+                tabindex="-1">
+                <div class="o_cert_line">
+                    <small class="o_cert_dates fw-bold">
+                        <t t-out="formatCertDate(data.date_start)"/>
+                        <t> - </t>
+                        <t t-out="formatCertDate(data.date_end, true)"/>
+                    </small>
+                    <h4 class="o_cert_name mt-2" t-esc="data.name"/>
+                    <p t-if="data.institution" class="o_cert_institution text-muted mb-0">
+                        <t t-esc="data.institution"/>
+                        <t t-if="data.certification_level">
+                            <span> |
+                                <t t-esc="getCertLevelLabel(data.certification_level)"/>
+                            </span>
+                        </t>
+                    </p>
+                </div>
+            </td>
+        </xpath>
+
+    </t>
+
+</templates>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_compensation_fund_list" model="ir.ui.view">
+            <field name="name">compensation.fund.list</field>
+            <field name="model">hr.compensation.fund</field>
+            <field name="arch" type="xml">
+                <list string="Caja de Compensación">
+                    <field name="name" placeholder="Ej. Compensar, Comfama, etc."/>
+                </list>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,80 @@
+.o_field_experience_one2many {
+    $o-exp-pad: 0.5rem;
+    $o-exp-dot-size: 0.5rem; // 8px exactos → mitad = 4px, coincide con --exp-line-left
+
+    // ── Filas ──────────────────────────────────────────────────────────────
+    .o_data_row {
+        border-bottom: none;
+    }
+
+    .o_data_row td {
+        padding: $o-exp-pad;
+
+        // ── Celda de timeline ─────────────────────────────────────────────
+        &.o_experience_timeline_cell {
+            // Sin padding horizontal: dot pegado al borde izquierdo del widget
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+
+            div {
+                width: $o-exp-dot-size;
+                height: $o-exp-dot-size;
+                // Sin margin:auto → dot al borde izquierdo (x=0)
+            }
+
+            // Línea vertical: _syncTimeline() inyecta --exp-line-left tras el render
+            // Fallback = 4px (mitad exacta de 8px dot)
+            &::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: var(--exp-line-left, 4px);
+                width: 1px;
+                height: 100%;
+                background-color: var(--o-border-color, #dee2e6);
+            }
+        }
+    }
+
+    // Primera fila: la línea arranca en el centro del dot, no desde el borde superior
+    .o_data_row:first-child .o_experience_timeline_cell::before {
+        top: $o-exp-pad;
+    }
+
+    // Última fila: la línea corre hasta el fondo del td (siempre visible bajo el dot)
+    .o_data_row.o_data_row_last {
+        .o_experience_desc {
+            margin-bottom: 1rem;
+        }
+    }
+
+    // ── Tipografía ──────────────────────────────────────────────────────────
+    .o_experience_position,
+    .o_experience_dates {
+        white-space: normal;
+        line-height: 1;
+    }
+
+    .o_experience_company {
+        font-size: 0.875rem;
+        line-height: 1.4;
+    }
+
+    .o_experience_desc {
+        white-space: pre-wrap;
+        font-size: 0.875rem;
+        line-height: 1.5;
+    }
+
+    // ── Fila del botón "Nuevo" ───────────────────────────────────────────────
+    .o_experience_add_row td {
+        padding: 0.5rem 0 0.5rem 0;
+    }
+
+    // ── Estado vacío ────────────────────────────────────────────────────────
+    .o_experience_empty {
+        p {
+            color: var(--bs-secondary-color, #6c757d);
+        }
+    }
+}

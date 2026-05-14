@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_enterprise_list" model="ir.ui.view">
+            <field name="name">enterprise.list</field>
+            <field name="model">hr.enterprise</field>
+            <field name="arch" type="xml">
+                <list string="Empresas (RRHH)" duplicate="false" editable="bottom">
+                    <field name="name" placeholder="Ej. Tsg The It Experts, It Talent, Kreivo, etc."/>
+                </list>
+            </field>
+        </record>
+
+    </data>
+</odoo>

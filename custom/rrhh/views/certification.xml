@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="hr_certification_view_form" model="ir.ui.view">
+            <field name="name">hr.certification.form</field>
+            <field name="model">hr.certification</field>
+            <field name="arch" type="xml">
+                <form string="Certificación" create="0" delete="0">
+                    <sheet>
+                        <span style="font-weight: 500; color: #212529;">
+                            Certificación
+                        </span>
+                        <div class="form-title-responsive">
+                            <h1>
+                                <field name="name" class="text-primary"
+                                    placeholder="Ej. AWS Solutions Architect..."/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="institution"
+                                    placeholder="Ej. Amazon Web Services..."/>
+                                <field name="certification_level"/>
+                            </group>
+                            <group>
+                                <label for="date_start" string="Inicio"/>
+                                <div class="o_row">
+                                    <field name="date_start"/>
+                                    <i class="fa fa-long-arrow-right mx-2" title="Fin"/>
+                                    <field name="date_end"
+                                        placeholder="Dejar vacío si no vence"/>
+                                </div>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

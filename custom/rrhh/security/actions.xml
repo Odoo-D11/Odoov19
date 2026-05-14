@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="action_view_hr_employee" model="ir.actions.act_window">
+            <field name="name">Empleados</field>
+            <field name="res_model">hr.employee</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No hay empleados registrados.
+                </p>
+                <p> Los <b class="text-primary">Empleados</b> son los miembros del equipo que forman
+                    parte de la empresa y contribuyen a su funcionamiento diario. Desde este módulo
+                    puedes gestionar la información de cada empleado, su puesto, departamento y
+                    otros datos relevantes. <b class="text-primary">La gestión de empleados</b>
+                    permite organizar, consultar y actualizar los datos del personal, facilitando la
+                    administración de recursos humanos y mejorando la eficiencia en los procesos
+                    internos. </p>
+            </field>
+        </record>
+
+        <record id="action_view_hr_enterprise" model="ir.actions.act_window">
+            <field name="name">Empresas</field>
+            <field name="res_model">hr.enterprise</field>
+            <field name="view_mode">list</field>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No hay empresas registradas.
+                </p>
+                <p> Las <b class="text-primary">Empresas</b> son las entidades que agrupan a los
+                    empleados y recursos de la organización. Desde este módulo puedes gestionar la
+                    información de cada empresa, su nombre, dirección y otros datos relevantes. <b
+                        class="text-primary">La gestión de empresas</b> permite organizar, consultar
+                    y actualizar los datos de las entidades, facilitando la administración de
+                    recursos humanos y mejorando la eficiencia en los procesos internos. </p>
+            </field>
+        </record>
+
+        <record id="action_view_hr_department" model="ir.actions.act_window">
+            <field name="name">Areas</field>
+            <field name="res_model">hr.department</field>
+            <field name="view_mode">list</field>
+            <field name="view_ids"
+                eval="[(5, 0, 0), (0, 0, {'view_mode': 'list', 'view_id': ref('rrhh.view_hr_department_list')})]"/>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No hay áreas registradas.
+                </p>
+                <p> Las <b class="text-primary">Áreas</b> son las divisiones dentro de la
+                    organización que agrupan a los empleados según sus funciones y
+                    responsabilidades. Desde este módulo puedes gestionar la información de cada
+                    área, su nombre, descripción y otros datos relevantes. <b class="text-primary">La
+                    gestión de áreas</b> permite organizar, consultar y actualizar los datos de las
+                    divisiones, facilitando la administración de recursos humanos y mejorando la
+                    eficiencia en los procesos internos. </p>
+            </field>
+        </record>
+
+        <record id="action_view_hr_eps" model="ir.actions.act_window">
+            <field name="name">EPS</field>
+            <field name="res_model">hr.eps</field>
+            <field name="view_mode">list</field>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No hay EPS registradas.
+                </p>
+                <p> Las <b class="text-primary">EPS</b> (Entidades Promotoras de Salud) son las
+                    organizaciones encargadas de brindar servicios de salud a los empleados. Desde
+                    este módulo puedes gestionar la información de cada EPS, su nombre, dirección y
+                    otros datos relevantes. <b class="text-primary">La gestión de EPS</b> permite
+                    organizar, consultar y actualizar los datos de las entidades de salud,
+                    facilitando la administración de recursos humanos y mejorando la eficiencia en
+                    los procesos internos. </p>
+            </field>
+        </record>
+
+        <record id="action_view_hr_arl" model="ir.actions.act_window">
+            <field name="name">ARL</field>
+            <field name="res_model">hr.arl</field>
+            <field name="view_mode">list</field>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No hay ARL registradas.
+                </p>
+                <p> Las <b class="text-primary">ARL</b> (Administradoras de Riesgos Laborales) son las organizaciones encargadas de gestionar los riesgos
+                    laborales y brindar protección a los empleados en caso de accidentes o enfermedades
+                    relacionadas con el trabajo. Desde este módulo puedes gestionar la información de
+                    cada ARL, su nombre, dirección y otros datos relevantes. <b class="text-primary">La
+                    gestión de ARL</b> permite organizar, consultar y actualizar los datos de las
+                    entidades de riesgos laborales, facilitando la administración de recursos humanos
+                    y mejorando la eficiencia en los procesos internos. </p>
+            </field>
+        </record>
+
+        <record id="action_view_hr_severance_fund" model="ir.actions.act_window">
+            <field name="name">Fondo de Cesantías</field>
+            <field name="res_model">hr.severance.fund</field>
+            <field name="view_mode">list</field>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No hay fondos de cesantías registrados.
+                </p>
+                <p> Los <b class="text-primary">Fondos de Cesantías</b> son las entidades encargadas de administrar los recursos destinados a las cesantías de los empleados. Desde este módulo puedes gestionar la información de cada fondo de cesantías, su nombre, dirección y otros datos relevantes. <b class="text-primary">La gestión de fondos de cesantías</b> permite organizar, consultar y actualizar los datos de las entidades encargadas de las cesantías, facilitando la administración de recursos humanos y mejorando la eficiencia en los procesos internos. </p>
+            </field>
+        </record>
+
+        <record id="action_view_hr_fund_pension" model="ir.actions.act_window">
+            <field name="name">Fondo de Pensiones</field>
+            <field name="res_model">hr.pension</field>
+            <field name="view_mode">list</field>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No hay fondos de pensiones registrados.
+                </p>
+                <p> Los <b class="text-primary">Fondos de Pensiones</b> son las entidades encargadas de administrar los recursos destinados a las pensiones de los empleados. Desde este módulo puedes gestionar la información de cada fondo de pensiones, su nombre, dirección y otros datos relevantes. <b class="text-primary">La gestión de fondos de pensiones</b> permite organizar, consultar y actualizar los datos de las entidades encargadas de las pensiones, facilitando la administración de recursos humanos y mejorando la eficiencia en los procesos internos. </p>
+            </field>
+        </record>
+
+        <record id="action_view_hr_fund_compensation" model="ir.actions.act_window">
+            <field name="name">Fondo de Compensación</field>
+            <field name="res_model">hr.compensation.fund</field>
+            <field name="view_mode">list</field>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No hay fondos de compensación registrados.
+                </p>
+                <p> Los <b class="text-primary">Fondos de Compensación</b> son las entidades encargadas de administrar los recursos destinados a las compensaciones de los empleados. Desde este módulo puedes gestionar la información de cada fondo de compensación, su nombre, dirección y otros datos relevantes. <b class="text-primary">La gestión de fondos de compensación</b> permite organizar, consultar y actualizar los datos de las entidades encargadas de las compensaciones, facilitando la administración de recursos humanos y mejorando la eficiencia en los procesos internos. </p>
+            </field>
+        </record>
+
+
+
+        <record id="action_hr_dashboard" model="ir.actions.client">
+            <field name="name">Dashboard</field>
+            <field name="tag">hr_vacancies.dashboard_pro</field>
+        </record>
+
+        <menuitem
+            id="menu_hr_employee_root"
+            name="Recursos Humanos"
+            action="action_view_hr_employee"
+            web_icon="rrhh,static/description/icon.png"
+            sequence="185"
+            groups="rrhh.group_consult_rrhh"/>
+
+        <menuitem
+            id="menu_hr_dashboard"
+            name="Empleados"
+            parent="menu_hr_employee_root"
+            action="action_view_hr_employee"
+            sequence="1"/>
+
+
+        <menuitem
+            id="menu_hr_employee_configuration"
+            name="Configuración"
+            parent="menu_hr_employee_root"
+            sequence="12"/>
+
+        <menuitem
+            id="menu_hr_enterprise"
+            name="Empresas"
+            parent="menu_hr_employee_configuration"
+            action="action_view_hr_enterprise"
+            sequence="1"/>
+
+        <menuitem
+            id="menu_hr_department"
+            name="Areas"
+            parent="menu_hr_employee_configuration"
+            action="rrhh.action_view_hr_department"
+            sequence="2"/>
+
+        <menuitem
+            id="menu_hr_social_security"
+            name="Seguridad Social"
+            parent="menu_hr_employee_configuration"
+            sequence="3"/>
+
+        <menuitem
+            id="menu_hr_eps"
+            name="EPS"
+            parent="menu_hr_social_security"
+            action="rrhh.action_view_hr_eps"
+            sequence="1"/>
+
+        <menuitem
+            id="menu_hr_arl"
+            name="ARL"
+            parent="menu_hr_social_security"
+            action="rrhh.action_view_hr_arl"
+            sequence="2"/>
+
+        <menuitem
+            id="menu_hr_severance_fund"
+            name="Cesantías"
+            parent="menu_hr_social_security"
+            action="rrhh.action_view_hr_severance_fund"
+            sequence="3"/>
+
+        <menuitem
+            id="menu_hr_fund_pension"
+            name="Pensiones"
+            parent="menu_hr_social_security"
+            action="rrhh.action_view_hr_fund_pension"
+            sequence="4"/>
+
+        <menuitem
+            id="menu_hr_fund_compensation"
+            name="Caja de Compensación"
+            parent="menu_hr_social_security"
+            action="rrhh.action_view_hr_fund_compensation"
+            sequence="5"/>
+
+
+    </data>
+</odoo>

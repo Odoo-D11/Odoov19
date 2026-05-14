@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_eps_list" model="ir.ui.view">
+            <field name="name">eps.list</field>
+            <field name="model">hr.eps</field>
+            <field name="arch" type="xml">
+                <list string="EPS">
+                    <field name="name" placeholder="Ej. Salud Total, Comfamiliar, etc."/>
+                </list>
+            </field>
+        </record>
+
+    </data>
+</odoo>

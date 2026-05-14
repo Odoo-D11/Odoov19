@@ -1,0 +1,408 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+
+    <record id="new_hr_employee_search_view" model="ir.ui.view">
+      <field name="name">new_hr_employee_search_view</field>
+      <field name="model">hr.employee</field>
+      <field name="inherit_id" ref="hr.view_employee_filter"/>
+      <field name="arch" type="xml">
+        <xpath expr="//search" position="replace">
+          <search>
+            <field name="name" string="Nombre"/>
+            <field name="job_title" string="Cargo"/>
+            <field name="department_id" string="Área"/>
+            <field name="certification_ids" string="Certificaciones"
+              filter_domain="[('certification_ids.name', 'ilike', self)]"/>
+            <filter name="active" string="Activo" domain="[('active', '=', True)]"/>
+            <filter name="inactive" string="Inactivo" domain="[('active', '=', False)]"/>
+            <group name="group_by">
+              <filter name="group_by_department" string="Área" domain="[]"
+                context="{'group_by': 'department_id'}"/>
+              <filter name="group_by_job_title" string="Cargo" domain="[]"
+                context="{'group_by': 'job_title'}"/>
+              <filter name="group_by_enterprise" string="Empresa" domain="[]"
+                context="{'group_by': 'enterprise_id'}"/>
+            </group>
+          </search>
+        </xpath>
+      </field>
+    </record>
+
+    <record id="hr_employee_view_list" model="ir.ui.view">
+      <field name="name">new.hr.employee.list</field>
+      <field name="model">hr.employee</field>
+      <field name="priority" eval="1"/>
+      <field name="arch" type="xml">
+        <list string="Empleados" duplicate="false">
+          <field name="name" string="Nombre"/>
+        </list>
+      </field>
+    </record>
+
+
+    <record id="hr_employee_view_form" model="ir.ui.view">
+      <field name="name">new.hr.employee.form</field>
+      <field name="model">hr.employee</field>
+      <field name="priority" eval="1"/>
+      <field name="arch" type="xml">
+        <form string="Empleado" duplicate="false">
+          <field name="country_id" invisible="1" options="{'no_create': True, 'no_open': True}"/>
+          <field name="active" invisible="1"/>
+          <header>
+            <button string="Crear usuario" class="btn btn-primary" type="object"
+              groups="rrhh.group_manager_rrhh" name="action_create_user"
+              invisible="user_id or not id"/>
+          </header>
+          <div class="alert alert-warning" role="alert" invisible="active">
+            <i class="fa-solid fa-triangle-exclamation me-1"/>Este empleado está inactivo. Para
+            activarlo, edite el registro y desarchívelo. </div>
+          <sheet>
+            <span style="font-weight: 500; color: #212529;">
+              Nombre
+            </span>
+            <div class="form-title-responsive">
+              <h1>
+                <field name="name" class="text-primary" required="1"
+                  placeholder="Ej. Dwight Schrute, Pam Beesly, Creed Bratton, etc.."/>
+              </h1>
+              <div>
+                <field name="job_title"
+                  placeholder="¿Cuál es el cargo del empleado? Ej. Gerente de ventas, Analista de sistemas, etc.."/>
+              </div>
+            </div>
+            <group>
+              <group>
+                <field name="department_id" string="Área" placeholder="Ej. Infraestructura.."
+                  options="{'no_create': True, 'no_open': True}"/>
+              </group>
+              <group>
+                <field name="coach_id" string="Jefe inmediato" domain="[('id', '!=', id)]"
+                  help="Jefe inmediato del empleado, puede ser un gerente o supervisor."
+                  options="{'no_create': True, 'no_open': True}"
+                  placeholder="Ej. Michael Scott, etc.."/>
+              </group>
+            </group>
+            <notebook>
+              <page string="Información del trabajo">
+                <separator string="Empresa asociada"/>
+                <div class="text-muted">
+                  <p>
+                    La empresa asociada permite identificar la organización responsable del
+                    empleado, mientras que el correo y teléfono laborales facilitan el contacto
+                    profesional y el acceso a servicios corporativos. Es importante mantener esta
+                    información actualizada para asegurar una correcta gestión de recursos humanos.
+                  </p>
+                </div>
+                <group>
+                  <group>
+                    <field name="enterprise_id" required="1" string="Nombre"
+                      placeholder="Ej. Tsg The It Experts Sad, Kreivo, It Talent, etc.."
+                      options="{'no_open': True, 'no_create': True}"
+                      class="text-primary "/>
+                  </group>
+                  <group>
+                    <field name="work_email" placeholder="Ej. ejemplo@gmail.com.."
+                      string="Correo electrónico" widget="email"/>
+                    <field name="mobile_phone" placeholder="Ej. 312 123 4567.."
+                      widget="CodeCountryPhone"
+                      string="Teléfono"/>
+                  </group>
+                </group>
+                <separator string="Gestión de recursos y gastos"/>
+                <div class="text-muted">
+                  <p>
+                    El proyecto y centro de costos asociados permiten una gestión eficiente de
+                    los recursos y gastos dentro de una organización. El proyecto identifica la
+                    iniciativa específica en la que el empleado está trabajando, mientras que el
+                    centro de costos ayuda a categorizar y controlar los gastos relacionados con
+                    esa actividad. Esta información es crucial para la planificación financiera y
+                    la evaluación del desempeño.
+                  </p>
+                </div>
+                <group>
+                  <group>
+                    <field name="project_id"
+                      placeholder="Ej. Administrativo - 30, Novacom - 90, etc.."
+                      options="{'no_create': True, 'no_open': True}"/>
+                  </group>
+                  <group>
+                    <field name="cost_center_id" string="Centro de costo"
+                      placeholder="Ej. Suministro de materiales, Gastos administrativos, etc.."
+                      options="{'no_create': True, 'no_open': True}"/>
+                  </group>
+                </group>
+              </page>
+              <page string="Experiencia laboral">
+                <separator string="Experiencia laboral"/>
+                <div class="text-muted">
+                  <p>
+                    La experiencia laboral es el conjunto de conocimientos, habilidades y
+                    competencias
+                    que una persona adquiere a lo largo de su trayectoria profesional. Esta
+                    experiencia se refleja en los trabajos anteriores, las responsabilidades
+                    asumidas y los logros alcanzados, y es un factor clave para el desarrollo de
+                    la carrera y la empleabilidad.
+                  </p>
+                </div>
+                <field name="experience_ids" widget="experience_one2many">
+                  <list string="Experiencia laboral">
+                    <field name="position"/>
+                    <field name="enterprise"/>
+                    <field name="city_id"/>
+                    <field name="start_date"/>
+                    <field name="end_date"/>
+                    <field name="description"/>
+                  </list>
+                </field>
+              </page>
+              <page string="Certificaciones">
+                <separator string="Certificaciones"/>
+                <div class="text-muted">
+                  <p>
+                    Las certificaciones son credenciales que validan las habilidades y conocimientos
+                    de una persona en un área específica, y son otorgadas por organizaciones
+                    reconocidas. Estas certificaciones pueden mejorar la empleabilidad, aumentar el
+                    potencial de ingresos y demostrar el compromiso con el desarrollo profesional.
+                  </p>
+                </div>
+                <field name="certification_ids" widget="certification_one2many">
+                  <list string="Certificaciones">
+                    <field name="name"/>
+                    <field name="institution"/>
+                    <field name="certification_level"/>
+                    <field name="date_start"/>
+                    <field name="date_end"/>
+                  </list>
+                </field>
+              </page>
+              <page string="Información personal">
+                <separator string="Datos personales"/>
+                <div class="text-muted">
+                  <p>
+                    Los datos personales de un usuario son aquellos que permiten identificarlo o
+                    hacerlo identificable, tales como su número de identificación,
+                    correo electrónico, número de teléfono, fecha y lugar de nacimiento,
+                    entre otros. Esta información es confidencial y debe ser protegida conforme a la
+                    normativa de protección de datos.
+                  </p>
+                </div>
+                <group>
+                  <group>
+                    <field name="gender" required="1"/>
+                    <label for="identification_id" string="Identificación"/>
+                    <div class="o_row">
+                      <field name="identification_type_id"
+                        placeholder="Ej. Cédula de ciudadanía, Tarjeta de identidad, etc.."
+                        options="{'no_create': True, 'no_open': True}"/>
+                      <field name="identification_id" placeholder="Numero de identificación.."/>
+                    </div>
+                    <label for="date_of_issue" string="Fecha de expedición"/>
+                    <div class="o_row">
+                      <field name="date_of_issue" placeholder="Ej. 01/01/2020.."
+                        string="Fecha de expedición"/>
+                      <span style="font-weight: 500; color: #212529;" class="ms-1 me-1">RH</span>
+                      <field name="rh_id" placeholder="Ej. O+, A-, B+, etc.." class="o_force_ltr"
+                        options="{'no_create': True, 'no_open': True}"/>
+                      <span style="font-weight: 500; color: #212529;" class="ms-1 me-1"
+                        invisible="not birthday">Edad</span>
+                      <field name="age" placeholder="Ej. 25 años.." class="o_force_ltr"
+                        invisible="not birthday"/>
+                    </div>
+                    <field name="private_email" placeholder="Ej. ejemplo@example.com.."
+                      string="Correo electrónico" widget="email"/>
+                  </group>
+                  <group>
+                    <label for="birthday" string="Fecha de nacimiento"/>
+                    <div class="o_row">
+                      <field name="birthday" placeholder="Ej. 01/01/1990.."/>
+                      <b
+                        style="margin-left: 5px; margin-right: 5px; font-weight: 500; color: #212529;">
+                        /</b>
+                      <field name="city_of_birth_id" placeholder="Lugar de nacimiento.."
+                        options="{'no_create': True, 'no_open': True}"/>
+                      <b
+                        style="margin-left: 5px; margin-right: 5px; font-weight: 500; color: #212529;">
+                        /</b>
+                      <field name="state_of_birth_id" placeholder="Departamento.."
+                        options="{'no_create': True, 'no_open': True}"/>
+                    </div>
+                    <field name="country_id" string="Nacionalidad (País)"
+                      placeholder="Ej. Colombia.."
+                      options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"/>
+                    <field name="private_phone" placeholder="Ej. 312 123 4567.."
+                      string="Teléfono" widget="CodeCountryPhone"/>
+                  </group>
+                </group>
+                <p/>
+                <separator string="Cuenta bancaria" name="separator_bank_account_info"
+                  groups="rrhh.group_manager_rrhh,rrhh.group_creator_rrhh"/>
+                <div class="text-muted" name="description_bank_account_info"
+                  groups="rrhh.group_manager_rrhh,rrhh.group_creator_rrhh">
+                  <p>
+                    La cuenta bancaria es un contrato por el cual una entidad financiera se
+                    obliga a custodiar el dinero de un cliente y a ponerlo a su disposición
+                    en cualquier momento que este lo solicite. Además, permite realizar operaciones
+                    como transferencias, pagos y depósitos, facilitando la gestión de recursos
+                    económicos de manera segura y eficiente.
+                  </p>
+                </div>
+                <group name="bank_account_info"
+                  groups="rrhh.group_manager_rrhh,rrhh.group_creator_rrhh">
+                  <group>
+                    <field name="bank_id" placeholder="Ej. Bancolombia, Davivienda, etc.."
+                      options="{'no_create': True, 'no_open': True}"/>
+                    <field name="type_account_id"
+                      placeholder="Ej. Ahorros, Corriente, etc.."
+                      options="{'no_create': True, 'no_open': True}"/>
+                  </group>
+                  <group>
+                    <field name="bank_account_number" placeholder="Ej. 123456789.."
+                      options="{'no_create': True, 'no_open': True}"/>
+                  </group>
+                </group>
+                <separator string="Dirección de residencia - Estado civil"/>
+                <div class="text-muted">
+                  <p>
+                    La dirección de residencia es el lugar donde una persona vive de manera
+                    habitual, y es importante para efectos legales, fiscales y de comunicación. El
+                    estado civil se refiere a la situación personal de una persona en relación con
+                    el matrimonio, como soltero, casado, divorciado o viudo. Ambos datos son
+                    esenciales para la gestión administrativa y la provisión de servicios.
+                  </p>
+                </div>
+                <group>
+                  <group>
+                    <label for="private_street" string="Dirección"/>
+                    <div>
+                      <field name="private_street" placeholder="Calle 123 #45-67.."
+                        string="Dirección"/>
+                      <div class="o_row">
+                        <field name="private_city_id" placeholder="Ciudad..."
+                          options="{'no_create': True, 'no_open': True}"/>
+                        <field name="private_state_id" placeholder="Departamento..."
+                          options="{'no_create': True, 'no_open': True}"/>
+                      </div>
+                      <div>
+                        <field name="private_country_id" placeholder="País..."
+                          class="o_address_country"
+                          options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"/>
+                      </div>
+                    </div>
+                  </group>
+                  <group>
+                    <field name="marital_status_id"
+                      placeholder="Ej. Soltero(a), Casado(a), etc.."
+                      options="{'no_create': True, 'no_open': True}"/>
+                    <label for="children" string="Hijos"/>
+                    <div class="o_row w-100">
+                      <field name="requires_children" required="requires_children"/>
+                      <span invisible="requires_children" class="text-danger">
+                        <i class="fa fa-ban me-1 text-danger" title="Advertencia"/> No se requiere
+                        esta información.</span>
+                      <field name="children" placeholder="Ej. 1.." string="Hijos"
+                        required="requires_children" invisible="not requires_children"
+                        class="me-2 mb-0"/>
+                    </div>
+                  </group>
+                </group>
+                <separator string="Seguridad social"/>
+                <div class="text-muted">
+                  <p>
+                    La seguridad social es un sistema de protección que garantiza a los
+                    individuos y sus familias el acceso a servicios básicos como salud, pensiones y
+                    prestaciones económicas en caso de desempleo, enfermedad o invalidez. Es un
+                    derecho fundamental que contribuye al bienestar social y económico de la
+                    población.
+                  </p>
+                </div>
+                <group>
+                  <group>
+                    <field name="eps_id" placeholder="Ej. Compensar, Coomeva, etc.."
+                      options="{'no_create': True, 'no_open': True}"/>
+                    <field name="severance_fund_id" placeholder="Ej. Colfondos, Protección, etc.."
+                      options="{'no_create': True, 'no_open': True}"/>
+                    <field name="compensation_fund_id" placeholder="Ej. Comfama, Comfenalco, etc.."
+                      string="Caja de comp."
+                      options="{'no_create': True, 'no_open': True}"/>
+                  </group>
+                  <group>
+                    <field name="arl_id" placeholder="Ej. Colmena, Sura, etc.."
+                      options="{'no_create': True, 'no_open': True}"/>
+                    <field name="pension_id" placeholder="Ej. Porvenir, Colpensiones, etc.."
+                      options="{'no_create': True, 'no_open': True}"/>
+                  </group>
+                </group>
+                <separator string="Información adicional"/>
+                <div class="text-muted">
+                  <p>
+                    La información adicional es un conjunto de datos complementarios que pueden ser
+                    relevantes para la gestión de recursos humanos, pero que no encajan en las
+                    categorías anteriores. Esta información puede incluir detalles sobre habilidades
+                    especiales, preferencias laborales, necesidades de accesibilidad, entre otros,
+                    y puede ayudar a personalizar la experiencia del empleado y mejorar su
+                    integración en la organización.
+                  </p>
+                </div>
+                <group>
+                  <field name="folder" widget="url"
+                    placeholder="Ej. https://tsgitexpers.sharepoint.com/_layouts/15/onedrive.aspx?id=%2Fpersonal%2Fcarpeta_empleado.."
+                    string="Carpeta"/>
+                </group>
+              </page>
+              <page string="Nomina">
+                <separator string="Información de nómina"/>
+                <div class="text-muted">
+                  <p>
+                    La información de nómina es un conjunto de datos que incluye detalles sobre
+                    los empleados, sus salarios, deducciones, beneficios y otros aspectos
+                    relacionados
+                    con la compensación laboral. Esta información es esencial para la gestión
+                    financiera de una empresa y para asegurar el cumplimiento de las obligaciones
+                    legales y fiscales.
+                  </p>
+                </div>
+                <group>
+                  <group>
+                    <field name="entry_date" placeholder="Ej. 01/01/2020.."
+                      string="Fecha de ingreso"/>
+                    <field name="type_of_contract" placeholder="Ej. Indefinido, Término fijo, etc.."
+                      string="Tipo de contrato" options="{'no_create': True, 'no_open': True}"/>
+                  </group>
+                  <group>
+                    <field name="salary_type" string="Tipo de salario"/>
+                    <label for="wage" string="Salario" groups="rrhh.group_manager_rrhh"/>
+                    <div class="o_row" groups="rrhh.group_manager_rrhh">
+                      <i class="fa fa-dollar me-1" title="Presupuesto"/>
+                      <field name="wage" placeholder="Ej. 1000000.."/>
+                    </div>
+                  </group>
+                </group>
+                <separator string="Ingresos adicionales"/>
+                <div class="text-muted">
+                  <p>
+                    Los ingresos adicionales son aquellos beneficios o compensaciones que un
+                    empleado recibe además de su salario base, y que no están regulados por la
+                    legislación laboral. Estos pueden incluir bonificaciones, comisiones,
+                    incentivos,
+                    entre otros, y suelen ser otorgados por el empleador como reconocimiento al
+                    desempeño o para motivar a los empleados.
+                  </p>
+                </div>
+                <field name="additional_income_ids">
+                  <list editable="bottom" string="Ingresos adicionales">
+                    <field name="income_type_id" placeholder="Ej. Bonificación, Comisión, etc.."
+                      string="Nombre" options="{'no_create': True, 'no_open': True}"/>
+                  </list>
+                </field>
+              </page>
+            </notebook>
+          </sheet>
+          <chatter/>
+        </form>
+      </field>
+    </record>
+
+
+  </data>
+</odoo>

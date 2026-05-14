@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="rrhh.ExperienceListRenderer"
+       t-inherit="web.ListRenderer"
+       t-inherit-mode="primary">
+
+        <!-- Oculta la tabla cuando no hay registros -->
+        <xpath expr="//table" position="attributes">
+            <attribute name="t-attf-class" add="table-borderless {{ !showTable ? 'd-none' : '' }}" remove="table-striped" separator=" "/>
+        </xpath>
+
+        <!--
+            Reemplaza el tr de cabecera con uno invisible que define los anchos de columna:
+            · 20px para la celda de timeline (dot pegado al borde + línea)
+            · w-100 para el contenido
+            · 32px para la celda de acciones (borrar)
+        -->
+        <xpath expr="//thead/tr" position="replace">
+            <tr style="visibility: hidden; height: 0;">
+                <th style="width: 20px; min-width: 20px;"/>
+                <th class="w-100"/>
+                <th t-if="isEditable" class="o_list_actions_header" style="width: 32px; min-width: 32px;"/>
+            </tr>
+        </xpath>
+
+        <xpath expr="//tfoot" position="replace"/>
+
+        <!-- Estado vacío: solo cuando no hay registros y es editable -->
+        <xpath expr="//table" position="after">
+            <t t-if="!showTable and isEditable">
+                <div class="o_experience_empty mt-2">
+                    <p class="text-muted mb-2">No hay experiencias laborales registradas. ¿Por qué no añades una?</p>
+                    <button type="button"
+                            class="btn btn-secondary"
+                            t-on-click="() => props.onAdd({})">
+                        Nuevo
+                    </button>
+                </div>
+            </t>
+        </xpath>
+
+    </t>
+
+    <!-- Loop de filas -->
+    <t t-name="rrhh.ExperienceListRenderer.Rows"
+       t-inherit="web.ListRenderer.Rows"
+       t-inherit-mode="primary">
+
+        <xpath expr="//t[@t-if='!list.isGrouped']" position="replace">
+            <t t-if="!list.isGrouped">
+                <t t-foreach="list.records" t-as="record" t-key="record.id">
+                    <t t-call="{{ constructor.recordRowTemplate }}"/>
+                </t>
+
+                <!-- Botón "Nuevo" como última fila del tbody -->
+                <tr t-if="isEditable" class="o_experience_add_row">
+                    <td/>
+                    <td class="o_experience_add_cell">
+                        <button type="button"
+                                class="btn btn-secondary"
+                                t-on-click="() => props.onAdd({})">
+                            Nuevo
+                        </button>
+                    </td>
+                </tr>
+            </t>
+        </xpath>
+
+    </t>
+
+    <!-- Fila individual -->
+    <t t-name="rrhh.ExperienceListRenderer.RecordRow"
+       t-inherit="web.ListRenderer.RecordRow"
+       t-inherit-mode="primary">
+
+        <xpath expr="//t[@t-foreach='getColumns(record)']" position="replace">
+            <t t-set="data" t-value="record.data"/>
+
+            <td class="o_experience_timeline_cell position-relative pe-lg-2">
+                <div class="o_exp_dot rounded-circle bg-primary position-relative"/>
+            </td>
+
+            <td class="o_data_cell pt-0"
+                t-on-click="(ev) => this.onCellClicked(record, null, ev)"
+                tabindex="-1">
+                <div class="o_experience_line">
+                    <small class="o_experience_dates fw-bold">
+                        <t t-out="formatExperienceDate(data.start_date)"/>
+                        <t> - </t>
+                        <t t-out="formatExperienceDate(data.end_date, true)"/>
+                    </small>
+                    <h4 class="o_experience_position mt-2" t-esc="data.position"/>
+                    <p t-if="data.enterprise"
+                       class="o_experience_company text-muted mb-0">
+                        <t t-esc="data.enterprise"/>
+                        <t t-if="data.city_id">, <t t-esc="getCityName(data.city_id)"/></t>
+                    </p>
+                    <p t-if="data.description"
+                       class="o_experience_desc"
+                       t-esc="data.description"/>
+                </div>
+            </td>
+        </xpath>
+
+    </t>
+
+</templates>

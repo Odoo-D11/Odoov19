@@ -1,0 +1,54 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+
+hr.access_hr_employee_user,hr.employee user,hr.model_hr_employee,hr.group_hr_user,1,0,0,0
+hr.access_hr_employee_category_user,hr.employee.category.user,hr.model_hr_employee_category,hr.group_hr_user,1,0,0,0
+hr.access_hr_employee_category_emp,hr.employee.category.emp,hr.model_hr_employee_category,base.group_user,1,0,0,0
+hr.access_hr_employee_user_overwrite,hr.employee user,hr.model_hr_employee,hr.group_hr_user,1,0,0,0
+hr.access_hr_employee_system_user,hr.employee system user,hr.model_hr_employee,base.group_system,1,0,0,0
+hr.access_hr_employee_public_user,hr.employee_public,hr.model_hr_employee_public,base.group_user,1,0,0,0
+hr.access_hr_employee_resource_user,resource.resource.user,resource.model_resource_resource,hr.group_hr_user,1,0,0,0
+hr.access_hr_department_user,hr.department.user,hr.model_hr_department,hr.group_hr_user,1,0,0,0
+hr.access_hr_department_employee,hr.department.employee,hr.model_hr_department,base.group_user,1,0,0,0
+hr.access_hr_job_user,hr.job user,hr.model_hr_job,hr.group_hr_user,1,0,0,0
+hr.access_hr_departure_wizard,access.hr.departure.wizard,hr.model_hr_departure_wizard,hr.group_hr_user,1,0,0,0
+hr.access_hr_work_location_user,access_hr_work_location_user,hr.model_hr_work_location,base.group_user,1,0,0,0
+hr.access_hr_work_location_manager,access_hr_work_location_manager,hr.model_hr_work_location,hr.group_hr_manager,1,0,0,0
+hr.access_hr_departure_reason,access_hr_departure_reason_user,hr.model_hr_departure_reason,hr.group_hr_user,1,0,0,0
+hr.access_hr_contract_type_manager,hr.contract.type.manager,hr.model_hr_contract_type,hr.group_hr_user,1,0,0,0
+hr.access_mail_activity_plan_hr_manager,mail.activity.plan.hr.manager,mail.model_mail_activity_plan,hr.group_hr_manager,1,0,0,0
+hr.access_mail_activity_plan_template_hr_manager,mail.activity.plan.template.hr.manager,mail.model_mail_activity_plan_template,hr.group_hr_manager,1,0,0,0
+
+rrhh.access_consult_rrhh_employee,group_consult_rrhh_employee,hr.model_hr_employee,rrhh.group_consult_rrhh,1,0,0,0
+rrhh.access_consult_hr_enterprise,group_consult_hr_enterprise,rrhh.model_hr_enterprise,rrhh.group_consult_rrhh,1,0,0,0
+rrhh.access_consult_hr_resource,group_consult_hr_resource,resource.model_resource_resource,rrhh.group_consult_rrhh,1,0,0,0
+rrhh.access_consult_rh_rh,group_consult_rh_rh,rrhh.model_rh_rh,rrhh.group_consult_rrhh,1,0,0,0
+rrhh.access_consult_res_bank,group_consult_res_bank,base.model_res_bank,rrhh.group_consult_rrhh,1,0,0,0
+rrhh.access_consult_identification_type,group_consult_identification_type,contacts_management.model_identification_type,rrhh.group_consult_rrhh,1,0,0,0
+rrhh.access_consult_res_city,group_consult_res_city,contacts_management.model_res_city,rrhh.group_consult_rrhh,1,0,0,0
+rrhh.access_consult_res_country_state,group_consult_res_country_state,contacts_management.model_res_country_state,rrhh.group_consult_rrhh,1,0,0,0
+rrhh.access_consult_hr_type_account,group_consult_hr_type_account,rrhh.model_hr_type_account,rrhh.group_consult_rrhh,1,0,0,0
+rrhh.access_consult_hr_eps,group_consult_hr_eps,rrhh.model_hr_eps,rrhh.group_consult_rrhh,1,0,0,0
+rrhh.access_consult_hr_marital_status,group_consult_hr_marital_status,rrhh.model_hr_marital_status,rrhh.group_consult_rrhh,1,0,0,0
+rrhh.access_consult_hr_compensation_fund,group_consult_hr_compensation_fund,rrhh.model_hr_compensation_fund,rrhh.group_consult_rrhh,1,0,0,0
+rrhh.access_consult_hr_pension,group_consult_hr_pension,rrhh.model_hr_pension,rrhh.group_consult_rrhh,1,0,0,0
+rrhh.access_consult_hr_severance_fund,group_consult_hr_severance_fund,rrhh.model_hr_severance_fund,rrhh.group_consult_rrhh,1,0,0,0
+rrhh.access_consult_hr_arl,group_consult_hr_arl,rrhh.model_hr_arl,rrhh.group_consult_rrhh,1,0,0,0
+rrhh.access_consult_hr_contract_type,group_consult_hr_contract_type,rrhh.model_hr_contract_type,rrhh.group_consult_rrhh,1,0,0,0
+rrhh.access_consult_hr_income_type,group_consult_hr_income_type,rrhh.model_hr_income_type,rrhh.group_consult_rrhh,1,0,0,0
+rrhh.access_consult_additional_income,group_consult_additional_income,rrhh.model_hr_employee_additional_income,rrhh.group_consult_rrhh,1,0,0,0
+rrhh.access_consult_hr_job_position,group_consult_hr_job_position,hr.model_hr_job,rrhh.group_consult_rrhh,1,0,0,0
+rrhh.access_consult_hr_experience,group_consult_hr_experience,rrhh.model_hr_experience,rrhh.group_consult_rrhh,1,0,0,0
+rrhh.access_consult_hr_certification,group_consult_hr_certification,rrhh.model_hr_certification,rrhh.group_consult_rrhh,1,0,0,0
+
+rrhh.access_create_hr_employee,group_create_rrhh,hr.model_hr_employee,rrhh.group_creator_rrhh,1,1,1,1
+rrhh.access_create_hr_enterprise,group_create_hr_enterprise,rrhh.model_hr_enterprise,rrhh.group_creator_rrhh,1,1,1,0
+rrhh.access_create_hr_resource,group_create_hr_resource,resource.model_resource_resource,rrhh.group_creator_rrhh,1,1,1,1
+rrhh.access_create_additional_income,group_create_additional_income,rrhh.model_hr_employee_additional_income,rrhh.group_creator_rrhh,1,1,1,1
+rrhh.access_create_hr_job_position,group_create_hr_job_position,hr.model_hr_job,rrhh.group_creator_rrhh,1,1,1,1
+rrhh.access_create_hr_experience,group_create_hr_experience,rrhh.model_hr_experience,rrhh.group_creator_rrhh,1,1,1,1
+rrhh.access_create_hr_certification,group_create_hr_certification,rrhh.model_hr_certification,rrhh.group_creator_rrhh,1,1,1,1
+rrhh.access_create_hr_departament,group_create_hr_departament,hr.model_hr_department,rrhh.group_creator_rrhh,1,1,1,1
+rrhh.access_create_hr_res_company,group_create_hr_company,base.model_res_company,rrhh.group_creator_rrhh,1,1,1,0
+rrhh.acces_create_hr_departure_wizard,group_create_hr_departure_wizard,hr.model_hr_departure_wizard,rrhh.group_creator_rrhh,1,1,1,0
+
+rrhh.access_admin_hr_enterprise,group_admin_hr_enterprise,rrhh.model_hr_enterprise,rrhh.group_manager_rrhh,1,1,1,1

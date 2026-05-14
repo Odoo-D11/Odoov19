@@ -1,0 +1,40 @@
+<templates id="tmpl" xml:space="preserve">
+  <t t-name="hr_job_vacancies_website.HrDashboardPro">
+    <div class="o_hr_dash_pro">
+      <input class="o_hr_search" t-model="state.q" t-on-input="() => {}" placeholder="Buscar (Ctrl/⌘+K)…"/>
+      <div class="o_cards">
+                <!-- Empleados -->
+        <div class="o_card" t-on-click="() => { state.lastCard='emp'; openEmployees(); }">
+          <div class="o_title">Empleados</div>
+          <div class="o_kpi" t-esc="state.kpi.employees"/>
+          <div class="o_row">
+            <span class="o_chip" t-on-click.stop="() => openEmployees([['create_date','>=', (new Date()).toISOString().slice(0,7) + '-01']])">Altas este mes</span>
+            <span class="o_chip" t-on-click.stop="() => openEmployees([['x_docs_pending','=',true]])">Pendientes docs</span>
+          </div>
+          <button class="o_btn" t-on-click.stop="quickCreate">Nuevo empleado (N)</button>
+        </div>
+                <!-- Vacantes -->
+        <div class="o_card" t-on-click="() => { state.lastCard='job'; openJobs(); }">
+          <div class="o_title">Vacantes</div>
+          <div class="o_kpi">
+            <span t-esc="state.kpi.jobs"/> 
+            <small>(publicadas: <t t-esc="state.kpi.jobs_pub"/>)</small>
+          </div>
+          <div class="o_row">
+            <span class="o_chip" t-on-click.stop="() => openJobs([['website_published','=',true]])">Publicadas</span>
+            <span class="o_chip" t-on-click.stop="() => openJobs([['website_published','=',false]])">Borradores</span>
+          </div>
+          <a class="o_link" t-att-href="`/jobs`" target="_blank">Ver sitio</a>
+          <button class="o_btn" t-on-click.stop="quickCreate">Nueva vacante (N)</button>
+        </div>
+      </div>
+            <!-- Recientes -->
+      <div class="o_recent" t-if="state.recent.length">
+        <div class="o_recent_title">Recientes</div>
+        <t t-foreach="state.recent" t-as="r" t-key="r.ts">
+          <div class="o_recent_item" t-esc="r.label" t-on-click="() => action.doAction(r.action)"/>
+        </t>
+      </div>
+    </div>
+  </t>
+</templates>

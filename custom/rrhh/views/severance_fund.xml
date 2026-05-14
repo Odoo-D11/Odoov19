@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_severance_fund_list" model="ir.ui.view">
+            <field name="name">severance.fund.list</field>
+            <field name="model">hr.severance.fund</field>
+            <field name="arch" type="xml">
+                <list string="Fondo de Cesantías" duplicate="false">
+                    <field name="name" placeholder="Ej. Colfondos, Porvenir, etc."/>
+                </list>
+            </field>
+        </record>
+
+    </data>
+</odoo>

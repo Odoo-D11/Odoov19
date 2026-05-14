@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="invisible_menu_hr_employee" model="res.groups">
+        <field name="name">Muestra el módulo de empleados (Odoo)</field>
+        <field name="comment">El usuario podrá ver el módulo de empleados que tiene odoo por defecto</field>
+    </record>
+
+    <record id="hr.open_view_employee_list_my" model="ir.actions.act_window">
+        <field name="group_ids" eval="[(6, 0, [ref('rrhh.invisible_menu_hr_employee')])]"/>
+    </record>
+
+    <record id="hr.menu_hr_root" model="ir.ui.menu">
+        <field name="group_ids" eval="[(6, 0, [ref('rrhh.invisible_menu_hr_employee')])]"/>
+    </record>
+
+
+    <!--CARNET
+    DE EMPLEADO-->
+
+    <record id="hr.hr_employee_print_badge" model="ir.actions.report">
+        <field name="binding_model_id" eval="False"/>
+    </record>
+
+    <!--PERMISOS
+    DE EMPLEADOS-->
+
+    <record id="hr.group_hr_user" model="res.groups">
+        <field name="privilege_id" eval="ref('base.module_category_hidden')"/>
+        <field name="model_access" eval="[(6, 0, [])]"/>
+    </record>
+
+    <record id="hr.group_hr_manager" model="res.groups">
+        <field name="privilege_id" eval="ref('base.module_category_hidden')"/>
+        <field name="model_access" eval="[(6, 0, [])]"/>
+    </record>
+
+    <record model="ir.module.category" id="category_module_rrhh">
+        <field name="name">Recursos Humanos</field>
+        <field name="sequence">23</field>
+    </record>
+
+    <record model="res.groups.privilege" id="category_rrhh">
+        <field name="name">Recursos Humanos</field>
+        <field name="sequence">32</field>
+        <field name="category_id" ref="category_module_rrhh"/>
+    </record>
+
+    <record id="group_consult_rrhh" model="res.groups">
+        <field name="name">Consulta</field>
+        <field name="comment">Consulta de empleados</field>
+        <field name="privilege_id" ref="category_rrhh"/>
+        <field name="implied_ids"
+            eval="[(4, ref('hr.group_hr_user'))]"/>
+    </record>
+
+    <record id="group_creator_rrhh" model="res.groups">
+        <field name="name">Creador</field>
+        <field name="comment">Creador de empleados</field>
+        <field name="privilege_id" ref="category_rrhh"/>
+        <field name="implied_ids"
+            eval="[(4, ref('rrhh.group_consult_rrhh'))]"/>
+    </record>
+
+    <record id="group_manager_rrhh" model="res.groups">
+        <field name="name">Administrador</field>
+        <field name="comment">Permisos completos</field>
+        <field name="privilege_id" ref="category_rrhh"/>
+        <field name="implied_ids"
+            eval="[(4, ref('rrhh.group_creator_rrhh'))]"/>
+    </record>
+
+</odoo>

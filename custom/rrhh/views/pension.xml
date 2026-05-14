@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_pension_list" model="ir.ui.view">
+            <field name="name">pension.list</field>
+            <field name="model">hr.pension</field>
+            <field name="arch" type="xml">
+                <list string="Fondo de Pensiones">
+                    <field name="name" placeholder="Ej. Porvenir, Colfondos, etc."/>
+                </list>
+            </field>
+        </record>
+
+    </data>
+</odoo>

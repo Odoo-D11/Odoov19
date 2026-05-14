@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_arl_list" model="ir.ui.view">
+            <field name="name">arl.list</field>
+            <field name="model">hr.arl</field>
+            <field name="arch" type="xml">
+                <list string="ARL">
+                    <field name="name" placeholder="Ej. ARL Sura, ARL Colmena, etc."/>
+                </list>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

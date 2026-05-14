@@ -1,0 +1,70 @@
+.o_field_certification_one2many {
+    $o-cert-pad: 0.5rem;
+    $o-cert-dot-size: 0.5rem; // 8px → mitad = 4px
+
+    // ── Filas ──────────────────────────────────────────────────────────────
+    .o_data_row {
+        border-bottom: none;
+    }
+
+    .o_data_row td {
+        padding: $o-cert-pad;
+
+        // ── Celda de timeline ─────────────────────────────────────────────
+        &.o_cert_timeline_cell {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+
+            div {
+                width: $o-cert-dot-size;
+                height: $o-cert-dot-size;
+            }
+
+            &::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: var(--cert-line-left, 4px);
+                width: 1px;
+                height: 100%;
+                background-color: var(--o-border-color, #dee2e6);
+            }
+        }
+    }
+
+    // Primera fila: línea arranca en el centro del dot
+    .o_data_row:first-child .o_cert_timeline_cell::before {
+        top: $o-cert-pad;
+    }
+
+    // Última fila
+    .o_data_row.o_data_row_last {
+        .o_cert_desc {
+            margin-bottom: 1rem;
+        }
+    }
+
+    // ── Tipografía ──────────────────────────────────────────────────────────
+    .o_cert_name,
+    .o_cert_dates {
+        white-space: normal;
+        line-height: 1;
+    }
+
+    .o_cert_institution {
+        font-size: 0.875rem;
+        line-height: 1.4;
+    }
+
+    // ── Botón Nuevo ─────────────────────────────────────────────────────────
+    .o_cert_add_row td {
+        padding: 0.5rem 0 0.5rem 0;
+    }
+
+    // ── Estado vacío ────────────────────────────────────────────────────────
+    .o_cert_empty {
+        p {
+            color: var(--bs-secondary-color, #6c757d);
+        }
+    }
+}
