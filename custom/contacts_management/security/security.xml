@@ -65,7 +65,8 @@
     </record>
 
     <!--MANDA
-    MENSAJE DE TEXTO SMS
+    MENSAJE DE TEXTO SMS-->
+    
     <record id="sms.res_partner_act_window_sms_composer_multi" model="ir.actions.act_window">
         <field name="group_ids" eval="[(6,0,[ref('invisible_menu_tag_res_partner')])]"/>
     </record>
@@ -76,7 +77,7 @@
 
     <record id="sms.sms_composer_action_form" model="ir.actions.act_window">
         <field name="group_ids" eval="[(6,0,[ref('invisible_menu_tag_res_partner')])]"/>
-    </record>-->
+    </record>
 
     <record id="base.group_partner_manager" model="res.groups">
         <field name="model_access" eval="[(6, 0, [])]"/>

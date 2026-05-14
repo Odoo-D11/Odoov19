@@ -1,0 +1,17 @@
+<odoo>
+    <data>
+
+        <record id="view_list_accounting_payment_term" model="ir.ui.view">
+            <field name="name">view.list.accounting.payment.term</field>
+            <field name="model">accounting.payment.term</field>
+            <field name="arch" type="xml">
+                <list string="Términos de pago" editable="bottom">
+                    <field name="sequence" widget="handle"/>
+                    <field name="name" string="Nombre"
+                        placeholder="Ej. Pago al contado, 30 días, etc."/>
+                </list>
+            </field>
+        </record>
+
+    </data>
+</odoo>

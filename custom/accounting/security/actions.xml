@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="action_accounting_payment_term_root" model="ir.actions.act_window">
+        <field name="name">Plazos de pago</field>
+        <field name="res_model">accounting.payment.term</field>
+        <field name="view_mode">list</field>
+        <field name="view_ids"
+            eval="[(5, 0, 0), (0, 0, {'view_mode': 'list', 'view_id': ref('accounting.view_list_accounting_payment_term')})]"/>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No se encontró ningún plazo de pago.
+            </p>
+            <p> El <b class="text-primary">plazo de pago</b> es el periodo acordado para que un
+                cliente realice el <b class="text-primary">pago</b> de una <b class="text-primary">
+                factura</b> sin incurrir en intereses o penalizaciones. En <b class="text-primary">
+                contabilidad</b>, los plazos de pago permiten gestionar el <b class="text-primary">flujo
+                de efectivo</b> y la <b class="text-primary">liquidez</b> de la empresa. En <b
+                    class="text-primary">proyectos</b>, ayudan a planificar los <b
+                    class="text-primary">desembolsos</b> y controlar los <b class="text-primary">
+                costos</b>. Para <b class="text-primary">proveedores</b>, los plazos de pago definen
+                cuándo recibirán el <b class="text-primary">cobro</b> por sus productos o servicios,
+                facilitando la <b class="text-primary">gestión financiera</b> y las <b
+                    class="text-primary">relaciones comerciales</b>. </p>
+        </field>
+    </record>
+
+    <record id="action_accounting_currencies" model="ir.actions.act_window">
+        <field name="name">Monedas</field>
+        <field name="res_model">res.currency</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="view_ids"
+            eval="[(5, 0, 0),
+                            (0, 0, {'view_mode': 'kanban', 'view_id': ref('accounting.view_kanban_res_currency')}),
+                            (0, 0, {'view_mode': 'list', 'view_id': ref('accounting.view_list_res_currency')}),
+                            (0, 0, {'view_mode': 'form', 'view_id': ref('accounting.view_form_res_currency')})]"/>
+        <field name="domain">[]</field>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No se encontró ninguna moneda.
+            </p>
+            <p> La <b class="text-primary">moneda</b> es una forma de dinero, generalmente emitida
+                por un gobierno y aceptada como medio de pago en la economía de un país. En <b
+                    class="text-primary">contabilidad</b>, las monedas permiten registrar <b
+                    class="text-primary">transacciones</b> en diferentes divisas y calcular
+                correctamente los <b class="text-primary">tipos de cambio</b>. En <b
+                    class="text-primary">órdenes de compra</b>, la selección de la moneda define el
+                valor de los <b class="text-primary">productos</b> y <b class="text-primary">
+                servicios</b> adquiridos, así como el <b class="text-primary">monto total</b> a
+                pagar. Para la prestación de <b class="text-primary">servicios</b>, la moneda
+                determina el <b class="text-primary">precio</b> y las <b class="text-primary">condiciones
+                de pago</b> acordadas con el cliente o proveedor. La correcta gestión de las <b
+                    class="text-primary">monedas</b> facilita la <b class="text-primary">consolidación
+                financiera</b>, el <b class="text-primary">análisis de resultados</b> y el
+                cumplimiento de <b class="text-primary">normativas internacionales</b>. </p>
+        </field>
+    </record>
+
+    <record id="action_analytical_account" model="ir.actions.act_window">
+        <field name="name">Cuentas Analíticas</field>
+        <field name="res_model">analytical.account</field>
+        <field name="view_mode">list</field>
+        <field name="view_ids"
+            eval="[(5, 0, 0), (0, 0, {'view_mode': 'list', 'view_id': ref('accounting.view_analytical_account_list')})]"/>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No se encontró ninguna cuenta analítica.
+            </p>
+            <p> Las <b class="text-primary">cuentas analíticas</b> son cuentas que se utilizan para
+                rastrear los <b class="text-primary">costos</b> y los <b class="text-primary">
+                ingresos</b> de un <b class="text-primary">proyecto</b>. Permiten analizar la <b
+                    class="text-primary">rentabilidad</b> y el <b class="text-primary">desempeño
+                financiero</b> de actividades específicas, facilitando la <b class="text-primary">
+                gestión</b> y el <b class="text-primary">control</b> de los recursos asignados a
+                cada proyecto. </p>
+        </field>
+    </record>
+
+    <record id="action_cost_center" model="ir.actions.act_window">
+        <field name="name">Centro de Costo</field>
+        <field name="res_model">cost.center</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="view_ids"
+            eval="[(5, 0, 0),
+                            (0, 0, {'view_mode': 'kanban', 'view_id': ref('accounting.view_kanban_cost_center')}),
+                            (0, 0, {'view_mode': 'list', 'view_id': ref('accounting.view_list_cost_center')}),
+                            (0, 0, {'view_mode': 'form', 'view_id': ref('accounting.view_form_cost_center')})]"/>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No se encontró ningun centro de costo.
+            </p>
+            <p> Los <b class="text-primary">centros de costo</b> son clasificaciones
+                que agrupan los costos y gastos asociados a un proyecto o actividad específica.
+                Facilitan el análisis y control financiero al permitir identificar y comparar
+                diferentes tipos de costos dentro de un mismo proyecto. </p>
+        </field>
+    </record>
+
+    <menuitem
+        id="menu_accounting_root"
+        name="Contabilidad"
+        sequence="55"
+        action="action_accounting_payment_term_root"
+        web_icon="accounting,static/description/icon.png"
+        groups="accounting.group_consult_accounting"
+    />
+
+    <menuitem
+        name="Contabilidad"
+        id="menu_accounting"
+        action="action_accounting_payment_term_root"
+        parent="menu_accounting_root"
+        sequence="1"
+    />
+
+    <menuitem
+        name="Configuración"
+        id="menu_accounting_configuration"
+        parent="menu_accounting_root"
+        sequence="10"
+    />
+
+    <menuitem
+        name="Monedas"
+        id="menu_accounting_currencies"
+        parent="menu_accounting_configuration"
+        action="action_accounting_currencies"
+        sequence="1"
+    />
+
+    <menuitem
+        name="Centro de costos"
+        id="menu_accounting_analytic_account"
+        parent="menu_accounting_configuration"
+        action="action_cost_center"
+        sequence="2"
+    />
+
+    <menuitem
+        name="Cuentas Analíticas"
+        id="menu_analytical_account"
+        parent="menu_accounting_configuration"
+        action="action_analytical_account"
+        sequence="3"
+    />
+
+</odoo>

@@ -1,0 +1,90 @@
+<odoo>
+    <data>
+
+        <record id="view_form_cost_center" model="ir.ui.view">
+            <field name="name">view.form.cost.center</field>
+            <field name="model">cost.center</field>
+            <field name="arch" type="xml">
+                <form duplicate="false" string="Centro de Costo">
+                    <sheet>
+                        <div class="oe_button_box" name="button_box"/>
+                        <b style="font-weight: 500;">
+                            Nombre
+                        </b>
+                        <div class="form-title-responsive">
+                            <h1>
+                                <field name="analytical_account_id" string="Cuenta Analítica"
+                                    options="{'no_open': True, 'no_create': True}"
+                                    placeholder="Ej. Mano de Obra, Gastos Administrativos, etc."
+                                    class="text-primary"/>
+                            </h1>
+                            <div name="project_id">
+                                <!--NO
+                                ELIMINAR EL NAME DEL DIV, YA QUE DESDE EL MODULO DE PROYECTOS SE
+                                AGREGA EL CAMPO CORRESPONDIENTE-->
+                            </div>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="code" placeholder="Ej. 1000"/>
+                            </group>
+                            <group>
+                                <field name="currency_id" placeholder="Ej. USD.."
+                                    options="{'no_open': True, 'no_create': True}"
+                                    class="text-primary"/>
+                            </group>
+                        </group>
+                        <notebook/>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_list_cost_center" model="ir.ui.view">
+            <field name="name">view.list.cost.center</field>
+            <field name="model">cost.center</field>
+            <field name="arch" type="xml">
+                <list string="Centros de Costo" duplicate="false">
+                    <field name="analytical_account_id" string="Cuenta Analítica"/>
+                    <field name="code"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_kanban_cost_center" model="ir.ui.view">
+            <field name="name">view.kanban.cost.center</field>
+            <field name="model">cost.center</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_dashboard res_partner_kanban" create="1"
+                    records_draggable="0" group_delete="0"
+                    group_create="0" group_edit="0" quick_create="0" groups_draggable="0">
+                    <field name="analytical_account_id"/>
+                    <!-- <field name="project_id"/>-->
+                    <field name="currency_id"/>
+                    <field name="code"/>
+                    <templates>
+                        <t t-name="card">
+                            <div class="oe_kanban_global_click o_res_partner_kanban_main">
+                                <div class="o_content_center col-12 p-1">
+                                    <div class="oe_title_kanban">
+                                        <b>
+                                            <t t-esc="record.code.raw_value"/> - <t
+                                                t-esc="record.analytical_account_id.value"/>
+                                        </b>
+                                    </div>
+                                    <div>
+                                        <em>
+                                            <!-- <t t-esc="record.project_id.value"/> -->
+
+                                        </em>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_analytical_account_list" model="ir.ui.view">
+            <field name="name">analytical.account.list</field>
+            <field name="model">analytical.account</field>
+            <field name="arch" type="xml">
+                <list string="Cuentas Analíticas" duplicate="false" editable="top">
+                    <field name="code" string="Código" placeholder="Ej. 01, 02"/>
+                    <field name="name" string="Nombre"
+                        placeholder="Ej. Mano de Obra, Gastos Administrativos"/>
+                    <field name="description"
+                        placeholder="Ej. Sueldos, prestaciones sociales, honorarios fijos mensuales, beneficios a empleados."/>
+                </list>
+            </field>
+        </record>
+
+    </data>
+</odoo>

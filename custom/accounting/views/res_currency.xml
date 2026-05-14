@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_list_res_currency" model="ir.ui.view">
+            <field name="name">view.list.res.currency</field>
+            <field name="model">res.currency</field>
+            <field name="arch" type="xml">
+                <list string="Monedas" duplicate="false">
+                    <field name="full_name" string="Nombre de la moneda"/>
+                    <field name="currency_unit_label" string="Unidad de moneda"/>
+                    <field name="name"/>
+                    <field name="symbol" string="Símbolo"/>
+                    <field name="active" widget="boolean_toggle"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_form_res_currency" model="ir.ui.view">
+            <field name="name">view.form.res.currency</field>
+            <field name="model">res.currency</field>
+            <field name="arch" type="xml">
+                <form duplicate="false" string="Moneda">
+                    <sheet>
+                        <b style="font-weight: 500;">
+                            Nombre
+                        </b>
+                        <div class="form-title-responsive">
+                            <h1>
+                                <field name="full_name" placeholder="Ej. Dólar estadounidense"
+                                    class="text-primary"/>
+                            </h1>
+                            <div>
+                                <field name="name" placeholder="Abreviatura.. Ej. USD"
+                                    class="text-primary"/>
+                            </div>
+                        </div>
+                        <separator string="Detalles de la moneda"/>
+                        <p class="text-muted">
+                            El símbolo es el carácter o conjunto de caracteres que se mostrará junto
+                            a los importes (por ejemplo: $, €, £); utilice un símbolo corto y
+                            reconocido para evitar problemas de diseño en listas y formularios. La
+                            etiqueta de unidad indica el nombre de la unidad monetaria que aparece
+                            en textos y reportes (por ejemplo: Dólar, Euro) y se usa cuando es
+                            necesario mostrar la denominación completa en facturas, encabezados y
+                            otros documentos.
+                        </p>
+                        <group>
+                            <group>
+                                <field name="symbol" placeholder="Ej. $"/>
+                            </group>
+                            <group>
+                                <field name="currency_unit_label" placeholder="Ej. Dólar"/>
+                            </group>
+                        </group>
+                        <separator string="Configuración de redondeo"/>
+                        <p class="text-muted">
+                            El redondeo define la precisión con la que se ajustan los importes en
+                            esta moneda. Debe reflejar la unidad mínima práctica usada en las
+                            transacciones (por ejemplo, 1 para monedas sin decimales, 0.01 para
+                            monedas con dos decimales, 0.001 para monedas con tres decimales).
+                            Seleccione el valor que corresponda a la menor fracción utilizada en la
+                            moneda.
+                        </p>
+                        <group>
+                            <group>
+                                <field name="rounding" placeholder="Ej. 0.01" string="Redondeo"/>
+                            </group>
+                            <group>
+                                <field name="decimal_places" placeholder="Ej. 2" string="Decimales"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_kanban_res_currency" model="ir.ui.view">
+            <field name="name">view.kanban.res.currency</field>
+            <field name="model">res.currency</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_dashboard res_partner_kanban" sample="1"
+                    records_draggable="0" group_delete="0"
+                    group_create="0" group_edit="0" quick_create="0" groups_draggable="0">
+                    <field name="name"/>
+                    <field name="symbol"/>
+                    <field name="currency_unit_label"/>
+                    <field name="full_name"/>
+                    <templates>
+                        <t t-name="card">
+                            <t t-set="money"
+                                t-value="'/accounting/static/src/img/money.jpg'"/>
+                            <div class="oe_kanban_global_click o_res_partner_kanban_main">
+                                <img t-att-src="money" alt="Moneda"/>
+                                <div class="o_content_center col-12 p-1">
+                                    <div class="oe_title_kanban">
+                                        <b>
+                                            <t t-esc="record.name.raw_value"/> - <t
+                                                t-esc="record.full_name.raw_value"/>
+                                        </b>
+                                    </div>
+                                    <div>
+                                        <em> Símbolo: <t t-esc="record.symbol.raw_value"/>
+                                        </em>
+                                        <br/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+    </data>
+</odoo>
