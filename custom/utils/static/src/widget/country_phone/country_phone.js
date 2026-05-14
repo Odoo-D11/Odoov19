@@ -27,7 +27,8 @@ class PhoneWithCountryWidget extends PhoneField {
     }
 
     async updateCountryInfo() {
-        const countryId = Array.isArray(this.props.record.data.country_id) ? this.props.record.data.country_id[0] : this.props.record.data.country_id;
+        const countryData = this.props.record.data.country_id;
+        const countryId = countryData && (Array.isArray(countryData) ? countryData[0] : countryData.id);
         if (countryId) {
             try {
                 const countryInfo = await this.orm.read('res.country', [countryId], ['phone_code', 'image_url']);

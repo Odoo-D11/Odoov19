@@ -1,6 +1,6 @@
 /** @odoo-module **/
 import { registry } from "@web/core/registry";
-import { Many2OneField, many2OneField } from "@web/views/fields/many2one/many2one_field";
+import { Many2OneField, buildM2OFieldDescription } from "@web/views/fields/many2one/many2one_field";
 import { Component, useState, onMounted, onWillStart, onWillUnmount, onWillUpdateProps } from "@odoo/owl";
 import { usePopover } from "@web/core/popover/popover_hook";
 import { useService } from "@web/core/utils/hooks";
@@ -429,7 +429,6 @@ export class ExpAvatarPopup extends Many2OneField {
 }
 
 registry.category("fields").add("ExpAvatarPopup", {
-    ...many2OneField,
-    component: ExpAvatarPopup,
+    ...buildM2OFieldDescription(ExpAvatarPopup),
     displayName: "Datos personales (Empleado)",
 });
