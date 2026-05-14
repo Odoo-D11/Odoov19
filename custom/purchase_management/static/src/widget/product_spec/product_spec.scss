@@ -1,0 +1,47 @@
+// Estilos para líneas de nota
+.o_data_row.o_is_line_note {
+    font-style: italic;
+
+    td {
+        border: none !important;
+        vertical-align: top;
+    }
+
+    textarea {
+        font-style: italic;
+        width: 100% !important;
+        resize: none !important;
+        overflow: hidden !important;
+    }
+
+    // Fondo gris solo cuando NO está en modo edición
+    &:not(.o_selected_row) {
+        background-color: #f5f5f5 !important;
+
+        td {
+            background-color: #f5f5f5 !important;
+        }
+
+        textarea {
+            background-color: #f5f5f5 !important;
+        }
+    }
+
+    // Fondo blanco cuando está en modo edición
+    &.o_selected_row {
+        background-color: white !important;
+
+        td {
+            background-color: white !important;
+        }
+
+        textarea {
+            background-color: white !important;
+        }
+    }
+}
+
+// Ocultar columnas
+.o_hidden {
+    display: none !important;
+}

@@ -20,6 +20,9 @@
                         confirm="¿Estás seguro de que deseas desinstalar este módulo?"
                         name="action_uninstall" data-hotkey="q" />
                 </xpath>
+                <xpath expr="//button[@special='cancel']" position="attributes">
+                    <attribute name="class">btn-secondary</attribute>
+                </xpath>
             </field>
         </record>
 

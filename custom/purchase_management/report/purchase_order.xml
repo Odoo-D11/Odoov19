@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="action_report_purchase_order" model="ir.actions.report">
+            <field name="name">Orden de Compra</field>
+            <field name="model">purchase.management.order</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">purchase_management.report_purchase_order_document</field>
+            <field name="report_file">purchase_management.report_purchase_order_document</field>
+            <field name="print_report_name">object.reference or 'OC'</field>
+            <field name="binding_model_id" eval="False"/>
+            <field name="paperformat_id" ref="purchase_management.custom_paper_format"/>
+            <field name="binding_type">report</field>
+        </record>
+
+        <template id="report_purchase_order_document">
+            <t t-call="purchase_management.custom_template_purchase_management_order">
+                <t t-foreach="docs" t-as="o">
+
+                    <!-- Encabezado del documento -->
+                    <t t-set="color"
+                        t-value="o.enterprise_id and o.enterprise_id.color or '#000000'"/>
+                    <table
+                        style="width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 18px; margin-bottom: 18px;">
+                        <tr>
+                            <td colspan="4"
+                                t-attf-style="font-weight: 700; text-transform: uppercase; color: #fff; padding: 6px 10px;border: 0.5px solid #000000; background: {{ color }};">
+                                Orden de Compra — <t t-esc="o.reference or '—'"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td
+                                style="font-weight: 700; text-transform: uppercase; padding: 6px 10px; border: 0.5px solid #000000; white-space: nowrap; width: 1%; vertical-align: middle; color: #000; background: #f3f4f6;">
+                                Proyecto</td>
+                            <td
+                                style="padding: 6px 10px; border: 0.5px solid #000000; color: #000; vertical-align: middle; width: 49%; text-align: center; max-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                <t t-esc="o.project_id.name or '—'"/>
+                            </td>
+                            <td
+                                style="font-weight: 700; text-transform: uppercase; padding: 6px 10px; border: 0.5px solid #000000; white-space: nowrap; width: 1%; vertical-align: middle; color: #000; background: #f3f4f6;">
+                                Ref. Interna</td>
+                            <td
+                                style="padding: 6px 10px; border: 0.5px solid #000000; color: #000; text-align: center; vertical-align: middle; width: 49%;">
+                                <t t-esc="o.request_quotation_id.reference or '—'"/>
+                            </td>
+                        </tr>
+                        <tr>
+
+                            <td
+                                style="font-weight: 700; text-transform: uppercase; padding: 6px 10px; border: 0.5px solid #000000; white-space: nowrap; width: 1%; vertical-align: middle; color: #000; background: #f3f4f6;">
+                                Fecha de Entrega</td>
+                            <td
+                                style="padding: 6px 10px; border: 0.5px solid #000000; color: #000; vertical-align: middle; text-align: center;">
+                                <t
+                                    t-esc="o.delivery_date.strftime('%d/%m/%Y') if o.delivery_date else '—'"/>
+                            </td>
+                            <td
+                                style="font-weight: 700; text-transform: uppercase; padding: 6px 10px; border: 0.5px solid #000000; white-space: nowrap; width: 1%; vertical-align: middle; color: #000; background: #f3f4f6;">
+                                Moneda</td>
+                            <td
+                                style="padding: 6px 10px; border: 0.5px solid #000000; color: #000; text-align: center; vertical-align: middle; width: 49%;">
+                                <t t-esc="o.currency_id.name or '—'"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td
+                                style="font-weight: 700; text-transform: uppercase; padding: 6px 10px; border: 0.5px solid #000000; white-space: nowrap; width: 1%; vertical-align: middle; color: #000; background: #f3f4f6;">
+                                Plazo de Pago</td>
+                            <td colspan="3"
+                                style="padding: 6px 10px; border: 0.5px solid #000000; color: #000; vertical-align: middle; width: 49%; text-align: center;">
+                                <t t-esc="o.payment_term or '—'"/>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Tabla de información del documento -->
+                    <table
+                        style="width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 10px; margin-bottom: 18px;">
+
+                        <!-- Fila 1: Título ORDEN DE COMPRA -->
+                        <tr>
+                            <td colspan="4"
+                                t-attf-style="font-weight: 700; text-transform: uppercase; color: #fff; padding: 6px 10px;border: 0.5px solid #000000; background: {{ color }};">
+                                Datos del Proveedor
+                            </td>
+                        </tr>
+
+                        <!-- Fila 2: Proveedor -->
+                        <tr>
+                            <td
+                                style="font-weight: 700; text-transform: uppercase; padding: 6px 10px; border: 0.5px solid #000000; white-space: nowrap; width: 1%; vertical-align: middle; color: #000; background: #f3f4f6;">
+                                Nombre
+                            </td>
+                            <td colspan="3"
+                                style="padding: 6px 10px; border: 0.5px solid #000000; color: #000; vertical-align: middle; text-align: center;">
+                                <t t-esc="o.partner_id.name"/>
+                                <t t-if="o.partner_id.vat">
+                                    <t t-esc="o.partner_id.identification_type_id.name"/> - <t
+                                        t-esc="o.partner_id.vat"/></t>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td
+                                style="font-weight: 700; text-transform: uppercase; padding: 6px 10px; border: 0.5px solid #000000; white-space: nowrap; width: 1%; vertical-align: middle; color: #000; background: #f3f4f6;">
+                                Dirección</td>
+                            <td
+                                style="padding: 6px 10px; border: 0.5px solid #000000; color: #000; vertical-align: middle; width: 49%; text-align: center;">
+                                <t t-esc="o.partner_id.street"/>, <t
+                                    t-esc="o.partner_id.city_id.name"/> - <t
+                                    t-esc="o.partner_id.country_id.name"/>
+                            </td>
+                            <td
+                                style="font-weight: 700; text-transform: uppercase; padding: 6px 10px; border: 0.5px solid #000000; white-space: nowrap; width: 1%; vertical-align: middle; color: #000; background: #f3f4f6;">
+                                Teléfono</td>
+                            <td
+                                style="padding: 6px 10px; border: 0.5px solid #000000; color: #000; text-align: center; vertical-align: middle; width: 49%;">
+                                <t t-esc="o.partner_id.phone"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td
+                                style="font-weight: 700; text-transform: uppercase; padding: 6px 10px; border: 0.5px solid #000000; white-space: nowrap; width: 1%; vertical-align: middle; color: #000; background: #f3f4f6;">
+                                Correo</td>
+                            <td colspan="3"
+                                style="padding: 6px 10px; border: 0.5px solid #000000; color: #000; vertical-align: middle; text-align: center;">
+                                <t t-esc="o.partner_id.email or '—'"/>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Tabla de información de la solicitud -->
+                    <table
+                        style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 18px;">
+                        <tr>
+                            <td colspan="4"
+                                t-attf-style="font-weight: 700; text-transform: uppercase; color: #fff; padding: 6px 10px; border: 0.5px solid #000000; background: {{ color }};">
+                                Entregar a
+                            </td>
+                        </tr>
+                        <tr>
+                            <td
+                                style="font-weight: 700; text-transform: uppercase; padding: 6px 10px; border: 0.5px solid #000000; white-space: nowrap; width: 1%; vertical-align: middle; color: #000; background: #f3f4f6;">
+                                Nombre</td>
+                            <td
+                                style="padding: 6px 10px; border: 0.5px solid #000000; color: #000; vertical-align: middle; width: 49%; text-align: center;">
+                                <t t-esc="o.delivery_contact_name or '—'"/> - <t
+                                    t-esc="o.delivery_address"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td t-if="o.delivery_email"
+                                style="font-weight: 700; text-transform: uppercase; padding: 6px 10px; border: 0.5px solid #000000; white-space: nowrap; width: 1%; vertical-align: middle; color: #000; background: #f3f4f6;">
+                                Correo</td>
+                            <td t-if="o.delivery_email"
+                                style="padding: 6px 10px; border: 0.5px solid #000000; color: #000; text-align: center; vertical-align: middle; width: 49%;">
+                                <t t-esc="o.delivery_email"/>
+                            </td>
+                            <td t-if="o.delivery_phone"
+                                style="font-weight: 700; text-transform: uppercase; padding: 6px 10px; border: 0.5px solid #000000; white-space: nowrap; width: 1%; vertical-align: middle; color: #000; background: #f3f4f6;">
+                                Teléfono</td>
+                            <td t-if="o.delivery_phone"
+                                style="padding: 6px 10px; border: 0.5px solid #000000; color: #000; text-align: center; vertical-align: middle; width: 49%;">
+                                <t t-esc="o.delivery_phone"/>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Tabla de productos -->
+                    <table
+                        style="width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px;">
+                        <thead>
+                            <tr>
+                                <th
+                                    t-attf-style="background: {{ color }}; color: #fff; padding: 7px 10px; text-align: left; font-weight: 700; text-transform: uppercase; border: 0.5px solid #000000;">
+                                    Producto</th>
+                                <th
+                                    t-attf-style="background: {{ color }}; color: #fff; padding: 7px 10px; text-align: right; font-weight: 700; text-transform: uppercase; border: 0.5px solid #000000;">
+                                    Cantidad</th>
+                                <th
+                                    t-attf-style="background: {{ color }}; color: #fff; padding: 7px 10px; text-align: center; font-weight: 700; text-transform: uppercase; border: 0.5px solid #000000;">
+                                    UDM</th>
+                                <th
+                                    t-attf-style="background: {{ color }}; color: #fff; padding: 7px 10px; text-align: right; font-weight: 700; text-transform: uppercase; border: 0.5px solid #000000;">Precio
+                                    Uni.</th>
+                                <th
+                                    t-attf-style="background: {{ color }}; color: #fff; padding: 7px 10px; text-align: right; font-weight: 700; text-transform: uppercase; border: 0.5px solid #000000;">
+                                    Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="o.product_line_ids" t-as="line">
+                                <tr>
+                                    <td
+                                        t-attf-style="padding: 6px 10px; border: 0.5px solid #000000; background: {{ '#f9fafb' if line_odd else '#ffffff' }};">
+                                        <t t-esc="line.product_id.product_id.name"/>
+                                        <t
+                                            t-if="line.product_id.name and line.product_id.name != line.product_id.product_id.name">
+                                            <span style="color: #6c757d;">&#160;<t
+                                                    t-esc="line.product_id.name"/></span>
+                                        </t>
+                                    </td>
+                                    <td
+                                        t-attf-style="padding: 6px 10px; text-align: right; border: 0.5px solid #000000; background: {{ '#f9fafb' if line_odd else '#ffffff' }};">
+                                        <t t-esc="'{:,.0f}'.format(line.qty).replace(',', '.')"/>
+                                    </td>
+                                    <td
+                                        t-attf-style="padding: 6px 10px; text-align: center; border: 0.5px solid #000000; background: {{ '#f9fafb' if line_odd else '#ffffff' }};">
+                                        Unidad</td>
+                                    <td
+                                        t-attf-style="padding: 6px 10px; text-align: right; border: 0.5px solid #000000; background: {{ '#f9fafb' if line_odd else '#ffffff' }};">
+                                        <t t-esc="line.price_unit"
+                                            t-options='{"widget": "monetary", "display_currency": line.currency_id}'/>
+                                    </td>
+                                    <td
+                                        t-attf-style="padding: 6px 10px; text-align: right; border: 0.5px solid #000000; background: {{ '#f9fafb' if line_odd else '#ffffff' }};">
+                                        <t t-esc="line.subtotal"
+                                            t-options='{"widget": "monetary", "display_currency": line.currency_id}'/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+
+                    <div>
+                        <div class="row mb-3">
+                            <div class="col-6"/>
+                            <div class="col-4 offset-2 text-end">
+                                <table class="table table-sm table-borderless">
+                                    <tr>
+                                        <td colspan="3"
+                                            style="border-right: 0.5px solid #000000; background: #fff;"/>
+                                        <td
+                                            t-attf-style="background: {{ color }}; color: #fff; font-weight: 700; padding: 6px 10px; text-align: center; white-space: nowrap; text-transform: uppercase; border: 0.5px solid #000000;">
+                                            Total</td>
+                                        <td
+                                            t-attf-style="background: {{ color }}; color: #fff; font-weight: 700; padding: 6px 10px; text-align: right; white-space: nowrap; border: 0.5px solid #000000;">
+                                            <t t-esc="o.total"
+                                                t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Términos y Condiciones -->
+                    <table
+                        style="width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 28px;">
+                        <tr>
+                            <td colspan="4"
+                                t-attf-style="font-weight: 700; text-transform: uppercase; color: #fff; padding: 6px 10px;border: 0.5px solid #000000; background: {{ color }};">
+                                Términos &amp; Condiciones
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4"
+                                style="padding: 6px 10px; border: 0.5px solid #000000; color: #000; vertical-align: middle;">
+                                La presente Orden de Compra es emitida por TSG y constituye un
+                                acuerdo vinculante entre TSG, en calidad de comprador o contratante,
+                                y el proveedor, en calidad de tercero obligado al suministro de
+                                bienes y/o prestación de servicios. Su aceptación podrá darse
+                                mediante firma, confirmación por correo electrónico, aceptación
+                                electrónica, despacho de bienes, inicio de ejecución del servicio,
+                                emisión de factura o cualquier otro acto inequívoco de cumplimiento.
+                                El proveedor se obliga a suministrar los bienes y/o prestar los
+                                servicios descritos en la Orden de Compra, conforme a las
+                                cantidades, especificaciones, calidades, precios, fechas, lugares y
+                                demás condiciones establecidas por TSG. Los precios serán fijos y no
+                                podrán modificarse sin autorización previa y escrita de TSG, e
+                                incluirán todos los costos necesarios para el cumplimiento de la
+                                orden, salvo estipulación expresa en contrario.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4"
+                                style="padding: 6px 10px; border: 0.5px solid #000000; color: #000; vertical-align: middle;">
+                                El pago se realizará conforme a los términos indicados en la Orden
+                                de Compra, sujeto al recibo a satisfacción por parte de TSG de los
+                                bienes y/o servicios, la presentación de la factura válida
+                                correspondiente y los documentos soporte exigidos por TSG. El
+                                proveedor deberá cumplir estrictamente los plazos y condiciones de
+                                entrega o ejecución. En caso de retraso o incumplimiento imputable
+                                al proveedor, TSG podrá rechazar los bienes o servicios, suspender o
+                                cancelar la Orden de Compra, exigir el cumplimiento, aplicar las
+                                penalidades pactadas en la Orden de Compra y reclamar los perjuicios
+                                que correspondan. El proveedor garantiza que los bienes y/o
+                                servicios cumplen con las condiciones de calidad, idoneidad,
+                                funcionamiento, normas aplicables y especificaciones acordadas. En
+                                caso de error, defecto, falla o no conformidad en lo entregado, el
+                                proveedor contará con un plazo máximo de cinco (5) días calendario,
+                                contados a partir de la notificación realizada por TSG, para
+                                corregir, reparar, reemplazar, subsanar y entregar el bien adquirido
+                                o el servicio contratado conforme a lo acordado, sin costo adicional
+                                para TSG.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4"
+                                style="padding: 6px 10px; border: 0.5px solid #000000; color: #000; vertical-align: middle;">
+                                Cualquier modificación a la Orden de Compra deberá constar por
+                                escrito y contar con aprobación previa de TSG. El proveedor no podrá
+                                ceder, transferir ni subcontratar total o parcialmente sus
+                                obligaciones sin autorización previa y escrita de TSG. TSG podrá
+                                terminar la Orden de Compra por incumplimiento del proveedor o por
+                                conveniencia, mediante notificación escrita. En caso de terminación
+                                por conveniencia, TSG solo estará obligada a pagar los bienes o
+                                servicios efectivamente recibidos y aceptados a satisfacción hasta
+                                la fecha de terminación.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4"
+                                style="padding: 6px 10px; border: 0.5px solid #000000; color: #000; vertical-align: middle;">
+                                El proveedor será responsable por los daños, perjuicios, costos,
+                                sanciones o reclamaciones ocasionadas por incumplimiento,
+                                negligencia, defectos, ejecución indebida o infracción de derechos
+                                de terceros. Asimismo, deberá cumplir con las normas legales,
+                                laborales, tributarias, de seguridad social, seguridad y salud en el
+                                trabajo, ambientales y demás disposiciones aplicables. La
+                                información de TSG a la que tenga acceso el proveedor será
+                                confidencial y no podrá ser divulgada ni utilizada para fines
+                                distintos al cumplimiento de la Orden de Compra. Las partes
+                                procurarán resolver cualquier diferencia derivada de la Orden de
+                                Compra mediante arreglo directo, dentro de un término de cinco (5)
+                                días hábiles contados desde la notificación escrita de la
+                                controversia. De no lograrse acuerdo, las partes podrán acudir a
+                                mecanismos alternativos de solución de controversias, incluyendo
+                                conciliación ante un centro de conciliación autorizado. Si la
+                                controversia no se resuelve mediante dichos mecanismos, será
+                                sometida a los jueces competentes del domicilio de TSG.
+                            </td>
+                        </tr>
+                    </table>
+
+                    <p style="font-size: 14px; color: #000000; margin-bottom: 28px;">
+                        La presente Orden de Compra se regirá por las leyes de la República de
+                        Colombia.
+                    </p>
+
+                    <!-- Firma -->
+                    <div style="font-size: 14px; color: #000000;">
+                        <div style="margin-bottom: 12px;">Atentamente,</div>
+                        <div>
+                            <t t-esc="o.env.user.name or ''"/>
+                        </div>
+                        <div
+                            style="font-weight: 500; font-family: Arial, DejaVu Sans, sans-serif; color: #6c757d;">
+                            <t t-esc="o.env.user.partner_id.email or ''"/> | <t
+                                t-esc="o.env.user.partner_id.phone or ''"/>
+                        </div>
+                    </div>
+
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>

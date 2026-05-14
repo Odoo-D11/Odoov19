@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_bulk_upload_products_wizard_form" model="ir.ui.view">
+            <field name="name">purchase.bulk.upload.products.wizard.form</field>
+            <field name="model">purchase.bulk.upload.products.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Carga Masiva de Productos">
+                    <field name="request_quotation_id" invisible="1"/>
+                    <field name="show_instructions" invisible="1"/>
+                    <field name="show_upload" invisible="1"/>
+                    <field name="show_validation" invisible="1"/>
+                    <sheet>
+                        <div invisible="not show_instructions">
+                            <separator string="Instrucciones"/>
+                            <p>Indicaciones para la <b class="text-primary">importación de
+                                productos</b>:</p>
+                            <ul>
+                                <li><b class="text-primary">Plantilla Excel:</b> Descárguela <button
+                                        name="action_download_template" type="object"
+                                        class="button_badge">
+                                        aquí</button>.
+                                </li>
+                                <li><b class="text-primary">Columnas obligatorias:</b>
+                                    <b class="text-primary">Nombre</b>,
+                                    <b class="text-primary">Especificación</b> (descripción técnica),
+                                    <b class="text-primary">Cantidad</b> (mayor a cero) y
+                                    <b class="text-primary">Unidad de Medida</b> (existente en el sistema).</li>
+                                <li><b class="text-primary">Duplicados:</b> Mismo nombre permitido
+                                    solo con especificaciones diferentes.</li>
+                                <li><b class="text-primary">Unidades de medida:</b> Use la <b
+                                        class="text-primary">lista desplegable</b> de la plantilla.
+                                    Las unidades mal escritas bloquearán la carga. Ver listado
+                                    completo <button name="action_download_uom"
+                                        type="object" class="button_badge">
+                                        aquí.</button>
+                                </li>
+                                <li><b class="text-primary">Caracteres especiales</b>
+                                    (<b class="text-primary">#, /, !, $, &amp;</b>) se eliminan
+                                    automáticamente.</li>
+                                <li><b class="text-primary">Validación:</b> El sistema verificará
+                                    campos vacíos, unidades y cantidades antes de importar.</li>
+                            </ul>
+                            <p><b class="text-primary">Nota:</b> Verifique que la información esté
+                                completa antes de confirmar.</p>
+                        </div>
+                        <div invisible="not show_upload">
+                            <separator string="Subir Archivo"/>
+                            <p>Cargue el archivo Excel completado. El sistema verificará
+                                la información antes de permitir la importación.</p>
+                            <group>
+                                <group>
+                                    <field name="file_data" filename="file_name" string="Archivo"/>
+                                    <field name="file_name" invisible="1"/>
+                                </group>
+                            </group>
+                        </div>
+                        <div invisible="not show_validation">
+                            <separator string="Resultado"/>
+                            <field name="validation_html" widget="html" nolabel="1"/>
+                        </div>
+                    </sheet>
+                    <footer>
+                        <!-- Instrucciones -->
+                        <button string="Siguiente" type="object" name="action_next_to_upload"
+                            class="btn-primary"
+                            invisible="not show_instructions"/>
+                        <!-- Subir Archivo -->
+                        <button string="Volver" type="object" name="action_back_to_instructions"
+                            class="btn-primary"
+                            invisible="not show_upload"/>
+                        <button string="Confirmar" type="object" name="action_validate_file"
+                            class="btn-primary"
+                            invisible="not show_upload or not file_data"/>
+                        <!-- Validación -->
+                        <button string="Volver" type="object" name="action_back_to_upload"
+                            class="btn-primary"
+                            invisible="not show_validation"/>
+                        <button string="Guardar" type="object" name="action_process_file"
+                            class="btn-primary"
+                            invisible="not show_validation"/>
+                        <button string="Cancelar" special="cancel" class="btn-secondary"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

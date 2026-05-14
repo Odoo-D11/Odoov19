@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <t t-name="purchase_management.ProductSelector">
+        <div
+            class="o_purchase_product_selector page-container d-flex flex-column vh-100 pm-font-inter">
+
+            <div class="page-header-custom sticky-top bg-white">
+                <div class="container-fluid d-flex justify-content-between align-items-center">
+                    <div class="d-flex flex-column">
+                        <div class="d-flex align-items-center gap-3 flex-wrap">
+                            <h1 class="page-main-title mb-0">
+                                <t t-esc="state.subject"/>
+                            </h1>
+                        </div>
+                        <h2 class="page-main-subtitle mb-0 mt-1" t-if="state.subject">
+                            <t t-esc="state.reference"/>
+                        </h2>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="header-stat">
+                            <span class="stat-value" t-esc="selectedCount"/>
+                            <span class="stat-label">
+                                <t t-esc="inputSelectedValue"/>
+                            </span>
+                        </div>
+                        <div class="vr text-muted opacity-25 align-self-stretch me-2"/>
+                        <button class="btn btn-primary shadow-sm px-4 fw-bold"
+                            t-att-disabled="selectedCount === 0"
+                            t-on-click="openSendMailModal">
+                            Confirmar
+                        </button>
+                        <div class="vr text-muted opacity-25 align-self-stretch ms-2"/>
+                        <div class="d-flex align-items-stretch">
+                            <button
+                                class="btn btn-secondary shadow-sm px-3 d-flex align-items-center justify-content-center"
+                                type="button"
+                                data-bs-toggle="offcanvas"
+                                data-bs-target="#sidebarProductSelector"
+                                aria-controls="sidebarProductSelector"
+                                title="Opciones">
+                                <i class="fa fa-bars" style="font-size: 1.1rem;"/>
+                            </button>
+
+                            <div class="offcanvas offcanvas-end shadow-lg border-0 bg-white"
+                                tabindex="-1"
+                                id="sidebarProductSelector"
+                                aria-labelledby="sidebarProductSelectorLabel"
+                                style="width: 320px;">
+
+                                <div
+                                    class="offcanvas-header bg-white p-4 d-flex align-items-center justify-content-between">
+                                    <h5 class="offcanvas-title mb-0"
+                                        id="sidebarProductSelectorLabel"
+                                        style="color: #343a40; font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; font-weight: 600;">
+                                        Opciones
+                                    </h5>
+
+                                    <button type="button"
+                                        class="btn btn-link text-decoration-none p-0 d-flex align-items-center justify-content-center"
+                                        data-bs-dismiss="offcanvas"
+                                        aria-label="Close"
+                                        style="color: #343a40; width: 30px; height: 30px; transition: opacity 0.2s; margin-right: -10px;">
+                                        <i class="fa fa-times"
+                                            style="font-size: 1.2rem; font-weight: 300;"/>
+                                    </button>
+                                </div>
+
+                                <div
+                                    class="offcanvas-body d-flex flex-column justify-content-end gap-2 px-4 pb-4 pt-0 bg-white">
+                                    <button
+                                        class="btn btn-primary py-2 shadow-sm d-flex align-items-center justify-content-center fw-bold text-uppercase"
+                                        style="letter-spacing: 0.5px;">
+                                        Instrucciones</button>
+                                    <hr class="w-100 my-1 text-muted opacity-25"/>
+                                    <button
+                                        class="btn btn-secondary py-2 shadow-sm d-flex align-items-center justify-content-center fw-bold text-uppercase"
+                                        data-bs-dismiss="offcanvas"
+                                        t-on-click.prevent="goBack">
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                            viewBox="0 0 640 640"
+                                            width="18"
+                                            height="18"
+                                            fill="currentColor"
+                                            class="me-2">
+                                            <g transform="translate(640, 0) scale(-1, 1)">
+                                                <path
+                                                    d="M224 160C241.7 160 256 145.7 256 128C256 110.3 241.7 96 224 96L160 96C107 96 64 139 64 192L64 448C64 501 107 544 160 544L224 544C241.7 544 256 529.7 256 512C256 494.3 241.7 480 224 480L160 480C142.3 480 128 465.7 128 448L128 192C128 174.3 142.3 160 160 160L224 160zM566.6 342.6C579.1 330.1 579.1 309.8 566.6 297.3L438.6 169.3C426.1 156.8 405.8 156.8 393.3 169.3C380.8 181.8 380.8 202.1 393.3 214.6L466.7 288L256 288C238.3 288 224 302.3 224 320C224 337.7 238.3 352 256 352L466.7 352L393.3 425.4C380.8 437.9 380.8 458.2 393.3 470.7C405.8 483.2 426.1 483.2 438.6 470.7L566.6 342.7z"/>
+                                            </g>
+                                        </svg>
+                                        Salir </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LOADING STATE -->
+            <div t-if="state.loading"
+                class="page-content flex-grow-1 d-flex align-items-center justify-content-center">
+                <div class="text-center">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                    <p class="text-muted">Cargando productos...</p>
+                </div>
+            </div>
+
+            <!-- ERROR STATE -->
+            <div t-elif="state.error"
+                class="page-content flex-grow-1 d-flex align-items-center justify-content-center">
+                <div class="alert alert-danger" role="alert">
+                    <i class="fa fa-exclamation-triangle me-2"/>
+                    <t t-esc="state.error"/>
+                </div>
+            </div>
+
+            <!-- MAIN CONTENT -->
+            <div t-else="" class="page-content flex-grow-1 overflow-auto pt-3 pb-5">
+                <div class="container-fluid">
+                    <div class="row g-3 g-xl-4">
+                        <div class="col-12 mb-4">
+
+                            <div class="card shadow-sm h-100">
+                                <div
+                                    class="card-header d-flex justify-content-between align-items-center flex-wrap gap-3">
+                                    <div>
+                                        <h5 class="dashboard-card-title mb-1">Productos solicitados</h5>
+                                        <p class="card-subtitle text-muted small mb-0">
+                                            Seleccione los productos que desea incluir en la
+                                            solicitud de cotización.
+                                        </p>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <input type="text"
+                                            class="form-control form-control-sm"
+                                            placeholder="Buscar producto..."
+                                            style="width: 200px;"
+                                            t-att-value="state.searchQuery"
+                                            t-on-input="onSearchInput"/>
+                                    </div>
+                                </div>
+
+                                <div class="card-body" style="padding: 1rem;">
+                                    <div class="table-responsive border rounded-2">
+                                        <table class="table comparison-table-final mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th class="sticky-col text-center"
+                                                        style="width: 50px; min-width: 50px;">
+                                                        <input type="checkbox"
+                                                            class="form-check-input"
+                                                            t-att-checked="allSelected"
+                                                            t-att-indeterminate="selectedCount > 0 &amp;&amp; !allSelected"
+                                                            t-on-click="toggleSelectAll"/>
+                                                    </th>
+                                                    <th>Nombre</th>
+                                                    <th class="text-center"
+                                                        style="width: 100px; min-width: 100px;">
+                                                        Cantidad</th>
+                                                    <th style="width: 100px; min-width: 100px;">UdM</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <t t-foreach="paginatedProducts" t-as="product"
+                                                    t-key="product.id">
+                                                    <tr
+                                                        t-attf-class="{{ product.sent_to_emails ? 'row-sent' : '' }}"
+                                                        t-on-click="() => this.toggleProduct(product.id)"
+                                                        style="cursor: pointer;">
+                                                        <td class="sticky-col text-center cell-data">
+                                                            <input type="checkbox"
+                                                                class="form-check-input"
+                                                                t-att-checked="isProductSelected(product.id)"
+                                                                t-on-click.stop="() => this.toggleProduct(product.id)"/>
+                                                        </td>
+                                                        <td class="product-name-cell cell-data">
+                                                            <div
+                                                                class="d-flex align-items-start gap-2">
+                                                                <span t-esc="product.name"/>
+                                                                <span
+                                                                    t-if="product.sent_to_emails"
+                                                                    class="supplier-sent-icon"
+                                                                    t-att-title="getSuppliersTooltip(product)">
+                                                                    <i class="fa fa-info"/>
+                                                                </span>
+                                                            </div>
+                                                            <div class="spec-preview"
+                                                                t-if="product.specification">
+                                                                <t
+                                                                    t-esc="truncateText(product.specification, 80)"/>
+                                                            </div>
+                                                        </td>
+                                                        <td class="cell-data text-center">
+                                                            <span class="fw-500" t-esc="product.qty"/>
+                                                        </td>
+                                                        <td class="cell-data">
+                                                            <t t-esc="product.uom"/>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                                <t t-if="paginatedProducts.length === 0">
+                                                    <tr>
+                                                        <td colspan="4"
+                                                            class="text-center py-4 text-muted">
+                                                            <i
+                                                                class="fa fa-search fa-2x mb-2 d-block opacity-50"/>
+                                                            No se encontraron productos </td>
+                                                    </tr>
+                                                </t>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <t t-if="totalPages > 1">
+                                    <div
+                                        class="card-footer d-flex justify-content-between align-items-center">
+                                        <button class="btn btn-sm btn-icon-minimal"
+                                            t-att-disabled="state.currentPage === 1"
+                                            t-on-click="() => this.changePage(-1)">
+                                            <i class="fa fa-chevron-left"/>
+                                        </button>
+                                        <span class="pagination-info"> Página <t
+                                                t-esc="state.currentPage"/> de <t t-esc="totalPages"/>
+                                        </span>
+                                        <button class="btn btn-sm btn-icon-minimal"
+                                            t-att-disabled="state.currentPage === totalPages"
+                                            t-on-click="() => this.changePage(1)">
+                                            <i class="fa fa-chevron-right"/>
+                                        </button>
+                                    </div>
+                                </t>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

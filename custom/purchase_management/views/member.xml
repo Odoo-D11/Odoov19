@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_purchase_management_member_list" model="ir.ui.view">
+            <field name="name">purchase.management.member.list</field>
+            <field name="model">purchase.member</field>
+            <field name="arch" type="xml">
+                <list string="Integrantes" sample="1"
+                    class="o_view_list_purchase_member">
+                    <field name="employee_id" options="{'no_create': True, 'no_open': True}"
+                        string="Nombre"
+                        placeholder="Ej. Dwight Schrute, Pam Beesly, etc."/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_purchase_management_member_form" model="ir.ui.view">
+            <field name="name">purchase.management.member.form</field>
+            <field name="model">purchase.member</field>
+            <field name="arch" type="xml">
+                <form string="Integrante" duplicate="0">
+                    <field name="team_name" invisible="1"/>
+                    <sheet>
+                        <b style="font-weight: 500;">Nombre</b>
+                        <div class="form-title-responsive">
+                            <h1>
+                                <field name="employee_id" class="text-primary"
+                                    options="{'no_create': True, 'no_open': True}"
+                                    placeholder="Ej. Dwight Schrute, Pam Beesly, etc."/>
+                            </h1>
+                            <div>
+                                <field name="team_id" options="{'no_create': True, 'no_open': True}"
+                                    placeholder="¿A que equipo pertenece? (Ej. Compras, Sagrilaft, etc.)"/>
+                            </div>
+                        </div>
+                        <separator invisible="team_name != 'Sagrilaft'" string="Descripción"/>
+                        <p class="text-muted" invisible="team_name != 'Sagrilaft'"> El equipo de <b
+                                class="text-primary">Sagrilaft</b> desempeña un rol de supervisión
+                            integral en toda la organización. Sus responsabilidades incluyen
+                            garantizar el cumplimiento normativo, realizar auditorías internas y
+                            validar los procesos de gestión de solicitudes de cotización a nivel
+                            organizacional. Por esta razón, no requieren asignación de proyectos
+                            específicos, ya que su alcance de acción es transversal y abarca todas
+                            las áreas y proyectos de la empresa. </p>
+                        <separator string="Proyectos" invisible="team_name != 'Compras'"/>
+                        <p class="text-muted" invisible="team_name != 'Compras'"> Los <b
+                                class="text-primary">proyectos</b> son iniciativas específicas donde
+                            este integrante será responsable de gestionar y procesar las <b
+                                class="text-primary">solicitudes de
+                                cotización</b> que lleguen. Al asignar proyectos, definimos el
+                            alcance de responsabilidad de cada miembro del equipo, asegurando que
+                            todas las cotizaciones sean atendidas por la persona indicada. Esto
+                            mejora la trazabilidad de las solicitudes, optimiza los tiempos de
+                            respuesta, evita duplicidades y garantiza un seguimiento eficiente de
+                            cada proyecto. Selecciona todos los proyectos para los cuales este
+                            integrante tendrá autoridad de gestión. </p>
+                        <field name="assigned_projects_ids" invisible="team_name != 'Compras'">
+                            <list editable="bottom">
+                                <field name="project_id" class="text-primary"
+                                    placeholder="Ej. Administrativo - 30, It Talent-19999, etc."
+                                    string="Nombre" options="{'no_create': True, 'no_open': True}"/>
+                            </list>
+                        </field>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

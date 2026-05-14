@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_inherit_purchase_management_res_partner_form" model="ir.ui.view">
+            <field name="name">res.partner.form.inherit.purchase.management</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="contacts_management.new_view_form_res_partner"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="inside">
+                    <field name="sagrilaft_state" invisible="1"/>
+                </xpath>
+                <xpath expr="//sheet" position="before">
+                    <header groups="purchase_management.group_purchase_sagrilaft_approval">
+                        <button name="action_approve_sagrilaft" type="object" string="Aprobar"
+                            class="btn btn-primary"
+                            groups="purchase_management.group_purchase_sagrilaft_approval"
+                            invisible="sagrilaft_state != 'pending' or not is_supplier"/>
+                        <button name="action_reject_sagrilaft" type="object" string="Rechazar"
+                            class="btn btn-secondary"
+                            groups="purchase_management.group_purchase_sagrilaft_approval"
+                            invisible="sagrilaft_state != 'pending' or not is_supplier"/>
+                    </header>
+                    <div class="alert alert-info" role="alert"
+                        groups="purchase_management.group_consult_purchase_management,purchase_management.group_purchase_sagrilaft_approval"
+                        invisible="not (is_supplier and id) or sagrilaft_state">
+                        <i class="fa fa-info-circle" title="Información"/> Para poder generar <strong>órdenes
+                        de compra</strong> a nombre de este proveedor, primero debe contar con la
+                        aprobación de <strong>SAGRILAFT</strong>. Actualmente <strong>no ha iniciado</strong>
+                        el proceso de verificación.</div>
+                    <div class="alert alert-warning" role="alert"
+                        groups="purchase_management.group_consult_purchase_management,purchase_management.group_purchase_sagrilaft_approval"
+                        invisible="not (is_supplier and id) or sagrilaft_state != 'pending'">
+                        <i class="fa fa-clock-o" title="Pendiente"/> Este proveedor se encuentra <strong>
+                        pendiente</strong> de aprobación SAGRILAFT. No se podrán generar <strong>órdenes
+                        de compra</strong> a su nombre hasta que sea aprobado.</div>
+                    <div class="alert alert-danger" role="alert"
+                        groups="purchase_management.group_consult_purchase_management,purchase_management.group_purchase_sagrilaft_approval"
+                        invisible="not (is_supplier and id) or sagrilaft_state != 'rejected'">
+                        <i class="fa fa-times-circle" title="Rechazado"/> Este proveedor fue <strong>
+                        rechazado</strong> en la verificación SAGRILAFT y no puede recibir <strong>órdenes
+                        de compra</strong>. Contacte al equipo de cumplimiento para más información.</div>
+                    <div class="alert alert-success" role="alert"
+                        groups="purchase_management.group_consult_purchase_management,purchase_management.group_purchase_sagrilaft_approval"
+                        invisible="not (is_supplier and id) or sagrilaft_state != 'approved'">
+                        <i class="fa fa-check-circle" title="Aprobado"/> Este proveedor cuenta con
+                        la aprobación <strong>SAGRILAFT</strong> y está habilitado para recibir <strong>órdenes
+                        de compra</strong>.</div>
+                </xpath>
+                <xpath expr="//notebook" position="attributes">
+                    <attribute name="invisible">not (is_supplier or is_business)</attribute>
+                </xpath>
+                <xpath expr="//notebook/page[@name='employees']" position="after">
+                    <page string="Compra" invisible="not is_supplier"
+                        groups="purchase_management.group_consult_purchase_management">
+                        <separator string="Condiciones comerciales"/>
+                        <p class="text-muted">
+                            Las condiciones comerciales permiten definir términos y acuerdos
+                            específicos entre la empresa y sus proveedores, facilitando una gestión
+                            eficiente de las relaciones comerciales y optimizando los procesos de
+                            compra.
+                        </p>
+                        <group>
+                            <group>
+                                <field name="payment_term"
+                                    required="is_supplier"
+                                    placeholder="Ej. Pago Inmediato, 30 Días, etc."/>
+                                <field name="currency_id" required="is_supplier"
+                                    options="{'no_create': True, 'no_open': True}"
+                                    placeholder="Ej. USD, EUR, etc."/>
+                            </group>
+                            <group>
+                                <span style="font-weight: 500; color: #212529;">
+                                    Calificación
+                                </span>
+                                <div>
+                                    <field name="qualification" widget="priority"/>
+                                </div>
+                            </group>
+                        </group>
+                        <separator string="Clasificación"/>
+                        <p class="text-muted">
+                            Esta clasificación ayuda a organizar y agrupar los productos ofrecidos
+                            por el proveedor, facilitando la gestión del inventario y la búsqueda de
+                            artículos. Además, permite segmentar proveedores según categorías de
+                            producto para mejorar la trazabilidad, priorizar procesos de compra y
+                            simplificar la generación de informes y análisis de proveedores.
+                            Establecer categorías claras optimiza el abastecimiento y la
+                            comunicación entre equipos.
+                        </p>
+                        <group>
+                            <field name="product_category_ids" widget="many2many_tags"
+                                string="Categorías"
+                                options="{'no_create': True, 'color_field': 'color'}"
+                                required="is_supplier"
+                                placeholder="Ej. Electrónica, Software, Servicios, etc."/>
+                        </group>
+                    </page>
+                </xpath>
+                <xpath expr="//field[@name='email']" position="attributes">
+                    <attribute name="required">is_supplier</attribute>
+                </xpath>
+                <xpath expr="//field[@name='phone']" position="attributes">
+                    <attribute name="required">is_supplier</attribute>
+                </xpath>
+                <xpath expr="//div[@name='options']/span[1]" position="after">
+                    <span class="d-inline-block"
+                        groups="purchase_management.group_consult_purchase_management">
+                        <field name="is_supplier"/>
+                        <label for="is_supplier"/>
+                    </span>
+                </xpath>
+                <xpath expr="//notebook/page[@name='employees']/field[@name='child_ids']"
+                    position="attributes">
+                    <attribute name="context">{'default_parent_id': id, 'default_street':
+                        street, 'default_city_id': city_id, 'default_state_id': state_id,
+                        'default_country_id': country_id, 'default_type':
+                        'contacts_management','default_is_company': False, 'default_is_employee':
+                        True, 'default_is_supplier': False, 'default_is_business': False,
+                        'default_company_type': 'person', 'default_identification_type_id':
+                        identification_type_id, 'default_vat': vat}</attribute>
+                </xpath>
+                <xpath expr="//notebook/page[@name='employees']/field[@name='child_ids']/kanban"
+                    position="inside">
+                    <field name="is_supplier"
+                        groups="purchase_management.group_consult_purchase_management"/>
+                </xpath>
+                <xpath
+                    expr="//notebook/page[@name='employees']/field[@name='child_ids']/kanban/templates/t/t[@t-set='people']"
+                    position="after">
+                    <t t-set="supplier"
+                        t-value="'/purchase_management/static/src/img/supplier.jpg'"/>
+                </xpath>
+                <xpath
+                    expr="//notebook/page[@name='employees']/field[@name='child_ids']/kanban/templates/t/div/img[2]"
+                    position="after">
+                    <img t-att-src="supplier" alt="Proveedor"
+                        invisible="is_supplier != True or is_employee and is_supplier == True or is_business == True"/>
+                </xpath>
+                <xpath
+                    expr="//notebook/page[@name='employees']/field[@name='child_ids']/form/sheet/div[@name='options']/span[1]"
+                    position="after">
+                    <span class="d-inline-block"
+                        groups="purchase_management.group_consult_purchase_management">
+                        <field name="is_supplier"/>
+                        <label for="is_supplier"/>
+                    </span>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_inherit_purchase_management_res_partner_kanban" model="ir.ui.view">
+            <field name="name">res.partner.kanban.inherit.purchase.management</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="contacts_management.new_view_kanban_res_partner"/>
+            <field name="arch" type="xml">
+                <xpath expr="//kanban/field[@name='is_employee']" position="after">
+                    <field name="is_supplier"/>
+                    <field name="sagrilaft_state"/>
+                </xpath>
+                <xpath expr="//kanban/templates/t/t[@t-set='people']" position="after">
+                    <t t-set="supplier"
+                        t-value="'/purchase_management/static/src/img/supplier.jpg'"/>
+                </xpath>
+                <xpath expr="//kanban/templates/t/div/img[2]" position="after">
+                    <img t-att-src="supplier" alt="Proveedor"
+                        invisible="is_supplier != True or is_employee and is_supplier == True or is_business == True"/>
+                </xpath>
+                <xpath expr="//kanban/templates/t/div/div[@class='o_content_center col-12 p-1']"
+                    position="after">
+                    <t t-if="record.is_supplier.raw_value and record.sagrilaft_state.raw_value">
+                        <span style="position: absolute; top: 1px; right: 2px; z-index: 3;">
+                            <i t-if="record.sagrilaft_state.raw_value == 'approved'"
+                                style="font-size: 18px;"
+                                class="fa fa-check-circle text-success" title="SAGRILAFT Aprobado"/>
+                            <i t-elif="record.sagrilaft_state.raw_value == 'pending'"
+                                style="font-size: 18px;"
+                                class="fa fa-question-circle text-warning"
+                                title="SAGRILAFT Pendiente"/>
+                            <i t-elif="record.sagrilaft_state.raw_value == 'rejected'"
+                                style="font-size: 16px;"
+                                class="fa fa-exclamation-triangle text-danger"
+                                title="SAGRILAFT Rechazado"/>
+                        </span>
+                    </t>
+                </xpath>
+                <xpath expr="//kanban/templates/t/div/div/div/em/t[@name='company_info']"
+                    position="attributes">
+                    <attribute name="t-if">record.is_business.raw_value or
+                        record.is_supplier.raw_value</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="inherit_new_view_search_res_partner_purchase_management" model="ir.ui.view">
+            <field name="name">res.partner.search.inherit.purchase.management</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="contacts_management.view_search_res_partner"/>
+            <field name="arch" type="xml">
+                <xpath expr="//filter[@name='is_employee']" position="after">
+                    <filter name="is_supplier" string="Proveedores"
+                        domain="[('is_supplier', '=', True)]"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

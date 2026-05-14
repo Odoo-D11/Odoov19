@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_reject_request_form" model="ir.ui.view">
+            <field name="name">reject.request.form</field>
+            <field name="model">reject.request.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Rechazar Solicitud de Cotización">
+                    <sheet>
+                        <field name="request_quotation_id" invisible="1"/>
+                        <separator string="Rechazar"/>
+                        <p invisible="view != 'min_providers_qty'">
+                            Registre la <b class="text-primary">justificación</b> del rechazo
+                            de la excepción para trabajar con menos proveedores del mínimo
+                            establecido. Esta información quedará en el <b class="text-primary">historial
+                            de la solicitud</b>.
+                        </p>
+                        <p invisible="view != 'normal'">
+                            Registre la <b class="text-primary">justificación</b> del rechazo
+                            de esta solicitud. Quedará registrada en el <b class="text-primary">historial</b>
+                            y podrá ser consultada por las áreas involucradas.
+                        </p>
+                        <p class="text-muted" invisible="view != 'project_leader'">
+                            Justifique la decisión de continuar con la aprobación a pesar del
+                            rechazo del <b class="text-primary">Líder de Proyecto</b>. Indique
+                            si hubo consenso o las razones técnicas/comerciales de la excepción.
+                        </p>
+                        <field name="reason"
+                            invisible="view not in ['min_providers_qty', 'normal']"
+                            placeholder="Ej. La solicitud no cumple con los criterios establecidos en la política corporativa debido a la falta de competencia en el mercado para este tipo de productos/servicios."
+                            nolabel="1"/>
+                        <field name="reason" invisible="view != 'project_leader'" nolabel="1"
+                            placeholder="Ej. Tras reunión con el área técnica, se acordó mantener el proveedor debido a los tiempos de entrega..."/>
+                    </sheet>
+                    <footer>
+                        <button string="Confirmar" type="object"
+                            name="action_reject_request"
+                            class="btn btn-primary"/>
+                        <button string="Cancelar" class="btn btn-secondary"
+                            special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

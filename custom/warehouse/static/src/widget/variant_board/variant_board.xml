@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates>
-    <t t-name="warehouse.WarehouseVariantBoardWidget" owl="1">
+    <t t-name="warehouse.WarehouseVariantBoardWidget">
         <div class="o_field_Variant">
             <div class="variant-container">
                 <div class="variant-header">

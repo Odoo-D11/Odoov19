@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_request_quotation_list" model="ir.ui.view">
+            <field name="name">request.quotation.list</field>
+            <field name="model">request.quotation</field>
+            <field name="priority" eval="1"/>
+            <field name="arch" type="xml">
+                <list string="Solicitudes de Cotización" duplicate="false"
+                    js_class="rfq_list_sidebar" class="request_quotation_list_view"
+                    decoration-danger="days_remaining &lt; 0 and state not in ('draft', 'order_created', 'cancelled', 'approved')"
+                    decoration-warning="days_remaining &gt;= 0 and days_remaining &lt;= 3 and state not in ('draft', 'order_created', 'cancelled', 'approved')">
+                    <field name="days_remaining" column_invisible="1"/>
+                    <field name="state" column_invisible="1"/>
+                    <field name="reference"/>
+                    <field name="subject"/>
+                    <field name="project_id"/>
+                    <field name="deadline"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_request_quotation_form" model="ir.ui.view">
+            <field name="name">request.quotation.form</field>
+            <field name="model">request.quotation</field>
+            <field name="priority" eval="1"/>
+            <field name="arch" type="xml">
+                <form string="Solicitud de Cotización" duplicate="false">
+                    <field name="responsible_purchase_id" invisible="1" readonly="1"
+                        options="{'no_create': True, 'no_open': True}"/>
+                    <field name="additional_info_ids" invisible="1" readonly="1"/>
+                    <field name="is_min_providers_approval_pending" invisible="1" readonly="1"/>
+                    <field name="all_quotation_rejected" invisible="1" readonly="1"/>
+                    <field name="commitee_approval_rejected" invisible="1" readonly="1"/>
+                    <field name="rejected_by_project_leader" invisible="1" readonly="1"/>
+                    <field name="pause_request" invisible="1" readonly="1"/>
+                    <field name="category" invisible="1" readonly="1"/>
+                    <field name="technical_spec_attachment_ids" invisible="1" readonly="1"/>
+                    <field name="locked" invisible="1" readonly="1"/>
+                    <header invisible="not id">
+                        <button title="Info. adicional" type="object"
+                            groups="purchase_management.group_purchase_user_management,purchase_management.group_purchase_committee_approval,purchase_management.group_project_leader_purchase_management"
+                            name="action_toggle_additional_info" invisible="not additional_info_ids"
+                            class="btn btn-primary" icon="fa-folder"/>
+                        <!--ADJUNTAR
+                        FICHA TECNICA-->
+                        <widget name="spec_launcher"
+                            invisible="state != 'draft'"/>
+                        <button name="action_rfq_send" type="object"
+                            groups="purchase_management.group_purchase_user_management,purchase_management.group_process_leader_purchase_management,purchase_management.group_project_leader_purchase_management"
+                            string="Enviar correo" class="btn btn-primary"
+                            invisible="not state in ('draft', 'in_shopping', 'sent') or is_min_providers_approval_pending"/>
+                        <button name="action_send_for_approval" type="object"
+                            groups="purchase_management.group_purchase_user_management"
+                            string="Enviar a aprobación" class="btn btn-primary"
+                            invisible="state not in ('sent', 'in_shopping') or is_min_providers_approval_pending or not quotation_line_ids or category == 'admin'"/>
+                        <button name="action_approval" type="object" string="Aprobar"
+                            class="btn btn-primary"
+                            groups="purchase_management.group_project_leader_purchase_management"
+                            invisible="state != 'pending_project_approval' or rejected_by_project_leader or pause_request"/>
+                        <button name="action_pause_request" type="object" string="Pausar"
+                            class="btn btn-primary"
+                            groups="purchase_management.group_project_leader_purchase_management"
+                            invisible="state != 'pending_project_approval' or pause_request or rejected_by_project_leader"/>
+                        <button name="action_resume_request" type="object" string="Reanudar"
+                            class="btn btn-primary"
+                            groups="purchase_management.group_project_leader_purchase_management"
+                            invisible="not pause_request"/>
+                        <button name="action_approval" type="object" string="Recomendación"
+                            groups="purchase_management.group_purchase_user_management,purchase_management.group_process_leader_purchase_management"
+                            invisible="not ((category == 'project' and state == 'pending_purchase_approval') or (category == 'admin' and state == 'sent'))"
+                            class="btn btn-primary"/>
+                        <button name="action_approval" type="object" string="Aprobar"
+                            invisible="not rejected_by_project_leader"
+                            groups="purchase_management.group_purchase_sagrilaft_approval"
+                            class="btn btn-primary"/>
+                        <button name="action_approval" type="object" string="Aprobar"
+                            invisible="not is_min_providers_approval_pending"
+                            groups="purchase_management.group_purchase_sagrilaft_approval"
+                            confirm="¿Está seguro de que desea aprobar la excepción para trabajar con un número menor de proveedores al establecido por la política corporativa? Una vez aprobada, esta acción no podrá deshacerse."
+                            class="btn btn-primary"/>
+                        <button name="action_present_comparative_chart" type="object"
+                            string="Presentar" class="btn btn-secondary"
+                            groups="purchase_management.group_purchase_user_management"
+                            invisible="not state == 'pending_purchase_approval'"/>
+                        <button name="action_present_comparative_chart" type="object"
+                            string="Presentar" class="btn btn-primary"
+                            invisible="state not in ('pending_advisory_committee_approval', 'approved')"/>
+                        <!--CREAR
+                        ORDEN-->
+                        <widget name="product_linking_launcher"
+                            groups="purchase_management.group_purchase_user_management"
+                            invisible="not state == 'approved'"/>
+                        <button name="action_reject_request" type="object"
+                            string="Rechazar" class="btn btn-secondary"
+                            groups="purchase_management.group_purchase_sagrilaft_approval"
+                            invisible="not is_min_providers_approval_pending and not rejected_by_project_leader"/>
+                        <button name="action_view_traceability" string="Trazabilidad" type="object"
+                            class="btn-secondary" invisible="state != 'order_created'"/>
+                        <button name="action_return_to_requester" type="object" string="Rechazar"
+                            class="btn btn-primary"
+                            groups="purchase_management.group_purchase_user_management"
+                            invisible="state not in ('in_shopping', 'sent') or quotation_line_ids"/>
+                        <button name="action_resubmit_after_return" type="object"
+                            string="Re-enviar a Compras" class="btn btn-primary"
+                            groups="purchase_management.group_project_leader_purchase_management,purchase_management.group_process_leader_purchase_management"
+                            invisible="state != 'returned'"/>
+                        <button name="action_unlock" string="Desbloquear" type="object"
+                            class="btn btn-primary" invisible="not locked"
+                            groups="purchase_management.group_unlock_request_quotation,purchase_management.group_manager_purchase_management"/>
+                        <button name="action_lock" string="Bloquear" type="object"
+                            class="btn btn-secondary" invisible="locked"
+                            groups="purchase_management.group_unlock_request_quotation,purchase_management.group_manager_purchase_management"/>
+                        <button name="action_cancel" type="object" string="Cancelar"
+                            class="btn btn-secondary"
+                            groups="purchase_management.group_project_leader_purchase_management,purchase_management.group_process_leader_purchase_management,purchase_management.group_purchase_user_management"
+                            invisible="not state in ('sent', 'in_shopping', 'returned', 'pending_project_approval', 'approved', 'pending_advisory_committee_approval') or rejected_by_project_leader or pause_request"/>
+                    </header>
+                    <div class="alert alert-warning" role="alert"
+                        invisible="state != 'returned'">
+                        <i class="fa fa-exclamation-triangle me-1" title="Atención"/>
+                        <span>La solicitud <strong>
+                                <field name="reference" readonly="1" nolabel="1"/>
+                            </strong>
+                            ha sido <strong>rechazada por el área de Compras</strong> para que
+                            realice los ajustes necesarios. Por favor, revise el último mensaje del
+                            registro para conocer el motivo, corrija lo indicado y haga clic en <strong>Re-enviar
+                            a Compras</strong> cuando esté lista. </span>
+                    </div>
+                    <div class="alert alert-info" role="alert"
+                        invisible="is_min_providers_approval_pending or all_quotation_rejected or commitee_approval_rejected or rejected_by_project_leader or pause_request or state in ('cancelled', 'returned')">
+                        <i class="fa fa-info-circle me-1" title="Información"/>
+                        <span>La solicitud <span invisible="reference == 'Nueva'">
+                                <strong>
+                                    <field name="reference" readonly="1" nolabel="1"/>
+                                </strong>
+                            creada el <strong>
+                                    <field name="create_date" readonly="1" nolabel="1"/>
+                                </strong>
+                            </span>
+                        <span
+                                invisible="state != 'draft'"> se encuentra en estado <strong>
+                                    <field name="state" readonly="1" nolabel="1"
+                                        style="text-transform: lowercase;"/>. </strong></span>
+                        <span
+                                invisible="state not in ['in_shopping', 'pending_purchase_approval']">
+                            ha sido enviada a <strong>
+                                    <field name="responsible_purchase_id" class="mb-0"
+                                        options="{'no_create': True, 'no_open': True}"
+                                        readonly="1" nolabel="1"/>
+                                </strong>
+                            del área de <strong>compras</strong><span
+                                    invisible="state != 'in_shopping'">, quien será la persona
+                            responsable de su gestión.</span>
+                                <span
+                                    invisible="state != 'pending_purchase_approval'"> para su
+                            recomendación final, previo a ser presentada ante el <strong>comité de
+                            compras</strong>. </span>
+                            </span>
+                        <span
+                                invisible="state != 'sent'"> ha sido enviada a los <strong>
+                            proveedores</strong> y está a la espera de recibir las cotizaciones
+                            correspondientes. </span>
+                        <span
+                                invisible="state != 'pending_project_approval'"> ha sido enviada al <strong>
+                            líder de proyecto</strong> para su revisión y aprobación. </span>
+                        <span
+                                invisible="state != 'pending_advisory_committee_approval'">
+                                <span invisible="category != 'project'"> ha sido revisada por el <strong>líder
+                            de proyecto</strong> y el <strong>equipo
+                                        de compras</strong>, quienes han agregado sus observaciones,
+                            y</span> está a la espera de la revisión del <strong>comité
+                                    de compras</strong>. </span>
+                        </span>
+                        <span
+                            invisible="state != 'approved'"> ha sido aprobada y está lista para
+                            proceder con la creación de la orden. </span>
+                        <span
+                            invisible="state != 'order_created'"> ha sido <strong>procesada</strong>:
+                            los productos solicitados han sido relacionados con el catálogo de
+                            bodega y la <strong>orden de compra ha sido creada</strong>. </span>
+                    </div>
+                    <div class="alert alert-info" role="alert" invisible="not pause_request">
+                        <i class="fa fa-info-circle me-1" title="Información"/>
+                        <span>La solicitud <b class="text-primary">
+                                <field name="reference" readonly="1" nolabel="1"/>
+                            </b>
+                            se encuentra <b class="text-primary">pausada por el líder de proyecto</b>.
+                            Esto puede ocurrir cuando se requiere revisar información adicional, hay
+                            cambios en los requerimientos del proyecto, o se necesita validar
+                            presupuesto antes de continuar. <b class="text-primary">Mientras la
+                            solicitud permanezca en este estado, no se podrá realizar ninguna acción
+                            sobre la misma.</b></span>
+                    </div>
+                    <div class="alert alert-warning" role="alert"
+                        invisible="not is_min_providers_approval_pending">
+                        <i class="fa fa-exclamation-triangle me-1" title="Atención"/>
+                        <span>La solicitud <strong>
+                                <field name="reference" readonly="1" nolabel="1"/>
+                            </strong>
+                            se encuentra pendiente de aprobación por parte del área responsable, ya
+                            que se ha solicitado trabajar únicamente con <strong>
+                                <field name="min_providers_qty" class="mb-0" readonly="1"
+                                    nolabel="1"/> proveedor(es), </strong>un número inferior al
+                            mínimo establecido por la política corporativa. Hasta que dicha
+                            aprobación no sea registrada, no será posible continuar con la gestión
+                            de esta solicitud. </span>
+                    </div>
+                    <div class="alert alert-danger" role="alert"
+                        invisible="not all_quotation_rejected">
+                        <i class="fa fa-exclamation-triangle me-1" title="Atención"/>
+                        <span>La solicitud <strong>
+                                <field name="reference" readonly="1" nolabel="1"/>
+                            </strong>
+                            ha sido rechazada por el gerente de proyecto, ya que todas las
+                            cotizaciones recibidas no cumplen con los requisitos establecidos. Por
+                            favor, revise el último mensaje del registro para conocer el motivo y la
+                            justificación del rechazo. Si tiene dudas, comuníquese con el área
+                            encargada. </span>
+                    </div>
+                    <div class="alert alert-danger" role="alert"
+                        invisible="not commitee_approval_rejected">
+                        <i class="fa fa-exclamation-triangle me-1" title="Atención"/>
+                        <span>La solicitud <strong>
+                                <field name="reference" readonly="1" nolabel="1"/>
+                            </strong>
+                            ha sido <b>rechazada por el comité de compras</b>. Por favor, revise el
+                            último mensaje del registro para conocer el motivo y la justificación
+                            del rechazo. Si tiene dudas, comuníquese con el área encargada. </span>
+                    </div>
+                    <div class="alert alert-danger" role="alert"
+                        invisible="not rejected_by_project_leader">
+                        <i class="fa fa-exclamation-triangle me-1" title="Atención"/>
+                        <span>Se han registrado rechazos en una o más cotizaciones por parte del <b>líder
+                            de proyecto.</b> Se requiere que el area encargada de revisar estos
+                            casos analice y defina las acciones a seguir: continuar el proceso de
+                            aprobación o solicitar nuevas propuestas. (Mientras la solicitud se
+                            encuentre en este estado, <b>no se podrá realizar ninguna acción sobre
+                                la
+                                misma</b>). </span>
+                    </div>
+                    <div class="alert alert-danger" role="alert"
+                        invisible="state != 'cancelled'">
+                        <i class="fa fa-exclamation-triangle me-1" title="Atención"/>
+                        <span>La solicitud <strong>
+                                <field name="reference" readonly="1" nolabel="1"/>
+                            </strong>
+                            ha sido cancelada. Por favor, revise el último mensaje del registro para
+                            conocer el motivo y la justificación de la cancelación. Si tiene dudas,
+                            comuníquese con el área encargada. </span>
+                    </div>
+                    <sheet>
+                        <div class="row">
+                            <div class="col-lg-7">
+                                <span style="font-weight: 500; color: #212529;">
+                                    Asunto
+                                </span>
+                                <div class="form-title-responsive mb-4 text-truncate">
+                                    <h1>
+                                        <field name="subject"
+                                            placeholder="Ej. Suministro de material de oficina"
+                                            nolabel="1"
+                                            class="o_field_char o_field_title"/>
+                                    </h1>
+                                    <div>
+                                        <field name="type_id" class="w-100 text-primary"
+                                            options="{'no_create': True, 'no_open': True}"
+                                            placeholder="¿A qué tipo de solicitud pertenece esta solicitud de cotización? Ej. Productos (Bienes físicos, Ej. Tecnología, Portátiles, Firewall, UPS), Servicios (Consultoría, mantenimiento, etc.), etc."/>
+                                    </div>
+                                </div>
+                                <group>
+                                    <field name="responsible_id" widget="ExpAvatarPopup"
+                                        class="text-primary"
+                                        options="{'no_open': True, 'no_create': True}"
+                                        placeholder="Ej. Dwight Schrute, Pam Beesly, etc..."/>
+                                    <field name="project_id"
+                                        options="{'no_open': True, 'no_create': True}"
+                                        placeholder="Ej. Administrativo - 30, Jep Mesa De Ayuda - 13333, etc..."/>
+                                    <field name="deadline" placeholder="Ej. 2023-01-31"
+                                        widget="RemainingDays" string="Fecha límite"/>
+                                </group>
+                                <div class="mt-3">
+                                    <field name="reason"
+                                        placeholder="Escribe el motivo de la solicitud.. Ej. (Se requieren nuevos equipos de computo para el departamento de desarrollo debido a la expansión del equipo)."
+                                        nolabel="1"/>
+                                </div>
+                            </div>
+                            <div class="col-lg-5 d-flex">
+                                <div class="o_timeline_sidebar flex-grow-1">
+                                    <field name="quotation_line_ids" nolabel="1"
+                                        widget="QuotationBoard"/>
+                                    <field name="product_line_ids" nolabel="1" widget="ProductBoard"/>
+                                </div>
+                            </div>
+                        </div>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_request_quotation_search" model="ir.ui.view">
+            <field name="name">request.quotation.search</field>
+            <field name="model">request.quotation</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="reference"/>
+                    <field name="subject"/>
+                    <field name="responsible_id"/>
+                    <field name="project_id"/>
+                    <separator/>
+                    <filter string="Mis solicitudes" name="my_assigned"
+                        domain="['|', ('responsible_purchase_id.employee_id.user_id', '=', uid), ('responsible_id.user_id', '=', uid)]"/>
+                    <separator/>
+                    <filter string="En proceso" name="in_progress"
+                        domain="[('state', 'not in', ('draft', 'approved', 'order_created', 'cancelled'))]"/>
+                    <separator/>
+                    <filter string="En Compras" name="in_shopping"
+                        domain="[('state', '=', 'in_shopping')]"/>
+                    <filter string="Enviadas" name="sent_to_suppliers"
+                        domain="[('state', '=', 'sent')]"/>
+                    <filter string="En Gestión" name="in_process_compras"
+                        domain="[('state', 'in', ('in_shopping', 'sent'))]"/>
+                    <filter string="Orden Creada" name="order_created"
+                        domain="[('state', '=', 'order_created')]"/>
+                    <separator/>
+                    <filter string="Vencidas" name="overdue"
+                        domain="[('deadline', '&lt;', context_today()), ('state', 'in', ('in_shopping', 'sent', 'pending_project_approval', 'pending_purchase_approval', 'pending_advisory_committee_approval'))]"/>
+                    <filter string="Pendientes" name="pending_approval"
+                        domain="[('state', 'in', ('pending_project_approval', 'pending_purchase_approval', 'pending_advisory_committee_approval'))]"/>
+                    <separator/>
+                    <filter string="Cerradas" name="closed_requests"
+                        domain="[('state', '=', 'approved')]"/>
+                    <separator/>
+                    <filter string="Canceladas" name="cancelled"
+                        domain="[('state', '=', 'cancelled'), ('active', '=', False)]"/>
+                    <group name="group_by">
+                        <filter string="Tipo de solicitud" name="group_by_type"
+                            context="{'group_by': 'type_id'}"/>
+                        <filter string="Solicitante" name="group_by_responsible"
+                            context="{'group_by': 'responsible_id'}"/>
+                        <filter string="Proyecto" name="group_by_project"
+                            context="{'group_by': 'project_id'}"/>
+                        <filter string="Estado" name="group_by_state"
+                            context="{'group_by': 'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_request_quotation_graph" model="ir.ui.view">
+            <field name="name">request.quotation.graph</field>
+            <field name="model">request.quotation</field>
+            <field name="arch" type="xml">
+                <graph string="Solicitudes de Cotización" type="bar" sample="1">
+                    <field name="state" type="row" string="Estado"/>
+                </graph>
+            </field>
+        </record>
+
+        <record id="view_request_quotation_pivot" model="ir.ui.view">
+            <field name="name">request.quotation.pivot</field>
+            <field name="model">request.quotation</field>
+            <field name="arch" type="xml">
+                <pivot string="Solicitudes de Cotización" sample="1">
+                    <field name="state" type="row" string="Estado"/>
+                    <field name="type_id" type="col" string="Tipo"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="view_request_quotation_form_add_product" model="ir.ui.view">
+            <field name="name">request.quotation.form.add.product</field>
+            <field name="model">request.quotation</field>
+            <field name="arch" type="xml">
+                <form string="Agregar Producto" duplicate="false">
+                    <field name="type_id" invisible="1"/>
+                    <sheet>
+                        <separator string="Productos" invisible="type_id != 1"/>
+                        <separator string="Servicios" invisible="type_id != 2"/>
+                        <separator string="Elementos solicitados" invisible="type_id != 3"/>
+                        <p class="text-muted">En una solicitud de cotización, <span
+                                invisible="type_id != 1">los “productos” hacen referencia a
+                                bienes tangibles o materiales que el comprador necesita adquirir.
+                            Pueden ser artículos físicos como equipos, suministros, herramientas,
+                            componentes o cualquier otro tipo de mercancía que se pueda tocar y
+                            transportar. Estos productos deben ser descritos con detalle, incluyendo
+                            especificaciones técnicas, cantidades y características relevantes para
+                            que los proveedores puedan ofrecer cotizaciones precisas.
+                            </span><span
+                                invisible="type_id != 2"> los “servicios” se refieren a actividades
+                            intangibles que el comprador requiere de un proveedor externo. Estos
+                            servicios pueden incluir consultoría, mantenimiento, desarrollo de
+                            software, capacitación, soporte técnico, entre otros. Al solicitar una
+                            cotización para servicios, es importante detallar claramente las
+                            expectativas, entregables y cualquier requisito específico que se tenga.
+                            </span><span
+                                invisible="type_id != 3"> los “elementos solicitados” pueden incluir
+                            una combinación de productos y servicios que el comprador necesita
+                            adquirir. Esto puede abarcar tanto bienes tangibles como actividades
+                            intangibles, permitiendo al comprador obtener una solución integral para
+                            sus necesidades. Al describir los elementos solicitados, es fundamental
+                            proporcionar detalles claros sobre cada componente, ya sea un producto o
+                            un servicio, para que los proveedores puedan ofrecer cotizaciones
+                            completas y precisas.
+                            </span></p>
+                        <field name="product_line_ids" widget="product_specification_one2many"
+                            class="product_request_line_ids">
+                            <list editable="bottom" string="Productos" limit="400">
+                                <control>
+                                    <create name="add_product_control" string="Agregar una línea"/>
+                                </control>
+                                <field name="display_type" column_invisible="1"/>
+                                <!-- Campos ocultos para almacenar información adicional sin
+                                mostrarla en la vista -->
+                                <field name="sequence" column_invisible="1"/>
+                                <field name="product_name" column_invisible="1"/>
+                                <field name="warehouse_variant_id"
+                                    options="{'no_create': True, 'no_open': True}"
+                                    column_invisible="1"/>
+                                <field name="name" string="Nombre"
+                                    widget="product_line_name"
+                                    placeholder="Escribe el nombre generico del item. Ej. Laptop, Servicio de consultoría, etc."
+                                    required="not display_type"/>
+                                <field name="qty" string="Cantidad"
+                                    required="not display_type"/>
+                                <field name="uom_id" string="UdM"
+                                    placeholder="Ej. Unidad, Metro..."
+                                    options="{'no_create': True, 'no_open': True}"
+                                    required="not display_type"/>
+
+                            </list>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

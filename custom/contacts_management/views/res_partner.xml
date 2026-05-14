@@ -317,6 +317,30 @@
 
         <!--SEARCH-->
 
+        <record id="view_search_res_partner" model="ir.ui.view">
+            <field name="name">new.view.search.res.partner</field>
+            <field name="model">res.partner</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name" string="Nombre"/>
+                    <filter name="is_business" string="Empresas"
+                        domain="[('is_business', '=', True)]"/>
+                    <filter name="is_employee" string="Empleados"
+                        domain="[('is_employee', '=', True)]"/>
+                    <group name="group_by">
+                        <filter name="group_by_is_business" string="Empresas"
+                            context="{'group_by': 'is_business'}"/>
+                        <filter name="group_by_is_employee" string="Empleados"
+                            context="{'group_by': 'is_employee'}"/>
+                        <filter name="group_by_country_id" string="País"
+                            context="{'group_by': 'country_id'}"/>
+                        <filter name="group_by_city_id" string="Ciudad"
+                            context="{'group_by': 'city_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
       
 
     </data>

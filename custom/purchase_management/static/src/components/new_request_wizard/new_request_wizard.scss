@@ -1,0 +1,366 @@
+/* ══════════════════════════════════════════════════════════
+   new_request_wizard.scss
+   Diseño coherente con order_linking:
+   - Paleta navy #02143f
+   - Ghost / underline inputs (om-field-input style)
+   - Step tracker idéntico a om-excel-track
+   - Usa Bootstrap para layout y botones
+   ══════════════════════════════════════════════════════════ */
+
+.o_new_request_wizard {
+    --text-dark:    #0d274d;
+    --text-gray:    #8392a5;
+    --border-light: #e9ecef;
+    --navy:         #02143f;
+    --danger:       #dc3545;
+
+    /* ── Card full-bleed ── */
+    .nrw-card-full-bleed {
+        margin: -1rem -1rem 0;
+        .card {
+            position: relative;
+            overflow: visible;
+            border-left: none;
+            border-right: none;
+            border-top: none;
+            border-radius: 0;
+            border-bottom: 1px solid var(--border-light);
+        }
+    }
+
+    /* ── Progress bar ── */
+    .nrw-progress-wrap {
+        height: 3px;
+        background: var(--border-light);
+        border-radius: 0;
+        overflow: hidden;
+    }
+
+    .nrw-progress-bar {
+        height: 100%;
+        background: var(--navy);
+        transition: width 0.4s ease;
+    }
+
+    /* ── Step tracker ── */
+    .nrw-step-track-wrap {
+        display: flex;
+        align-items: center;
+        padding: 0.9rem 2rem;
+        background: #fff;
+    }
+
+    .nrw-track-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.3rem;
+        flex-shrink: 0;
+    }
+
+    .nrw-track-dot {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.78rem;
+        font-weight: 700;
+        border: 2px solid var(--border-light);
+        background: #fff;
+        color: #adb5bd;
+        transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+
+    .nrw-track-label {
+        font-size: 0.65rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #adb5bd;
+        white-space: nowrap;
+        transition: color 0.2s;
+    }
+
+    .nrw-track-line {
+        flex: 1;
+        height: 2px;
+        background: var(--border-light);
+        margin: 0 6px;
+        margin-bottom: 1.35rem; 
+        transition: background 0.2s;
+        min-width: 36px;
+    }
+
+    .nrw-track-line-filled {
+        background: var(--navy);
+    }
+
+    /* Estados del tracker */
+    .nrw-track-active {
+        .nrw-track-dot { background: var(--navy); border-color: var(--navy); color: #fff; }
+        .nrw-track-label { color: var(--navy); }
+    }
+
+    .nrw-track-done {
+        .nrw-track-dot { background: #198754; border-color: #198754; color: #fff; }
+        .nrw-track-label { color: #198754; }
+    }
+
+    .nrw-track-pending {
+        .nrw-track-dot { background: #fff; border-color: var(--border-light); color: #adb5bd; }
+        .nrw-track-label { color: #adb5bd; }
+    }
+
+    /* ── Wizard body ── */
+    .nrw-wizard-body {
+        padding: 0.75rem 1.5rem 0.5rem;
+        transition: opacity 160ms ease;
+        overflow: visible !important;
+
+        &.nrw-fading {
+            opacity: 0;
+            pointer-events: none;
+        }
+    }
+
+    .nrw-step-content {
+        animation: nrw-fade-up 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+        overflow: visible !important;
+    }
+
+    @keyframes nrw-fade-up {
+        from { opacity: 0; transform: translateY(8px); }
+        to   { opacity: 1; transform: none; }
+    }
+
+    /* ── Step header ── */
+    .nrw-step-header {
+        margin-bottom: 1.25rem;
+    }
+
+    .nrw-step-heading {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        font-size: 0.80rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--navy);
+        margin: 0 0 0.45rem;
+        white-space: nowrap;
+
+        &::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: var(--border-light);
+        }
+    }
+
+    .nrw-step-desc {
+        font-size: 0.8rem;
+        color: var(--text-gray);
+        margin: 0;
+        line-height: 1.55;
+    }
+
+    /* ── Fields ── */
+    .nrw-field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        margin-bottom: 1.1rem;
+        position: relative;
+        overflow: visible !important;
+    }
+
+    .nrw-field-label {
+        display: block;
+        font-size: 0.65rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.55px;
+        color: var(--text-gray);
+        line-height: 1;
+    }
+
+    .nrw-ghost-input, .nrw-ghost-textarea {
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid #e0e3e8;
+        border-radius: 0;
+        padding: 0.28rem 0;
+        font-size: 0.9rem;
+        color: var(--text-dark);
+        width: 100%;
+        outline: none;
+        transition: border-color 0.2s ease;
+        font-family: inherit;
+
+        &::placeholder { color: #b8bec8; font-style: italic; }
+        &:hover { border-bottom-color: #adb5bd; }
+        &:focus { border-bottom-color: var(--navy); box-shadow: none; }
+    }
+
+    .nrw-ghost-textarea {
+        resize: none;
+        min-height: 120px;
+        line-height: 1.6;
+    }
+
+    .nrw-field-error {
+        .nrw-ghost-input, .nrw-ghost-textarea { border-bottom-color: var(--danger); }
+    }
+
+    .nrw-field-error-msg {
+        font-size: 0.75rem;
+        color: var(--danger);
+        font-weight: 500;
+        margin-top: 2px;
+    }
+
+    /* ── M2O dropdown ── */
+    .nrw-m2o-wrap {
+        position: relative;
+        overflow: visible !important;
+    }
+
+    .nrw-m2o-dropdown {
+        display: block !important;
+        position: fixed;
+        background: #fff;
+        border: 1px solid var(--border-light);
+        border-radius: 6px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        z-index: 5000;
+        max-height: 220px;
+        overflow-y: auto;
+        box-sizing: border-box;
+
+        &::-webkit-scrollbar { width: 4px; }
+        &::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 2px; }
+    }
+
+    .nrw-dd-item {
+        display: flex;
+        align-items: center;
+        padding: 8px 12px;
+        cursor: pointer;
+        border-bottom: 1px solid #f9fafb;
+        transition: background 0.1s ease;
+        &:last-child { border-bottom: none; }
+        &:hover { background: rgba(13, 39, 77, 0.04); }
+    }
+
+    .nrw-dd-label {
+        font-size: 0.88rem;
+        color: var(--text-dark);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* ── Product table ── */
+    .nrw-product-table {
+        margin-bottom: 0.75rem;
+        thead th {
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-gray);
+            border-bottom: 1px solid var(--border-light);
+            padding: 0.4rem 0.5rem;
+            white-space: nowrap;
+        }
+        tbody td {
+            padding: 0.45rem 0.5rem;
+            vertical-align: middle;
+            border-color: #f5f6f8;
+            overflow: visible !important;
+            position: relative;
+        }
+        .nrw-prod-name { min-height: 48px; }
+        .nrw-prod-qty { text-align: center; }
+    }
+
+    .nrw-cell-error .nrw-ghost-input { border-bottom-color: var(--danger) !important; }
+    .nrw-td-del { text-align: center; }
+    .nrw-del-btn {
+        width: 22px; height: 22px; border: none; background: none; border-radius: 4px;
+        display: flex; align-items: center; justify-content: center;
+        color: #adb5bd; font-size: 0.75rem; cursor: pointer;
+        transition: color 0.15s, background 0.15s;
+        &:hover { color: var(--danger); background: #fff5f5; }
+    }
+
+    .nrw-add-prod-btn {
+        background: none; border: none; color: var(--navy); font-size: 0.82rem; font-weight: 600;
+        cursor: pointer; padding: 0; display: inline-flex; align-items: center;
+        &:hover { opacity: 0.7; text-decoration: underline; }
+    }
+
+    /* ── Summary card ── */
+    .nrw-summary {
+        background: #f9fbfd;
+        border: 1px solid var(--border-light);
+        border-radius: 6px;
+        padding: 1rem 1.25rem;
+        margin-top: 1.5rem;
+    }
+
+    .nrw-summary-sep {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-size: 0.68rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--navy);
+        margin-bottom: 0.75rem;
+        white-space: nowrap;
+        &::after { content: ""; flex: 1; height: 1px; background: var(--border-light); }
+    }
+
+    .nrw-summary-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.1rem;
+        padding: 0.35rem 0;
+        border-bottom: 1px solid var(--border-light);
+        &:last-child { border-bottom: none; }
+    }
+
+    .nrw-summary-key { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; color: var(--text-gray); }
+    .nrw-summary-val { font-size: 0.88rem; color: var(--text-dark); font-weight: 500; }
+
+    /* ── Import result panel ── */
+    .nrw-import-result {
+        display: flex; gap: 1.1rem; padding: 1rem 1.25rem; border-radius: 8px; border: 1px solid var(--border-light);
+        .nrw-result-icon { font-size: 1.6rem; color: var(--text-dark); }
+        .nrw-result-body { flex: 1; min-width: 0; }
+        .nrw-result-title { font-size: 0.9rem; font-weight: 600; color: var(--text-dark); margin-bottom: 0.6rem; }
+        .nrw-result-list { 
+            max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.35rem; 
+            &::-webkit-scrollbar { width: 4px; }
+            &::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 2px; }
+        }
+        .nrw-result-row { font-size: 0.82rem; color: #4a5568; display: flex; align-items: flex-start; gap: 0.3rem; }
+        .nrw-result-hint { font-size: 0.78rem; color: var(--text-gray); margin-top: 0.5rem; }
+    }
+
+    .nrw-result-error { background: #fff8f8; border-color: #fecaca; .nrw-result-icon { color: #dc3545; } }
+    .nrw-result-success { background: #f0fdf4; border-color: #bbf7d0; .nrw-result-icon { color: #198754; } }
+}
+
+/* Forzar que el modal de Odoo permita el desbordamiento */
+.modal:has(.o_new_request_wizard) {
+    overflow: visible !important;
+    .modal-content, .modal-body {
+        overflow: visible !important;
+    }
+}

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_purchase_send_mail_wizard_form" model="ir.ui.view">
+            <field name="name">purchase.send.mail.wizard.form</field>
+            <field name="model">purchase.send.mail.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Enviar correo electrónico">
+                    <field name="type" invisible="1"/>
+                    <field name="request_quotation_id" invisible="1"/>
+                    <field name="instructions" invisible="1"/>
+                    <field name="complete_fields" invisible="1"/>
+                    <field name="show_provider_instructions" invisible="1"/>
+                    <field name="edit_request_quotation" invisible="1"/>
+                    <field name="currency_id" invisible="1"
+                        options="{'no_create': True, 'no_open': True}"/>
+                    <sheet>
+                        <separator string="Instrucciones"
+                            invisible="not instructions and not show_provider_instructions"/>
+                        <separator string="Editar" invisible="not edit_request_quotation"/>
+                        <p invisible="not show_provider_instructions"> Tenga en cuenta las
+                            siguientes indicaciones sobre <b class="text-primary">
+                                
+                            </b> antes de enviar la solicitud: </p>
+
+                        <ul invisible="not show_provider_instructions">
+                            <li> Toda solicitud debe enviarse a un mínimo de <b class="text-primary"><field
+                                        name="min_providers_qty" class="mb-0"/> proveedores</b> para
+                                garantizar transparencia y competitividad. </li>
+
+                            <li> Si necesita enviar a <b class="text-primary">menos de <field
+                                        name="min_providers_qty" class="mb-0"/> proveedores</b>, use
+                                el botón <b class="text-primary">"Editar"</b> para registrar la
+                                justificación. El sistema enviará la solicitud de excepción para
+                                aprobación antes de generar las cotizaciones. </li>
+
+                            <li> Si no requiere excepción, haga clic en <b
+                                    class="text-primary">"Siguiente"</b> para continuar con el envío
+                                normal. </li>
+                        </ul>
+
+                        <p invisible="not edit_request_quotation"> Defina el <b
+                                class="text-primary">número de proveedores</b> que serán contactados
+                            (mínimo establecido: <b class="text-primary">
+                                <field
+                                    name="min_providers_qty" class="mb-0"/>
+                            </b>).
+                            Si es menor al mínimo, registre la <b class="text-primary">justificación</b>
+                            de la excepción en el campo correspondiente. </p>
+
+                        <p invisible="not instructions">Complete la siguiente información para su <b
+                                class="text-primary">solicitud de cotización</b>:</p>
+                        <ul invisible="not instructions">
+                            <li><b class="text-primary">Proveedores sugeridos:</b> Si conoce
+                                proveedores que puedan suministrar el material o servicio,
+                                regístrelos con nombre, correo y teléfono.</li>
+                            <li><b class="text-primary">Ubicación de entrega:</b> Indique si será en <b
+                                    class="text-primary">bodega</b> o en <b class="text-primary">
+                                campo</b>.</li>
+                            <li><b class="text-primary">Presupuesto:</b> Indique si la solicitud
+                                está presupuestada. Si no lo está, podrían aplicarse revisiones
+                                adicionales.</li>
+                        </ul>
+                        <p invisible="not instructions"><b class="text-primary">Nota:</b> Verifique
+                            que la información esté completa antes de continuar para evitar
+                            retrasos.</p>
+                        <separator string="Proveedores sugeridos" invisible="not complete_fields"/>
+                        <p class="text-muted" invisible="not complete_fields">Registre los correos
+                            electrónicos separados por coma.</p>
+                        <group invisible="not complete_fields">
+                            <field name="supplier_emails" string="Correos"
+                                placeholder="proveedor@mail.com, otro@mail.com"/>
+                        </group>
+                        <separator string="Información adicional" invisible="not complete_fields"/>
+                        <p class="text-muted" invisible="not complete_fields"> Indique si la
+                            solicitud está <b class="text-primary">presupuestada</b> y la <b
+                                class="text-primary">ubicación de entrega</b> (bodega o campo). </p>
+                        <group invisible="not complete_fields">
+                            <group>
+                                <div class="o_checkbox_container">
+                                    <div class="o_checkbox_title_container">
+                                        <field name="bugeted"/>
+                                        <div class="o_title_with_border">
+                                            <label for="bugeted"
+                                                string="Presupuesto"/>
+                                            <p invisible="not bugeted">
+                                                <span class="oe_grey">
+                                                    La solicitud se encuentra dentro del presupuesto
+                                                    aprobado y cumple con las políticas internas de
+                                                    la compañía.
+                                                </span>
+                                                <div class="mt-1 o_row">
+                                                    <span style="font-weight: 500; color: #212529;"
+                                                        class="me-1">
+                                                        Precio
+                                                    </span>
+                                                    <field name="price"
+                                                        placeholder="$100.000, $500.000, etc."/>
+                                                </div>
+                                            </p>
+                                            <p class="text-danger"
+                                                invisible="bugeted">
+                                                <i class="fa fa-ban me-1 text-danger"
+                                                    title="Advertencia"/> La solicitud no se
+                                                encuentra dentro del presupuesto aprobado por la
+                                                compañía. </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </group>
+                            <group>
+                                <field name="location_delivery" string="Entregar en"/>
+                                <field name="destination_id"
+                                    invisible="location_delivery != 'field'"
+                                    required="location_delivery == 'field'"
+                                    options="{'no_create': True, 'no_open': True}"
+                                    placeholder="Ej. Bogota, Cali, Medellin, etc.."/>
+                            </group>
+                        </group>
+                        <group invisible="not edit_request_quotation">
+                            <field name="exception_providers_qty"
+                                string="Proveedores"
+                                help='Número de proveedores que serán contactados para esta solicitud de cotización.'
+                                placeholder="Ej. 2, 1, etc."/>
+                        </group>
+                        <field name="justification" invisible="not edit_request_quotation"
+                            placeholder="*Justificación* Ej. No se cuenta con más proveedores que puedan suministrar el producto o servicio solicitado en el tiempo requerido, etc."/>
+                        <group
+                            invisible="type != 'rfq_to_supplier' or instructions or complete_fields or show_provider_instructions or edit_request_quotation">
+                            <field name="supplier_emails" string="Para"
+                                placeholder="DunderMifflin@example.com, AcmeCorp@example.com, etc.."/>
+                        </group>
+                        <group
+                            invisible="instructions or complete_fields or show_provider_instructions or edit_request_quotation">
+                            <field name="subject" string="Asunto" required="1"/>
+                        </group>
+                        <field name="body" widget="html" options="{'codeview': true}"
+                            invisible="instructions or complete_fields or show_provider_instructions or edit_request_quotation"/>
+                        <field name="attachment_ids" widget="mail_composer_attachment_list"
+                            invisible="instructions or complete_fields or show_provider_instructions or edit_request_quotation"/>
+                    </sheet>
+                    <footer>
+
+                        <button string="Editar" type="object" name="action_edit_request_quotation"
+                            class="btn btn-primary" invisible="not show_provider_instructions"/>
+                        <button string="Instrucciones" type="object"
+                            name="action_edit_request_quotation"
+                            class="btn btn-primary"
+                            invisible="show_provider_instructions or type != 'rfq_to_supplier' or min_providers_qty == 0"/>
+
+                        <button string="Siguiente" type="object" name="action_next"
+                            class="btn btn-primary"
+                            invisible="not instructions and not show_provider_instructions"/>
+                        <button string="Instrucciones" type="object" name="action_next"
+                            class="btn btn-primary"
+                            invisible="instructions or not complete_fields"/>
+
+                        <button string="Siguiente" type="object" name="action_view_mail_preview"
+                            class="btn btn-primary" invisible="not complete_fields or instructions"/>
+                        <button string="Volver" type="object" name="action_view_mail_preview"
+                            class="btn btn-primary"
+                            invisible="complete_fields or instructions or not location_delivery"/>
+
+                        <button string="Confirmar" type="object" name="send_mail"
+                            confirm="¿Está seguro de notificar al líder de compras sobre esta solicitud? Una vez enviado el correo, la solicitud no podrá ser modificada."
+                            class="btn btn-primary"
+                            invisible="instructions or complete_fields or type != 'rfq_to_purchase' or show_provider_instructions or edit_request_quotation"/>
+                        <button string="Confirmar" type="object" name="send_mail"
+                            class="btn btn-primary"
+                            invisible="instructions or complete_fields or type == 'rfq_to_purchase' or show_provider_instructions or min_providers_qty == 0"/>
+                        <button string="Confirmar" type="object" name="send_mail"
+                            class="btn btn-primary"
+                            invisible="type != 'rfq_to_project_manager'"/>
+                        <button string="Enviar" type="object" name="send_mail"
+                            class="btn btn-primary"
+                            invisible="type != 'rfq_to_supplier' or min_providers_qty > 0"/>
+                        <button string="Cancelar" class="btn btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

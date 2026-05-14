@@ -1,0 +1,770 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <t t-name="purchase_management.PurchaseManagementDashboard">
+        <div class="pm-dashboard d-flex flex-column h-100 overflow-auto user-select-none">
+
+            <!-- ══ ENCABEZADO ══════════════════════════════════════════════════ -->
+            <div class="pm-header px-3 px-md-4">
+                <div class="d-flex justify-content-end mb-1">
+                    <span class="pm-header-date" t-esc="formattedDate"/>
+                </div>
+                <h1 class="pm-header-title mb-0">Bienvenido, <strong t-esc="userName"/></h1>
+                <div class="d-flex align-items-center justify-content-between gap-3 mt-2">
+                    <p class="pm-header-quote mb-0">
+                        <span t-esc="quote.text"/>
+                        <span class="pm-header-quote-author" t-esc="' — ' + quote.author"/>
+                    </p>
+                    <div class="d-flex align-items-center gap-2 flex-shrink-0">
+
+                        <!-- Filtro por integrante — diseño search + badge + chevron -->
+                        <div t-if="state.teamMembers.length" 
+                             t-att-class="'pm-team-filter' + (!state.filterMemberId &amp;&amp; !state.teamDropdownOpen ? ' pm-team-filter--collapsed' : '')" 
+                             t-on-click.stop="">
+                            <!-- Campo principal -->
+                            <div class="pm-team-field" t-on-click="toggleTeamDropdown">
+                                <i class="fa fa-search pm-team-field-icon"/>
+                                <input class="pm-team-field-input"
+                                       type="text"
+                                       placeholder="Buscar integrante..."
+                                       t-att-value="state.teamSearch"
+                                       t-on-input="onTeamInput"
+                                       t-on-click="openTeamDropdown"/>
+                                <!-- Chevron → X cuando hay filtro activo -->
+                                <i t-if="!state.filterMemberId"
+                                   t-att-class="'fa fa-chevron-down pm-team-chevron' + (state.teamDropdownOpen ? ' pm-team-chevron--open' : '')"/>
+                                <i t-else=""
+                                   class="fa fa-times pm-team-clear"
+                                   t-on-click.stop="(ev) => selectTeamMember(ev, false)"/>
+                            </div>
+                            <!-- Dropdown lista simple -->
+                            <div t-if="state.teamDropdownOpen" class="pm-team-dropdown">
+                                <t t-foreach="filteredTeamMembers" t-as="m" t-key="m.id">
+                                    <div t-att-class="'pm-team-option' + (state.filterMemberId === m.id ? ' pm-team-option--active' : '')"
+                                         t-on-click="(ev) => selectTeamMember(ev, m.id)">
+                                        <t t-esc="m.name"/>
+                                    </div>
+                                </t>
+                                <div t-if="!filteredTeamMembers.length" class="pm-team-empty">
+                                    Sin resultados
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="pm-btn-export"> Exportar <svg
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"
+                                class="pm-btn-export-icon">
+                                <path
+                                    d="M352 96C352 78.3 337.7 64 320 64C302.3 64 288 78.3 288 96L288 306.7L246.6 265.3C234.1 252.8 213.8 252.8 201.3 265.3C188.8 277.8 188.8 298.1 201.3 310.6L297.3 406.6C309.8 419.1 330.1 419.1 342.6 406.6L438.6 310.6C451.1 298.1 451.1 277.8 438.6 265.3C426.1 252.8 405.8 252.8 393.3 265.3L352 306.7L352 96zM160 384C124.7 384 96 412.7 96 448L96 480C96 515.3 124.7 544 160 544L480 544C515.3 544 544 515.3 544 480L544 448C544 412.7 515.3 384 480 384L433.1 384L376.5 440.6C345.3 471.8 294.6 471.8 263.4 440.6L206.9 384L160 384zM464 440C477.3 440 488 450.7 488 464C488 477.3 477.3 488 464 488C450.7 488 440 477.3 440 464C440 450.7 450.7 440 464 440z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══ CUERPO ═══════════════════════════════════════════════════════ -->
+            <div class="pm-body px-3 px-md-4 py-4" t-if="!state.loading">
+
+                <!-- ── §1 INDICADORES CLAVE ──────────────────────────────────── -->
+                <p class="pm-section-label">Estado actual de compras</p>
+                <p class="pm-section-desc">Resumen del estado de las solicitudes y órdenes de compra
+                    activas en el sistema.</p>
+                <div class="row g-3 mb-4">
+
+                    <div class="col-12 col-lg-5">
+                        <div class="pm-kpi-featured"
+                            style="--pm-feat-color: #e63946; --pm-feat-bg: #fff5f5">
+                            <div class="d-flex align-items-start justify-content-between">
+                                <div class="pm-feat-icon-wrap" style="background:#ffdde0">
+                                    <i class="fa fa-clock-o" style="color:#e63946"/>
+                                </div>
+                                <button class="pm-kpi-nav" t-on-click="navigateToOverdue">
+                                    <i class="fa fa-arrow-right"/>
+                                </button>
+                            </div>
+                            <div class="pm-feat-number mt-3" t-esc="state.kpis.sdc_overdue"/>
+                            <div class="pm-feat-label" t-esc="labelOverdue"/>
+                            <p class="pm-feat-desc">Solicitudes cuya fecha límite ha sido superada y
+                                aún se encuentran activas en el sistema.</p>
+                            <div class="pm-feat-footer">
+                                <span class="pm-feat-pct" t-esc="overduePercent + '% del total'"/>
+                                <span class="pm-feat-pill" style="background:#ffdde0; color:#e63946">Requiere
+                                    atención</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-lg-7">
+                        <div class="row g-3 h-100">
+                            <div class="col-12 col-sm-6">
+                                <div class="pm-kpi-medium" style="--pm-card-color: #f4a261">
+                                    <div
+                                        class="d-flex align-items-start justify-content-between mb-2">
+                                        <div class="pm-med-icon-wrap" style="background:#fff3e6">
+                                            <i class="fa fa-hourglass-half" style="color:#f4a261"/>
+                                        </div>
+                                        <button class="pm-kpi-nav"
+                                            t-on-click="() => navigateToList('request.quotation', { search_default_pending_approval: 1 }, 'Solicitudes de Cotización')">
+                                            <i class="fa fa-arrow-right"/>
+                                        </button>
+                                    </div>
+                                    <div class="pm-med-number" t-esc="state.kpis.sdc_pending"/>
+                                    <div class="pm-med-label" t-esc="labelPending"/>
+                                    <p class="pm-med-desc">En revisión por líder de proyecto,
+                                        compras o comité asesor.</p>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="pm-kpi-medium" style="--pm-card-color: #4361ee">
+                                    <div
+                                        class="d-flex align-items-start justify-content-between mb-2">
+                                        <div class="pm-med-icon-wrap" style="background:#eaecff">
+                                            <i class="fa fa-refresh" style="color:#4361ee"/>
+                                        </div>
+                                        <button class="pm-kpi-nav"
+                                            t-on-click="() => navigateToList('request.quotation', { search_default_in_process_compras: 1 }, 'Solicitudes de Cotización')">
+                                            <i class="fa fa-arrow-right"/>
+                                        </button>
+                                    </div>
+                                    <div class="pm-med-number" t-esc="state.kpis.sdc_in_process"/>
+                                    <div class="pm-med-label" t-esc="labelInProcess"/>
+                                    <p class="pm-med-desc">Solicitudes activas siendo procesadas en
+                                        el área de compras.</p>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="pm-kpi-small" style="--pm-card-color: #457b9d">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <span class="pm-sm-label" t-esc="labelTotal"/>
+                                        <button class="pm-kpi-nav"
+                                            t-on-click="() => navigateToList('request.quotation', {}, 'Solicitudes de Cotización')">
+                                            <i class="fa fa-arrow-right"/>
+                                        </button>
+                                    </div>
+                                    <div class="pm-sm-number" t-esc="state.kpis.sdc_total"/>
+                                    <div class="pm-sm-sub d-flex align-items-center gap-2">
+                                        <span>Este mes: <strong t-esc="state.kpis.sdc_this_month"/></span>
+                                        <span t-if="sdcMonthChange.pct !== null"
+                                            t-att-class="'pm-mini-change ' + sdcMonthChange.dir">
+                                            <i
+                                                t-att-class="'fa fa-arrow-' + (sdcMonthChange.dir === 'up' ? 'up' : 'down')"/>
+                                            <t
+                                                t-esc="sdcMonthChange.pct"/>% </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="pm-kpi-small" style="--pm-card-color: #2a9d8f">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <span class="pm-sm-label" t-esc="labelOrders"/>
+                                        <button class="pm-kpi-nav"
+                                            t-on-click="() => navigateToList('purchase.management.order', {}, 'Órdenes de Compra')">
+                                            <i class="fa fa-arrow-right"/>
+                                        </button>
+                                    </div>
+                                    <div class="pm-sm-number" t-esc="state.kpis.oc_total"/>
+                                    <div class="pm-sm-sub" t-if="state.kpis.oc_total_value > 0">
+                                        Acumulado: <strong
+                                            t-esc="formatCompact(state.kpis.oc_total_value)"/>
+                                    </div>
+                                    <div class="pm-sm-sub pm-sm-empty" t-else="">Sin valor acumulado</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div><!--
+                /§1 -->
+
+                <!-- ── §2 PULSO DEL NEGOCIO ──────────────────────────────────── -->
+                <p class="pm-section-label">Actividad de los últimos 6 meses</p>
+                <p class="pm-section-desc">Cómo ha evolucionado el volumen de compras mes a mes y en
+                    qué etapa se encuentran las solicitudes activas.</p>
+                <div class="row g-3 mb-4">
+
+                    <div class="col-12 col-lg-8">
+                        <div class="pm-pulse-card">
+                            <div class="pm-pulse-metrics">
+                                <div class="pm-pulse-metric">
+                                    <span class="pm-pulse-value" t-esc="sdc6MonthsTotal"/>
+                                    <span class="pm-pulse-label">SDC en los últimos 6 meses</span>
+                                    <p class="pm-pulse-desc">Volumen total de solicitudes de
+                                        cotización creadas en el período analizado.</p>
+                                </div>
+                                <div class="pm-pulse-divider"/>
+                                <div class="pm-pulse-metric">
+                                    <span class="pm-pulse-value"><t t-esc="conversionRate"/>%</span>
+                                    <span class="pm-pulse-label">Tasa de conversión</span>
+                                    <p class="pm-pulse-desc">Solicitudes que resultaron en una orden
+                                        de compra efectiva en el sistema.</p>
+                                </div>
+                            </div>
+                            <div class="pm-pulse-legend">
+                                <span><span class="pm-pulse-legend-dot" style="background:#4361ee"/>
+                                    SDC creadas</span>
+                                <span><span class="pm-pulse-legend-dot" style="background:#2a9d8f"/>
+                                    OC generadas</span>
+                            </div>
+                            <div style="position:relative; height:160px">
+                                <canvas t-ref="trendChart"/>
+                            </div>
+                            <div class="pm-pulse-footer" t-if="sdcTrendChange">
+                                <i
+                                    t-att-class="'fa fa-arrow-' + (sdcTrendChange.dir === 'up' ? 'up' : 'down')"
+                                    t-att-style="'color:' + (sdcTrendChange.dir === 'up' ? '#2a9d8f' : '#e63946')"/>
+                                <span><t t-esc="sdcTrendChange.pct"/>% respecto al mes anterior en
+                                    volumen de solicitudes</span>
+                            </div>
+                            <div class="pm-pulse-footer" t-else="">
+                                <i class="fa fa-minus" style="color:#adb5bd"/>
+                                <span>Sin datos comparativos del período anterior</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-lg-4">
+                        <div class="pm-pipeline-card">
+                            <!-- Header -->
+                            <div class="pm-pipeline-header">
+                                <p class="pm-section-label mb-0">Solicitudes por etapa</p>
+                            </div>
+                            <p class="pm-section-desc mb-0" style="margin-bottom:0.85rem!important">Solicitudes activas agrupadas por paso del proceso.</p>
+                            <!-- Lista estilo schedule -->
+                            <div class="pm-stage-list">
+                                <t t-foreach="stateDistWithPct" t-as="item" t-key="item.state">
+                                    <div class="pm-stage-item" style="cursor:pointer"
+                                         t-on-click="() => navigateToStateSDC(item.state)">
+                                        <span class="pm-stage-icon"
+                                              t-attf-style="background:#{item.color}1a; color:#{item.color}">
+                                            <i t-att-class="'fa ' + item.icon"/>
+                                        </span>
+                                        <div class="pm-stage-info">
+                                            <span class="pm-stage-name" t-esc="item.label"/>
+                                            <span class="pm-stage-sub">
+                                                <t t-esc="item.count"/> solicitudes · <t t-esc="item.pct"/>%
+                                            </span>
+                                        </div>
+                                        <i class="fa fa-chevron-right pm-stage-chevron"/>
+                                    </div>
+                                </t>
+                                <div t-if="!stateDistWithPct.length" class="pm-empty-state">
+                                    <i class="fa fa-inbox"/>
+                                    <span>Sin datos.</span>
+                                </div>
+                            </div>
+                            <!-- Footer -->
+                            <div class="pm-pipeline-footer">
+                                Total: <strong t-esc="state.kpis.sdc_in_process"/> solicitudes activas
+                            </div>
+                        </div>
+                    </div>
+
+                </div><!--
+                /§2 -->
+
+                <!-- ── §3 PANEL DE GESTIÓN DE COMPRAS ──────────────────────────── -->
+                <p class="pm-section-label">Panel de gestión — Compras</p>
+                <p class="pm-section-desc">Solicitudes listas para el comité y resumen del flujo del período actual.</p>
+                <div class="row g-3 mb-4">
+
+                    <!-- Card 1 — SDC Gestión de Aprobaciones del Comité -->
+                    <div class="col-12 col-lg-8">
+                        <div class="pm-showcase-card">
+                            <div class="pm-showcase-body">
+                                <div class="pm-showcase-content">
+                                    <span class="pm-showcase-title">Pendientes de Comité</span>
+                                    <div class="pm-showcase-divider"/>
+                                    <p class="pm-showcase-desc">Centraliza el seguimiento de las solicitudes en su etapa final de validación ante el Comité de Compras. Para asegurar un control operativo total, esta vista agrupa todas las solicitudes administrativas de la compañía junto con los proyectos específicos bajo su responsabilidad que ya cuentan con recomendaciones técnicas y comerciales, permitiendo una supervisión integral antes de la emisión de la orden.</p>
+                                </div>
+                                <div class="pm-showcase-stat">
+                                    <span class="pm-showcase-stat-num" t-esc="state.kpis.sdc_management"/>
+                                    <span class="pm-showcase-stat-lbl">En Comité</span>
+                                    <div class="pm-showcase-stat-sep"/>
+                                    <button class="pm-showcase-btn"
+                                        t-on-click="navigateToManagementSDC">
+                                        Ver solicitudes
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 — columna derecha apilada -->
+                    <div class="col-12 col-lg-4 d-flex flex-column gap-3">
+
+                        <!-- 2a — Listas para OC (aprobadas) -->
+                        <div class="pm-approved-kpi" t-on-click="() => navigateToStateSDC('approved')">
+                            <div class="pm-approved-kpi-top">
+                                <span class="pm-approved-kpi-label">Listas para crear OC</span>
+                                <i class="fa fa-arrow-right pm-approved-kpi-arrow"/>
+                            </div>
+                            <div class="pm-approved-kpi-body">
+                                <span class="pm-approved-kpi-num" t-esc="state.sdc_approved_count"/>
+                                <span class="pm-approved-kpi-sub">
+                                    <t t-if="state.sdc_approved_count === 1">Solicitud aprobada</t>
+                                    <t t-else="">Solicitudes aprobadas</t>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- 2b — SDC del Período -->
+                        <div class="pm-mini-report-card" style="flex:1">
+                            <div class="d-flex align-items-baseline justify-content-between mb-2">
+                                <span class="pm-section-label mb-0">SDC del Período</span>
+                                <span class="pm-mini-report-period" t-esc="todayMonthLabel"/>
+                            </div>
+                            <div class="pm-mini-report-metrics">
+                                <div class="pm-mini-report-metric">
+                                    <span class="pm-mini-report-lbl">Este Mes</span>
+                                    <span class="pm-mini-report-val" t-esc="state.kpis.sdc_this_month"/>
+                                </div>
+                                <div class="pm-mini-report-sep"/>
+                                <div class="pm-mini-report-metric">
+                                    <span class="pm-mini-report-lbl">En Proceso</span>
+                                    <span class="pm-mini-report-val" t-esc="state.kpis.sdc_in_process"/>
+                                </div>
+                                <div class="pm-mini-report-sep"/>
+                                <div class="pm-mini-report-metric">
+                                    <span class="pm-mini-report-lbl">OC Creadas</span>
+                                    <span class="pm-mini-report-val" t-esc="state.kpis.oc_total"/>
+                                </div>
+                            </div>
+                            <div class="pm-mini-report-bar-wrap">
+                                <div class="pm-mini-report-bar"
+                                    t-att-style="'width:' + Math.min(conversionRate, 100) + '%'">
+                                    <span t-if="conversionRate > 8" t-esc="conversionRate + '%'"/>
+                                </div>
+                            </div>
+                            <span class="pm-mini-report-bar-label">Tasa de conversión SDC → OC</span>
+                        </div>
+
+                    </div>
+
+                </div><!--
+                /§3 -->
+
+                <!-- ── §4 MÉTRICAS DE EFICIENCIA ─────────────────────────────── -->
+                <p class="pm-section-label">Eficiencia del proceso de compras</p>
+                <p class="pm-section-desc">Tasa de conversión de solicitudes de proyecto, tiempo promedio de gestión y valor de compras del mes.</p>
+                <div class="row g-3 mb-4">
+
+                    <!-- Conversión SDC → OC -->
+                    <div class="col-12 col-md-4">
+                        <div class="pm-kpi-spark">
+                            <span class="pm-spark-label">Conversión SDC → OC</span>
+                            <div class="pm-spark-main">
+                                <span class="pm-spark-value"><t t-esc="conversionRate"/>%</span>
+                            </div>
+                            <p class="pm-spark-desc pm-spark-desc--spaced">De las solicitudes de
+                                proyecto gestionadas por compras, este porcentaje resultó en una
+                                orden de compra efectiva.</p>
+                            <div style="position:relative; height:40px; margin-top:auto">
+                                <canvas t-ref="convSparkline"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tiempo promedio de gestión -->
+                    <div class="col-12 col-md-4">
+                        <div class="pm-kpi-spark">
+                            <span class="pm-spark-label">Tiempo Promedio de Gestión</span>
+                            <div class="pm-spark-main">
+                                <span class="pm-spark-value"><t t-esc="avgDays"/> días</span>
+                            </div>
+                            <p class="pm-spark-desc pm-spark-desc--spaced">Promedio desde la
+                                creación de una SDC de proyecto hasta la generación de la orden de
+                                compra.</p>
+                            <div style="position:relative; height:40px; margin-top:auto">
+                                <canvas t-ref="daysSparkline"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Valor OC del mes -->
+                    <div class="col-12 col-md-4">
+                        <div class="pm-kpi-spark">
+                            <span class="pm-spark-label">Valor OC del Mes</span>
+                            <div class="pm-spark-main">
+                                <span class="pm-spark-value" t-esc="formatCompact(ocValueMonth)"/>
+                                <t t-if="ocValueMonthChange.pct !== null">
+                                    <span t-att-class="'pm-spark-change ' + ocValueMonthChange.dir">
+                                        <i
+                                            t-att-class="'fa fa-arrow-' + (ocValueMonthChange.dir === 'up' ? 'up' : 'down')"/>
+                                        <t
+                                            t-esc="ocValueMonthChange.pct"/>% </span>
+                                </t>
+                            </div>
+                            <p class="pm-spark-desc pm-spark-desc--spaced">Monto total de órdenes de
+                                compra generadas en el mes en curso. Comparado con el mes anterior.</p>
+                            <div style="position:relative; height:40px; margin-top:auto">
+                                <canvas t-ref="ocValSparkline"/>
+                            </div>
+                        </div>
+                    </div>
+
+                </div><!--
+                /§4 -->
+
+                <!-- ── §5 ALERTAS OPERATIVAS Y MERCADO CAMBIARIO ─────────────── -->
+                <p class="pm-section-label">Alertas y seguimiento de riesgos</p>
+                <p class="pm-section-desc">Solicitudes próximas a vencer, sin responsable asignado,
+                    y movimientos de divisas que pueden afectar las cotizaciones.</p>
+                <div class="row g-3 mb-4">
+
+                    <!-- Calendario de vencimientos SDC — diseño dos paneles -->
+                    <div class="col-12 col-lg-5">
+                        <div class="pm-cal-card">
+
+                            <!-- Panel izquierdo: hoy destacado -->
+                            <div class="pm-cal-left">
+                                <div class="pm-cal-left-center">
+                                    <span class="pm-cal-left-day" t-esc="todayDayNumber"/>
+                                    <span class="pm-cal-left-month" t-esc="todayMonthLabel"/>
+                                </div>
+                                <div class="pm-cal-left-footer">
+                                    <span t-if="calendarDeadlineCount > 0" class="pm-cal-left-badge">
+                                        <i class="fa fa-exclamation-circle"/>
+                                        <t
+                                            t-esc="calendarDeadlineCount"/> este mes </span>
+                                    <span t-else="" class="pm-cal-left-ok">
+                                        <i class="fa fa-check-circle"/> Al día </span>
+                                </div>
+                            </div>
+
+                            <!-- Panel derecho: grilla navegable -->
+                            <div class="pm-cal-right">
+                                <!-- Fila de navegación -->
+                                <div class="pm-cal-nav-row">
+                                    <span class="pm-cal-nav-month" t-esc="calendarMonthLabel"/>
+                                    <div class="pm-cal-nav-controls">
+                                        <div class="pm-cal-legend-trigger">
+                                            <i class="fa fa-info-circle pm-cal-info-icon"/>
+                                            <div class="pm-cal-tooltip">
+                                                <div class="pm-cal-leg-item">
+                                                    <span class="pm-cal-leg-swatch"
+                                                        style="background:#e63946"/>Vencida </div>
+                                                <div class="pm-cal-leg-item">
+                                                    <span class="pm-cal-leg-swatch"
+                                                        style="background:#e63946; opacity:0.6"/>Crítica
+                                                    ≤2d </div>
+                                                <div class="pm-cal-leg-item">
+                                                    <span class="pm-cal-leg-swatch"
+                                                        style="background:#f4a261"/>Urgente ≤7d </div>
+                                                <div class="pm-cal-leg-item">
+                                                    <span class="pm-cal-leg-swatch"
+                                                        style="background:#4361ee"/>A tiempo </div>
+                                            </div>
+                                        </div>
+                                        <div class="pm-cal-nav-sep"/>
+                                        <button class="pm-cal-btn" t-on-click="prevCalMonth">
+                                            <i class="fa fa-chevron-left"/>
+                                        </button>
+                                        <button class="pm-cal-btn" t-on-click="nextCalMonth">
+                                            <i class="fa fa-chevron-right"/>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Grilla (se reemplaza por el detalle al seleccionar un día) -->
+                                <div t-if="!state.selectedCalDay" class="pm-cal-grid">
+                                    <div class="pm-cal-dow">Lu</div>
+                                    <div class="pm-cal-dow">Ma</div>
+                                    <div class="pm-cal-dow">Mi</div>
+                                    <div class="pm-cal-dow">Ju</div>
+                                    <div class="pm-cal-dow">Vi</div>
+                                    <div class="pm-cal-dow">Sá</div>
+                                    <div class="pm-cal-dow">Do</div>
+                                    <t t-foreach="calendarDays" t-as="day" t-key="day_index">
+                                        <div t-if="!day" class="pm-cal-cell pm-cal-empty"/>
+                                        <div t-else=""
+                                            t-att-class="'pm-cal-cell' + (day.isToday ? ' is-today' : '') + (day.count ? ' has-deadline urgency-' + day.urgency : '')"
+                                            t-on-click.stop="() => day.count and toggleCalDay(day.dateStr)">
+                                            <span class="pm-cal-day-num" t-esc="day.day"/>
+                                        </div>
+                                    </t>
+                                </div>
+
+                                <!-- Detalle del día (reemplaza la grilla, misma altura) -->
+                                <div t-else="" class="pm-cal-day-detail">
+                                    <div class="pm-cal-detail-header">
+                                        <span class="pm-cal-detail-title">
+                                            <i class="fa fa-calendar-o"/>
+                                            <t
+                                                t-esc="calSelectedDayLabel"/> — <strong><t
+                                                    t-esc="calSelectedDayItems.length"/> SDC</strong>
+                                        </span>
+                                        <button class="pm-cal-detail-close"
+                                            t-on-click="() => (state.selectedCalDay = null)">
+                                            <i class="fa fa-times"/>
+                                        </button>
+                                    </div>
+                                    <div class="pm-cal-detail-list">
+                                        <t t-foreach="calSelectedDayItems" t-as="sdc" t-key="sdc.id">
+                                            <div class="pm-cal-detail-item"
+                                                t-on-click="() => navigateToForm('request.quotation', sdc.id)">
+                                                <span class="pm-urgency-dot"
+                                                    t-att-data-urgency="sdc.urgency"/>
+                                                <div class="pm-cal-detail-info">
+                                                    <span class="pm-cal-detail-ref"
+                                                        t-esc="sdc.reference"/>
+                                                    <span class="pm-cal-detail-sub"
+                                                        t-esc="sdc.subject or '—'"/>
+                                                </div>
+                                                <span t-att-class="'pm-days-badge ' + sdc.urgency">
+                                                    <t t-if="sdc.days_left &lt; 0">hace <t t-esc="-sdc.days_left"/>d</t>
+                                                    <t t-elif="sdc.days_left === 0">hoy</t>
+                                                    <t t-elif="sdc.days_left === 1">mañana</t>
+                                                    <t t-else="">en <t t-esc="sdc.days_left"/>d</t>
+                                                </span>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- TRM y exposición en divisas -->
+                    <div class="col-12 col-lg-7">
+                        <div class="pm-trm-card">
+                            <div class="pm-trm-header">
+                                <p class="pm-section-label mb-0">Divisas hoy</p>
+                                <span class="pm-trm-updated">Actualizado al <t
+                                        t-esc="todayFormatted"/></span>
+                            </div>
+                            <div class="pm-trm-blocks">
+                                <!-- USD -->
+                                <div class="pm-trm-block">
+                                    <span class="pm-trm-currency-code">🇺🇸 USD</span>
+                                    <span class="pm-trm-value"> $<t
+                                            t-esc="state.currencies.USD and state.currencies.USD.rate.toLocaleString('es-CO') or '—'"/>
+                                        COP </span>
+                                    <span t-if="trmUsdChange.pct !== null"
+                                        t-att-class="'pm-trm-change ' + trmUsdChange.dir">
+                                        <i
+                                            t-att-class="'fa fa-arrow-' + (trmUsdChange.dir === 'up' ? 'up' : 'down')"/>
+                                        <t
+                                            t-esc="trmUsdChange.pct"/>% vs mes ant. </span>
+                                    <div class="pm-trm-chart-wrap">
+                                        <canvas t-ref="trmUsdChart"/>
+                                    </div>
+                                </div>
+                                <!-- EUR -->
+                                <div class="pm-trm-block">
+                                    <span class="pm-trm-currency-code">🇪🇺 EUR</span>
+                                    <span class="pm-trm-value"> $<t
+                                            t-esc="state.currencies.EUR and state.currencies.EUR.rate.toLocaleString('es-CO') or '—'"/>
+                                        COP </span>
+                                    <span t-if="trmEurChange.pct !== null"
+                                        t-att-class="'pm-trm-change ' + trmEurChange.dir">
+                                        <i
+                                            t-att-class="'fa fa-arrow-' + (trmEurChange.dir === 'up' ? 'up' : 'down')"/>
+                                        <t
+                                            t-esc="trmEurChange.pct"/>% vs mes ant. </span>
+                                    <div class="pm-trm-chart-wrap">
+                                        <canvas t-ref="trmEurChart"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="pm-trm-note">
+                                Las cotizaciones en divisa extranjera pueden variar con los
+                                movimientos del mercado cambiario.
+                                Se recomienda validar la TRM vigente al momento de la aprobación de
+                                la OC.
+                            </p>
+                        </div>
+                    </div>
+
+                </div><!--
+                /§5 -->
+
+                <!-- ── §6 DESEMPEÑO DE PROVEEDORES Y PROYECTOS ───────────────── -->
+                <p class="pm-section-label">Proveedores y proyectos activos</p>
+                <p class="pm-section-desc">Proveedores con mayor valor acumulado en órdenes de
+                    compra y proyectos con más actividad en el período.</p>
+                <div class="row g-3 mb-4">
+
+                    <!-- Top Proveedores -->
+                    <div class="col-12 col-lg-6">
+                        <div class="pm-supplier-card">
+                            <div class="pm-card-header">
+                                <p class="pm-section-label mb-0">Principales proveedores</p>
+                                <p class="pm-section-desc mb-0">Por valor acumulado en órdenes de
+                                    compra</p>
+                            </div>
+                            <t
+                                t-if="state.charts and state.charts.top_suppliers and state.charts.top_suppliers.length">
+                                <div class="pm-sup-list">
+                                    <t t-foreach="state.charts.top_suppliers" t-as="sup"
+                                        t-key="sup.id">
+                                        <div class="pm-sup-row" t-att-data-rank="sup_index + 1"
+                                             style="cursor:pointer"
+                                             t-on-click="() => navigateToSupplierOC(sup.id, sup.name)">
+                                            <span class="pm-sup-rank" t-esc="sup_index + 1"/>
+                                            <div class="pm-sup-info">
+                                                <span class="pm-sup-name" t-esc="sup.name"/>
+                                                <span class="pm-sup-meta"><t t-esc="sup.count"/> <t
+                                                        t-if="sup.count === 1">Órden</t><t t-else="">
+                                                    Órdenes</t> de compra </span>
+                                            </div>
+                                            <span class="pm-sup-value"
+                                                t-esc="formatCompact(sup.value)"/>
+                                        </div>
+                                    </t>
+                                </div>
+                                <div class="pm-supplier-footer"> Total: <strong
+                                        t-esc="formatCompact(state.kpis.oc_total_value)"/> · <t
+                                        t-esc="state.kpis.oc_total"/> OC activas </div>
+                            </t>
+                            <div class="pm-empty-state" t-else="">
+                                <i class="fa fa-building-o"/>
+                                <span>Sin órdenes de compra registradas aún.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top Proyectos -->
+                    <div class="col-12 col-lg-6">
+                        <div class="pm-project-card">
+                            <div class="pm-card-header">
+                                <p class="pm-section-label mb-0">Proyectos con más movimiento</p>
+                                <p class="pm-section-desc mb-0">Por número de solicitudes de compra
+                                    en el período</p>
+                            </div>
+                            <t t-if="projectTreemap.length">
+                                <div class="pm-treemap-container">
+                                    <t t-foreach="projectTreemap" t-as="cell" t-key="cell.name">
+                                        <div class="pm-treemap-cell"
+                                            t-att-title="cell.name + ' — ' + sdcLabel(cell.value)"
+                                            t-att-style="'left:' + cell.x + '%; top:' + cell.y + '%; width:' + cell.w + '%; height:' + cell.h + '%; background:' + cell.color"
+                                            t-on-click="() => navigateToProjectSDC(cell.id, cell.name)">
+                                            <t t-if="cellHasRoom(cell)">
+                                                <span class="pm-treemap-name" t-esc="cell.name"/>
+                                                <span class="pm-treemap-val"
+                                                    t-esc="sdcLabel(cell.value)"/>
+                                            </t>
+                                        </div>
+                                    </t>
+                                </div>
+                            </t>
+                            <div class="pm-empty-state" t-else="">
+                                <i class="fa fa-folder-open-o"/>
+                                <span>Sin proyectos con solicitudes registradas.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div><!--
+                /§6 -->
+
+                <!-- ── §7 RESUMEN DE ACTIVIDAD TOTAL ─────────────────────────── -->
+                <p class="pm-section-label">Actividad total del período</p>
+                <p class="pm-section-desc">Totales acumulados y evolución mensual comparativa entre
+                    solicitudes creadas y órdenes de compra generadas.</p>
+                <div class="row g-3 mb-4">
+                    <div class="col-12">
+                        <div class="pm-activity-card">
+                            <div class="pm-activity-header">
+                                <div class="pm-activity-stat">
+                                    <span class="pm-activity-value" t-esc="state.kpis.sdc_total"/>
+                                    <span class="pm-activity-label">Total SDC</span>
+                                </div>
+                                <div class="pm-activity-divider"/>
+                                <div class="pm-activity-stat">
+                                    <span class="pm-activity-value" t-esc="state.kpis.oc_total"/>
+                                    <span class="pm-activity-label">Total OC</span>
+                                </div>
+                                <div class="pm-activity-divider"/>
+                                <div class="pm-activity-stat">
+                                    <span class="pm-activity-value"
+                                        t-esc="formatCompact(state.kpis.oc_total_value)"/>
+                                    <span class="pm-activity-label">Valor Acumulado OC</span>
+                                </div>
+                                <div class="pm-activity-divider"/>
+                                <div class="pm-activity-stat">
+                                    <span class="pm-activity-value"><t t-esc="avgDays"/> días</span>
+                                    <span class="pm-activity-label">Promedio de Gestión</span>
+                                </div>
+                            </div>
+                            <p class="pm-activity-desc">
+                                Evolución mensual comparativa entre solicitudes de cotización
+                                creadas y órdenes de compra generadas en los últimos 6 meses.
+                            </p>
+                            <div style="position:relative; height:160px">
+                                <canvas t-ref="activityChart"/>
+                            </div>
+                        </div>
+                    </div>
+                </div><!--
+                /§7 -->
+
+                <!-- ── §8 SOLICITUDES DE COTIZACIÓN ─────────────────────── -->
+                <div class="pm-table-card mb-3">
+                    <div class="pm-table-header">
+                        <span class="pm-section-label mb-0">Solicitudes de Cotización</span>
+                        <div class="pm-search-wrap">
+                            <i class="fa fa-search pm-search-icon"/>
+                            <input class="pm-search-input" type="text"
+                                placeholder="Buscar por referencia, asunto o proyecto..."
+                                t-att-value="state.sdcSearch"
+                                t-on-input="onSDCSearch"/>
+                            <i t-if="state.sdcSearchLoading" class="fa fa-spinner fa-spin pm-search-spinner"/>
+                        </div>
+                    </div>
+                    <table class="pm-data-table">
+                        <colgroup>
+                            <col style="width:12%"/>
+                            <col style="width:30%"/>
+                            <col style="width:25%"/>
+                            <col style="width:18%"/>
+                            <col style="width:15%"/>
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th>Referencia</th>
+                                <th>Asunto</th>
+                                <th>Proyecto</th>
+                                <th>Estado</th>
+                                <th>Fecha Límite</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="displayedSdc" t-as="sdc" t-key="sdc.id">
+                                <tr t-on-click="() => navigateToForm('request.quotation', sdc.id)">
+                                    <td class="pm-mono" t-esc="sdc.reference or '—'"/>
+                                    <td class="pm-cell-subject" t-esc="sdc.subject or '—'"/>
+                                    <td class="pm-text-muted pm-cell-project" t-esc="sdc.project or '—'"/>
+                                    <td>
+                                        <span class="pm-badge" t-att-data-state="sdc.state"
+                                            t-esc="sdc.state_label"/>
+                                    </td>
+                                    <td class="pm-cell-deadline">
+                                        <span t-esc="sdc.deadline or '—'"/>
+                                        <span class="pm-deadline-delta"
+                                            t-if="sdc.days_left !== null and sdc.days_left !== undefined"
+                                            t-esc="deadlineDeltaLabel(sdc.days_left)"/>
+                                    </td>
+                                </tr>
+                            </t>
+                            <tr t-if="!displayedSdc.length">
+                                <td colspan="5" class="pm-empty-row">
+                                    <t t-if="state.sdcSearch">Sin resultados para &quot;<t t-esc="state.sdcSearch"/>&quot;.</t>
+                                    <t t-else="">Sin solicitudes registradas.</t>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div><!-- /§8 -->
+
+            </div><!--
+            /pm-body -->
+
+            <div t-if="state.loading"
+                class="d-flex align-items-center justify-content-center flex-grow-1">
+                <span class="text-muted" style="font-size:0.85rem">Cargando dashboard…</span>
+            </div>
+
+        </div>
+    </t>
+</templates>

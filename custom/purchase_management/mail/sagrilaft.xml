@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="email_template_sagrilaft_request_approval" model="mail.template">
+            <field name="name">Solicitar aprobación SAGRILAFT</field>
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="subject">Solicitud de aprobación de proveedor para SAGRILAFT</field>
+            <field name="email_from">odoo@tsg.net.co</field>
+            <field name="body_html" type="html">
+                <div style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;color:#222;">
+                    <p style="font-size:13px;margin:0 0 10px 0;line-height:1.45;">
+                        Estimado equipo SAGRILAFT,
+                    </p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;"> Se le informa que
+                        se creó un nuevo <strong>
+                            Proveedor
+                        </strong>
+                        que requiere su aprobación dentro del sistema de gestión de compras. Los
+                        detalles del proveedor son los siguientes:</p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;">
+                        <ul>
+                            <li>
+                                <strong>Nombre:</strong>
+                                <t t-out="object.name"/>
+                            </li>
+                            <li>
+                                <strong>Email:</strong>
+                                <t t-out="object.email or 'No proporcionado'"/>
+                            </li>
+                            <li>
+                                <strong>Teléfono:</strong>
+                                <t t-out="object.phone or 'No proporcionado'"/>
+                            </li>
+                            <li>
+                                <strong>Dirección:</strong>
+                                <t t-out="object.street or 'No proporcionado'"/>
+                            </li>
+                            <li>
+                                <strong>Ciudad:</strong>
+                                <t t-out="object.city_id.name or 'No proporcionado'"/>
+                            </li>
+                            <li>
+                                <strong>País:</strong>
+                                <t t-out="object.country_id.name or 'No proporcionado'"/>
+                            </li>
+                        </ul>
+                    </p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;"> Por favor, revise
+                        la información del proveedor y proceda con la evaluación correspondiente. Su
+                        aprobación es esencial para garantizar el cumplimiento de las políticas
+                        internas y las normativas vigentes en materia de prevención de lavado de
+                        activos. Puede acceder al sistema para aprobar o rechazar al proveedor
+                        haciendo clic <t
+                            t-set="website_url" t-value="object.get_base_url()"/> <a
+                            t-att-href="website_url" target="_blank"
+                            style="color:#1155cc;text-decoration:underline;">aquí</a>. </p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;">
+                        Agradecemos de antemano su pronta atención a esta solicitud.
+                    </p>
+                    <p style="font-size:13px;margin:0;line-height:1.45;"> Saludos cordiales,<br/>
+                        Equipo de Compras </p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

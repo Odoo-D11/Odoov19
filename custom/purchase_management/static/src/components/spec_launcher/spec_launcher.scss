@@ -1,0 +1,95 @@
+.o_spec_kanban_container {
+    min-height: 80px;
+}
+
+.o_spec_empty {
+    text-align: center;
+    color: #999;
+    padding: 28px 0;
+    font-size: 0.875rem;
+}
+
+.o_spec_kanban {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 4px 0;
+}
+
+.o_spec_card {
+    width: 200px;
+    border: 1px solid #d5d5d5;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07);
+    transition: box-shadow 0.15s ease;
+
+    &:hover {
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.13);
+    }
+}
+
+.o_spec_card_preview {
+    position: relative;
+    height: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    &.o_spec_type_pdf {
+        background-color: #a93226;
+    }
+
+    &.o_spec_type_doc {
+        background-color: #1a5276;
+    }
+}
+
+.o_spec_delete_btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.30);
+    color: #fff;
+    font-size: 12px;
+    line-height: 22px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.15s;
+
+    &:hover {
+        background: rgba(0, 0, 0, 0.55);
+    }
+}
+
+.o_spec_card_type {
+    color: #fff;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    user-select: none;
+}
+
+.o_spec_card_footer {
+    padding: 8px 12px;
+    background: #f9f9f9;
+    border-top: 1px solid #e6e6e6;
+}
+
+.o_spec_card_name {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 400;
+    color: #777;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+    letter-spacing: 0.2px;
+}

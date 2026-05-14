@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_purchase_administrative_expense_list" model="ir.ui.view">
+            <field name="name">purchase.administrative.expense.list</field>
+            <field name="model">purchase.administrative.expense</field>
+            <field name="arch" type="xml">
+                <list string="Gastos administrativos">
+                    <field name="reference"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_purchase_administrative_expense_form" model="ir.ui.view">
+            <field name="name">purchase.administrative.expense.form</field>
+            <field name="model">purchase.administrative.expense</field>
+            <field name="arch" type="xml">
+                <form string="Gasto administrativo" duplicate="false">
+                    <div class="alert alert-info" role="alert">
+                        <i class="fa fa-info-circle me-1" title="Información"/>
+                        <span> La solicitud con referencia <strong class="text-primary">
+                                <field name="reference"/>
+                            </strong> se
+                            encuentra actualmente en el estado <strong class="text-primary">
+                                <field name="state"/>
+                            </strong>. </span>
+                    </div>
+                    <sheet>
+                        <div class="row">
+                            <div class="col-lg-7">
+                                <span style="font-weight: 500; color: #212529;">
+                                    Asunto
+                                </span>
+                                <div class="form-title-responsive mb-4 text-truncate">
+                                    <h1>
+                                        <field name="subject"
+                                            placeholder="Ej. Suministro de material de oficina"
+                                            nolabel="1" class="o_field_char o_field_title"/>
+                                    </h1>
+                                    <div>
+                                        <field name="type_id" class="w-100 text-primary"
+                                            options="{'no_create': True, 'no_open': True}"
+                                            placeholder="¿A qué tipo de solicitud pertenece esta solicitud de cotización? Ej. Productos (Bienes físicos, Ej. Tecnología, Portátiles, Firewall, UPS), Servicios (Consultoría, mantenimiento, etc.), etc."/>
+                                    </div>
+                                </div>
+                                <group>
+                                    <field name="partner_id" class="text-primary"
+                                        options="{'no_open': True, 'no_create': True}"
+                                        placeholder="Ej. Dwight Schrute, Pam Beesly, etc..."/>
+                                    <field name="project_id"
+                                        options="{'no_open': True, 'no_create': True}"
+                                        placeholder="Ej. Administrativo - 30, Jep Mesa De Ayuda - 13333, etc..."/>
+                                    <label for="currency_id"/>
+                                    <div class="o_row">
+                                        <span style="font-weight: 400;"
+                                            invisible="currency_id == 8 or not currency_id"
+                                            class="me-1">1</span>
+                                        <field name="currency_id"
+                                            placeholder="Ej. COP, USD, etc..."
+                                            options="{'no_create': True, 'no_open': True}"/>
+                                        <span style="font-weight: 400;" class="mx-1"
+                                            invisible="currency_id == 8 or not currency_id">=</span>
+                                        <field name="trm"
+                                            invisible="currency_id == 8 or not currency_id"
+                                            placeholder="Ej. 4,500.00"/>
+                                    </div>
+                                </group>
+                                <div class="mt-3">
+                                    <field name="reason"
+                                        placeholder="Escribe el motivo de la solicitud.. Ej. (Se requieren nuevos equipos de computo para el departamento de desarrollo debido a la expansión del equipo)."
+                                        nolabel="1"/>
+                                </div>
+                            </div>
+                            <div class="col-lg-5 d-flex">
+                                <div class="o_timeline_sidebar flex-grow-1">
+                                    <field name="product_line_ids" nolabel="1"
+                                        widget="AdminExpenseBoard"/>
+                                </div>
+                            </div>
+                        </div>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_purchase_administrative_expense_form_add_product" model="ir.ui.view">
+            <field name="name">purchase.administrative.expense.form.add.product</field>
+            <field name="model">purchase.administrative.expense</field>
+            <field name="arch" type="xml">
+                <form string="Agregar Producto" duplicate="false">
+                    <field name="type_id" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="trm" invisible="1"/>
+                    <sheet>
+                        <separator string="Servicios"/>
+                        <p class="text-muted">En una solicitud, los “servicios” se
+                            refieren a actividades intangibles que el comprador requiere de un
+                            proveedor externo. Estos servicios pueden incluir consultoría,
+                            mantenimiento, desarrollo de software, capacitación, soporte técnico,
+                            entre otros. Al solicitar una cotización para servicios, es importante
+                            detallar claramente las expectativas, entregables y cualquier requisito
+                            específico que se tenga.
+                        </p>
+                        <field name="product_line_ids" class="o_list_product_line_ids">
+                            <list editable="bottom" string="Productos" limit="400">
+                                <field name="currency_id" column_invisible="1"
+                                    options="{'no_create': True, 'no_open': True}"/>
+                                <field name="name" string="Nombre" class="text-primary"
+                                    placeholder="Ej. Consultoría en seguridad informática"/>
+                                <field name="qty" string="Cantidad"/>
+                                <field name="price_unit" string="Precio Unit."
+                                    placeholder="Ej. 1500, 200, etc..."/>
+                                <field name="subtotal" string="Subtotal" readonly="1"/>
+                            </list>
+                        </field>
+                        <div class="o_line_totals_container">
+                            <div class="o_line_totals_wrapper">
+                                <field name="total" widget="line-totals-field" nolabel="1"
+                                    readonly="1" options="{'currency_field': 'currency_id'}"/>
+                            </div>
+                        </div>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

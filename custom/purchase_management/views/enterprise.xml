@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_purchase_enterprise_list" model="ir.ui.view">
+            <field name="name">purchase.enterprise.list</field>
+            <field name="model">purchase.enterprise</field>
+            <field name="arch" type="xml">
+                <list string="Empresas">
+                    <field name="name" placeholder="Ej. Dunder Mifflin S.A., ACME Corp., etc..."/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_purchase_enterprise_form" model="ir.ui.view">
+            <field name="name">purchase.enterprise.form</field>
+            <field name="model">purchase.enterprise</field>
+            <field name="arch" type="xml">
+                <form string="Empresa" duplicate="false">
+                    <sheet>
+                        <div class="o_employee_avatar">
+                            <field name="logo" widget="image" class="oe_avatar ms-4"
+                                options="{&quot;zoom&quot;: true, &quot;preview_image&quot;:&quot;logo&quot;}"/>
+                        </div>
+                        <b style="font-weight: 500;">Nombre</b>
+                        <div class="form-title-responsive">
+                            <h1>
+                                <field name="name" class="text-primary"
+                                    placeholder="Ej. Dunder Mifflin S.A., ACME Corp., etc..."/>
+                            </h1>
+                        </div>
+                        <separator string="Descripción"/>
+                        <p>Una <b class="text-primary">Empresa</b> es una entidad comercial o
+                            corporativa que participa en actividades económicas, comerciales o
+                            industriales. En el contexto de la gestión de compras, una empresa
+                            representa a un proveedor, cliente o cualquier organización con la que
+                            se realicen transacciones comerciales. La información de la empresa es
+                            fundamental para gestionar relaciones comerciales, realizar compras,
+                            emitir facturas y mantener un registro organizado de las entidades con
+                            las que se interactúa en el proceso de adquisición de bienes y
+                            servicios. </p>
+
+                        <group>
+                            <group>
+                                <label for="address" string="Dirección"/>
+                                <div>
+                                    <field name="address" placeholder="Ej. Calle 123 # 45-67.."
+                                        string="Dirección" required="1"/>
+                                    <div class="o_row">
+                                        <field name="city_id" placeholder="Ciudad..." required="1"
+                                            options="{'no_open': True, 'no_create': True}"/>
+                                        <field name="state_id" placeholder="Departamento.."
+                                            required="1"
+                                            options="{'no_open': True, 'no_create': True}"/>
+                                    </div>
+                                    <div>
+                                        <field name="country_id" placeholder="Pais.." required="1"
+                                            options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"/>
+                                    </div>
+                                </div>
+                                <label for="identification_type_id" string="Nro. identificación"/>
+                                <div class="o_row">
+                                    <field name="identification_type_id"
+                                        placeholder="Ej. (Ced. Ciudadanía, C.E, etc.)"
+                                        options="{'no_open': True, 'no_create': True}"/>
+                                    <field name="vat" placeholder="Ej.  1477472701" required="1"/>
+                                </div>
+                            </group>
+                            <group>
+                                <field name="email" placeholder="Ej. correo@empresa.com"
+                                    widget="email"/>
+                                <field name="color" placeholder="Ej. #000000"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="mail_template_reject_min_providers_qty" model="mail.template">
+            <field name="name">Notificación de rechazo por cantidad mínima de proveedores</field>
+            <field name="model_id" ref="purchase_management.model_request_quotation"/>
+            <field name="subject">Rechazo de solicitud de cotización - {{ object.reference }}</field>
+            <field name="email_from">odoo@tsg.net.co</field>
+            <field name="body_html" type="html">
+                <div style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;color:#222;">
+                    <p style="font-size:13px;margin:0 0 10px 0;line-height:1.45;">
+                        Estimado usuario,
+                    </p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;"> Le informamos que
+                        la solicitud de cotización <strong>
+                            <t t-out="object.reference"/>
+                        </strong> ha sido
+                        rechazada en lo relacionado con la <strong>excepción de cantidad mínima de
+                        proveedores</strong>, es decir, no se ha autorizado trabajar con la cantidad
+                        solicitada de <strong><t t-out="ctx.get('exception_providers_qty')"/>
+                        proveedor(es)</strong> en lugar del mínimo estándar de <strong><t
+                                t-out="ctx.get('min_providers_qty')"/> proveedores</strong> definido
+                        por la política corporativa. </p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;"> El motivo
+                        registrado para este rechazo es el siguiente: <b>"<t
+                                t-out="ctx.get('reason')"/>“</b>
+                    </p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;"> La solicitud
+                        continuará su gestión bajo la política estándar de mínimo <strong><t
+                                t-out="ctx.get('min_providers_qty')"/> proveedores</strong>. En caso
+                        de que requiera insistir en una cantidad menor, podrá ajustar la solicitud
+                        conforme a las políticas establecidas y generar una nueva solicitud de
+                        aprobación para la excepción. </p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;">
+                        Gracias por su atención.
+                    </p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+        <record id="mail_template_reject_all_quotations" model="mail.template">
+            <field name="name">Notificación de rechazo de todas las cotizaciones</field>
+            <field name="model_id" ref="purchase_management.model_request_quotation"/>
+            <field name="subject">Rechazo de todas las cotizaciones - {{ object.reference }}</field>
+            <field name="email_from">odoo@tsg.net.co</field>
+            <field name="body_html" type="html">
+                <div style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;color:#222;">
+                    <p style="font-size:13px;margin:0;line-height:1.5;"> Estimado usuario, le
+                        informamos que, tras revisar las cotizaciones recibidas, el <strong>gerente
+                        de proyecto</strong> ha decidido rechazar todas las cotizaciones vinculadas
+                        a la solicitud <t t-out="object.reference"/>, correspondientes a los
+                        siguientes proveedores: <strong>
+                            <t t-out="ctx.get('supplier_names')"/>, </strong> la razón indicada es: <strong>
+                            <t t-out="ctx.get('reason')"/>,</strong> por lo tanto, la solicitud será
+                        revertida al estado inicial para reiniciar el proceso desde cero y permitir
+                        el trabajo con nuevos proveedores. </p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+        <record id="mail_template_reject_request_committee_approval" model="mail.template">
+            <field name="name">Notificación de rechazo de solicitud por comité de compras</field>
+            <field name="model_id" ref="purchase_management.model_request_quotation"/>
+            <field name="subject">Solicitud de cotización - {{ object.reference }}</field>
+            <field name="email_from">odoo@tsg.net.co</field>
+            <field name="body_html" type="html">
+                <div style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;color:#222;">
+                    <p style="font-size:13px;margin:0 0 10px 0;line-height:1.45;">
+                        Buen día,
+                    </p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;"> La solicitud de
+                        cotización con referencia <strong>
+                            <t t-out="object.reference"/>, </strong>creada el <strong>
+                            <t t-out="object.create_date.strftime('%d/%m/%Y')"/>
+                        </strong>
+                        y con el asunto <strong>
+                            <t t-out="object.subject"/>, </strong>ha sido rechazada por el comité de
+                        compras. El motivo registrado para este rechazo es el siguiente: <b>"<t
+                                t-out="ctx.get('reason')"/>“</b>
+                    </p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;"> A partir de este
+                        momento, la solicitud se devolverá al estado previo a enviar la solicitud de
+                        cotización a los proveedores, ya que debe empezar desde cero y permitir
+                        el trabajo con nuevos proveedores. Agradecemos su comprensión y colaboración
+                        en este proceso. </p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;">
+                        Saludos cordiales.
+                    </p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+        <record id="mail_template_reject_project_leader" model="mail.template">
+            <field name="name">Notificación de rechazo por lider de proyecto</field>
+            <field name="model_id" ref="purchase_management.model_request_quotation"/>
+            <field name="subject">Solicitud de cotización - {{ object.reference }}</field>
+            <field name="email_from">odoo@tsg.net.co</field>
+            <field name="body_html" type="html">
+                <div style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;color:#222;">
+                    <p style="font-size:13px;margin:0 0 10px 0;line-height:1.45;">
+                        Estimado usuario,
+                    </p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;"> Le informamos que
+                        con respecto a la solicitud de cotización con referencia <strong>
+                            <t t-out="object.reference"/>
+                        </strong>, creada
+                        el <strong>
+                            <t t-out="object.create_date.strftime('%d/%m/%Y')"/>
+                        </strong>
+                        y con el asunto <strong>
+                            <t t-out="object.subject"/>
+                        </strong>, el <strong>líder
+                        de proyecto</strong> rechazó una o más cotizaciones recibidas. Sin embargo,
+                        el área responsable ha evaluado la situación y ha decidido <strong>no
+                            validar</strong> dicha decisión. </p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;"> El motivo
+                        registrado para esta decisión es el siguiente: <b>"<t
+                                t-out="ctx.get('reason')"/>"</b>
+                    </p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;"> Por lo tanto, la
+                        solicitud continuará su proceso de aprobación de manera normal. Le
+                        solicitamos ingresar a la plataforma <t
+                            t-set="website_url" t-value="object.get_base_url()"/><a
+                            t-att-href="website_url" target="_blank"
+                            style="color:#1155cc;text-decoration:underline;">aquí</a> para continuar
+                        con la gestión correspondiente. </p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;">
+                        Saludos cordiales.
+                    </p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

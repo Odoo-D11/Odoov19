@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
-    <t t-name="utils.LineTotalsField" owl="1">
+    <t t-name="utils.LineTotalsField">
         <div t-if="showTotals" class="o_line_totals_field">
             <table class="o_line_totals_table float-end">
                 <tbody>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="custom_paper_format" model="report.paperformat">
+            <field name="name">Formato de Papel Customizado</field>
+            <field name="default" eval="True"/>
+            <field name="format">Letter</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">10</field>
+            <field name="margin_bottom">10</field>
+            <field name="margin_left">5</field>
+            <field name="margin_right">5</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">0</field>
+            <field name="dpi">90</field>
+        </record>
+
+        <template id="custom_template_purchase_management_order">
+            <t t-set="company" t-value="res_company"/>
+            <t t-set="enterprise" t-value="docs[0].enterprise_id if docs else False"/>
+            <div class="article o_report_layout_boxed">
+                <t t-call="web.html_container">
+
+                    <!-- Encabezado empresa: parte del cuerpo, sólo en página 1 -->
+                    <div style="padding: 0; margin-bottom: 0;">
+                        <div class="row" style="margin: 0; padding-bottom: 8px;">
+                            <div class="col-6"
+                                 style="display: flex; align-items: center; padding-left: 0;">
+                                <img t-if="enterprise and enterprise.logo"
+                                    t-att-src="image_data_uri(enterprise.logo)"
+                                    alt="Logo"
+                                    style="height: 100px; max-width: 100%; object-fit: contain;"/>
+                            </div>
+                            <div class="col-6 text-end"
+                                style="display: flex; flex-direction: column; justify-content: center; line-height: 1.45; font-size: 14px; padding-right: 0;">
+                                <t t-if="enterprise">
+                                    <div style="font-weight: 500; font-size: 17px;">
+                                        <t t-esc="enterprise.name"/>
+                                    </div>
+                                    <t t-if="enterprise.address">
+                                        <div style="color: #6c757d;"><t t-esc="enterprise.address"/></div>
+                                    </t>
+                                    <t t-if="enterprise.city_id or enterprise.state_id">
+                                        <div style="color: #6c757d;">
+                                            <t t-if="enterprise.city_id"><t t-esc="enterprise.city_id.name"/></t>
+                                            <t t-if="enterprise.city_id and enterprise.state_id"> </t>
+                                            <t t-if="enterprise.state_id"><t t-esc="enterprise.state_id.name"/></t>
+                                            <t t-if="enterprise.state_id and enterprise.state_id.country_id and enterprise.state_id.country_id.code">
+                                                ( <t t-esc="enterprise.state_id.country_id.code"/> )
+                                            </t>
+                                        </div>
+                                    </t>
+                                    <t t-if="enterprise.vat">
+                                        <div style="color: #6c757d;">NIT: <t t-esc="enterprise.vat"/></div>
+                                    </t>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contenido del reporte -->
+                    <t t-out="0"/>
+
+                </t>
+            </div>
+
+            <div class="footer o_boxed_footer">
+                <div class="row mt-2">
+                    <div class="col-7 text-end" style="font-size: 11px; color: #6c757d;">
+                        <t t-if="enterprise and enterprise.name == 'Tsg The It Experts Sas'">
+                            https://www.tsgtheitexperts.com/
+                        </t>
+                    </div>
+                    <div class="col-5">
+                        <div class="float-end" style="font-size: 11px; color: #6c757d;">
+                            <div t-if="report_type == 'pdf'">Pag: <span class="page"/> / <span class="topage"/></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+    </data>
+</odoo>

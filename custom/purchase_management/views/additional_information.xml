@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_form_additional_information" model="ir.ui.view">
+            <field name="name">view.form.additional.information</field>
+            <field name="model">purchase.additional.information</field>
+            <field name="arch" type="xml">
+                <form string="Información" duplicate="false" create="false" edit="false">
+                    <field name="bugeted" invisible="1"/>
+                    <field name="location_delivery" invisible="1"/>
+                    <field name="previous_evidence" invisible="1"/>
+                    <field name="suggested_supplier_ids" invisible="1"/>
+                    <sheet>
+                        <separator string="Información"/>
+                        <p class="text-muted">
+                            A continuación, se presenta un resumen de algunos datos relevantes
+                            registrados para esta solicitud,
+                            que sirven como referencia para las áreas de compras, finanzas y
+                            logística al momento de revisar,
+                            aprobar y ejecutar el requerimiento. Esta información facilita la toma
+                            de decisiones, la priorización
+                            de necesidades y la adecuada planificación de recursos.
+                        </p>
+
+                        <ul>
+                            <!-- Condición presupuestal: dentro del presupuesto -->
+                            <li invisible="not bugeted">La solicitud se encuentra <b
+                                    class="text-primary">dentro del presupuesto aprobado</b> por un
+                                valor estimado de <b class="text-primary"> $ <field
+                                        name="estimated_price" style="margin-bottom: 0;"
+                                        nolabel="1" readonly="1"/>
+                                </b>,
+                                lo que indica que los recursos necesarios ya han sido considerados
+                                en la planeación financiera. Esto contribuye a una gestión más ágil
+                                del requerimiento y reduce la necesidad de revisiones adicionales
+                                por parte de las áreas responsables de control presupuestal. </li>
+
+                            <!-- Condición presupuestal: fuera del presupuesto -->
+                            <li invisible="bugeted"> La solicitud <b class="text-primary">no se
+                                encuentra dentro del presupuesto aprobado</b> por la compañía, por
+                                lo que su atención puede requerir <b class="text-primary">validaciones
+                                y
+                                    aprobaciones adicionales</b>. Esta condición puede impactar los
+                                tiempos de respuesta y la priorización frente a otros requerimientos
+                                que sí cuentan con recursos previamente asignados. </li>
+
+                            <!-- Ubicación de entrega definida -->
+                            <li invisible="not location_delivery"> La <b class="text-primary">
+                                ubicación de destino </b> registrada para esta solicitud es <b
+                                    class="text-primary"> entrega en <field name="location_delivery"
+                                        style="margin-bottom: 0;"
+                                        nolabel="1" readonly="1"/>
+                                </b><span
+                                    invisible="location_delivery != 'field'">, con destino a <b
+                                        class="text-primary">
+                                        <field name="destination_id"
+                                            options="{'no_create': True, 'no_open': True}"
+                                            style="margin-bottom: 0;" nolabel="1" readonly="1"/>
+                                    </b></span>.
+                                Esta información es utilizada por el área de compras y logística
+                                para coordinar el despacho, la recepción y el almacenamiento de los
+                                bienes o la prestación del servicio, y permite estimar de manera más
+                                precisa los tiempos y costos asociados a la entrega. </li>
+
+                            <!--Proveedores
+                            sugeridos -->
+                            <li invisible="not suggested_supplier_ids"> Se han sugerido <b
+                                    class="text-primary">proveedores</b> para esta solicitud de
+                                cotización. Estos proveedores pueden ser contactados por el área de
+                                compras para solicitar cotizaciones y evaluar sus ofertas en función
+                                de los productos o servicios requeridos. </li>
+
+                            <!-- Sin proveedores sugeridos -->
+                            <li invisible="suggested_supplier_ids"> No se han sugerido <b
+                                    class="text-primary">
+                                    proveedores</b> para esta solicitud de cotización. En estos
+                                casos, el área de compras deberá identificar y seleccionar
+                                proveedores adecuados para contactar y solicitar cotizaciones,
+                                basándose en criterios como la experiencia, reputación, capacidad de
+                                suministro y condiciones comerciales. </li>
+                        </ul>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

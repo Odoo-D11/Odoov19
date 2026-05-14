@@ -1,6 +1,6 @@
 /** @odoo-module **/
 
-import { Component, useState, onWillStart, onWillUpdateProps, markup } from "@odoo/owl";
+import { Component, useState, onWillStart, onWillUnmount, onWillUpdateProps, markup } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
@@ -13,6 +13,8 @@ class WarehouseVariantBoardWidget extends Component {
 
     setup() {
         super.setup();
+        this.isDestroyed = false;
+        this.loadVersion = 0;
         this.orm = useService("orm");
         this.actionService = useService("action");
         this.notification = useService("notification");
@@ -23,7 +25,7 @@ class WarehouseVariantBoardWidget extends Component {
             loading: false,
         });
 
-        this.productId = this.props.record._config.resId || false;
+        this.productId = this.props.record.resId || this.props.record._config?.resId || false;
         this.modelName = this.props.record.resModel || "warehouse.product";
         this._cachedPopupViewId = undefined;
         this.variantLineKey = JSON.stringify(
@@ -40,7 +42,7 @@ class WarehouseVariantBoardWidget extends Component {
             const newKey = JSON.stringify(
                 nextProps.record.data.variant_ids?.resIds || []
             );
-            const newProductId = nextProps.record._config.resId || false;
+            const newProductId = nextProps.record.resId || nextProps.record._config?.resId || false;
 
             if (newKey !== this.variantLineKey || newProductId !== this.productId) {
                 this.variantLineKey = newKey;
@@ -51,10 +53,15 @@ class WarehouseVariantBoardWidget extends Component {
                 }
             }
         });
+
+        onWillUnmount(() => {
+            this.isDestroyed = true;
+        });
     }
 
     async fetchVariants({ props = this.props } = {}) {
-        const productId = props.record._config.resId || false;
+        const loadVersion = ++this.loadVersion;
+        const productId = props.record.resId || props.record._config?.resId || false;
         if (!productId) {
             this.state.variants = [];
             return;
@@ -68,20 +75,27 @@ class WarehouseVariantBoardWidget extends Component {
                 ["id", "name", "estimated_price", "currency_id"]
             );
 
-            if (productId !== this.productId) {
+            if (this.isDestroyed || loadVersion !== this.loadVersion) {
+                return;
+            }
+
+            if (productId !== (this.props.record.resId || this.props.record._config?.resId)) {
                 return;
             }
 
             this.state.variants = variants;
             await this.syncVariantLineRecords(variants, { props });
         } catch (error) {
+            if (this.isDestroyed || loadVersion !== this.loadVersion) return;
             console.error("Error al cargar las variantes", error);
             this.notification.add(
                 _t("No se pudieron cargar las variantes. Intenta nuevamente."),
                 { type: "danger" }
             );
         } finally {
-            this.state.loading = false;
+            if (!this.isDestroyed && loadVersion === this.loadVersion) {
+                this.state.loading = false;
+            }
         }
     }
 
@@ -152,7 +166,7 @@ class WarehouseVariantBoardWidget extends Component {
     }
 
     async openVariantManager() {
-        const productId = this.props.record._config.resId || false;
+        const productId = this.props.record.resId || this.props.record._config?.resId || false;
         if (!productId) {
             this.notification.add(
                 _t("Para gestionar variantes, primero debes guardar el producto."),

@@ -1,0 +1,700 @@
+// Dropdown arrow animation for the "Nuevo" split button
+.dropdown-icon {
+    transition: transform 0.3s ease-in-out;
+}
+.dropdown-icon.rotate-up {
+    transform: rotate(180deg);
+}
+
+// ——— Barra lateral de solicitudes ——————————————————————————————————————————
+.o_purchase_status_sidebar {
+    position: relative;
+    width: 260px;
+    min-width: 260px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    height: 100%;
+    background-color: #ffffff;
+    border-right: 1px solid #ddd;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 16px;
+    z-index: 10;
+
+    // ——— Header fijo del sidebar ————————————————————————————————————————
+    .pss-sidebar-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding-bottom: 8px;
+        margin-bottom: 16px;
+        border-bottom: 2px solid #02143f;
+
+        .pss-sidebar-header-icon {
+            font-size: 14px;
+            color: #02143f;
+        }
+
+        .pss-sidebar-header-text {
+            font-size: 13px;
+            font-weight: 700;
+            color: #02143f;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+    }
+
+    // ——— Sección ————————————————————————————————————————————————————————
+    .pss-section {
+        display: grid;
+        grid-template-rows: 1fr;
+        margin-top: 1rem;
+        opacity: 1;
+        animation: pss-sections-enter 0.22s ease;
+        transition:
+            grid-template-rows 0.35s ease,
+            opacity 0.3s ease,
+            margin-top 0.35s ease;
+
+        &:first-child {
+            margin-top: 0;
+        }
+
+        &--collapsed {
+            grid-template-rows: 0fr;
+            opacity: 0;
+            margin-top: 0 !important;
+            pointer-events: none;
+        }
+
+        // Cuando pasa a ser la primera sección visible
+        &--first {
+            margin-top: 0;
+        }
+    }
+
+    .pss-section-inner {
+        overflow: hidden;
+    }
+
+    // ——— Header de sección ——————————————————————————————————————————————
+    .pss-section-header {
+        position: relative;
+        height: 22px;
+        margin-bottom: 8px;
+
+        // Fila normal (título + lupa): visible por defecto
+        .pss-title-row {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+            transition:
+                opacity 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        // Fila de búsqueda (input): oculta por defecto
+        .pss-search-row {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            opacity: 0;
+            transform: translateY(5px);
+            pointer-events: none;
+            transition:
+                opacity 0.2s ease,
+                transform 0.2s ease;
+        }
+
+        // Estado búsqueda activa: intercambiar visibilidad
+        &--searching {
+            .pss-title-row {
+                opacity: 0;
+                transform: translateY(-5px);
+                pointer-events: none;
+            }
+            .pss-search-row {
+                opacity: 1;
+                transform: translateY(0);
+                pointer-events: auto;
+            }
+        }
+    }
+
+    .pss-section-title {
+        font-size: 14px;
+        font-weight: bold;
+        color: #02143f;
+        text-transform: uppercase;
+    }
+
+    .pss-search-toggle {
+        background: none;
+        border: none;
+        padding: 2px 4px;
+        cursor: pointer;
+        color: #7f8c8d;
+        border-radius: 3px;
+        line-height: 1;
+        flex-shrink: 0;
+
+        &:hover {
+            color: #02143f;
+        }
+    }
+
+    .pss-search-icon-inline {
+        color: #7f8c8d;
+        font-size: 12px;
+        flex-shrink: 0;
+    }
+
+    .pss-search-input {
+        flex: 1;
+        min-width: 0;
+        border: none;
+        border-bottom: 1px solid #ddd;
+        outline: none;
+        font-size: 13px;
+        font-weight: 500;
+        padding: 1px 0;
+        background: transparent;
+        color: #212529;
+
+        &::placeholder {
+            color: #bdc3c7;
+            font-weight: 400;
+        }
+        &:focus {
+            border-bottom-color: #02143f;
+        }
+    }
+
+    .pss-search-close {
+        background: none;
+        border: none;
+        padding: 2px 4px;
+        cursor: pointer;
+        color: #7f8c8d;
+        border-radius: 3px;
+        line-height: 1;
+        flex-shrink: 0;
+
+        &:hover {
+            color: #e74c3c;
+        }
+    }
+
+    // ——— Ver más ————————————————————————————————————————————————————————
+    .pss-show-more {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        margin-top: 4px;
+        padding: 5px 12px;
+        font-size: 11px;
+        font-weight: 700;
+        color: #02143f;
+        cursor: pointer;
+        user-select: none;
+        opacity: 0.55;
+        border-top: 1px solid rgba(3, 20, 64, 0.12);
+        transition: opacity 0.2s ease;
+
+        .fa {
+            font-size: 9px;
+            transition: transform 0.25s ease;
+        }
+
+        &:hover {
+            opacity: 1;
+        }
+
+        &--expanded .fa {
+            transform: rotate(180deg);
+        }
+    }
+
+    .pss-section-content {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    // ——— Ítem ———————————————————————————————————————————————————————————
+    .pss-item {
+        position: relative;
+        display: flex;
+        align-items: center;
+        padding: 4px 12px;
+        overflow: hidden;
+        transition: background-color 0.3s ease;
+
+        &::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 4px;
+            bottom: 4px;
+            width: 0;
+            background-color: #5b9bd5;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        &:hover {
+            background: rgba(0, 0, 0, 0.04);
+        }
+
+        &.is-selected {
+            background-color: #f5faff;
+
+            &::before {
+                width: 4px;
+            }
+
+            .pss-avatar,
+            .pss-icon-square {
+                transform: translateX(8px);
+            }
+
+            .pss-info {
+                transform: translateX(8px);
+            }
+        }
+    }
+
+    // ——— Avatar (inicial de nombre) —————————————————————————————————————
+    .pss-avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 6px;
+        color: white;
+        font-weight: bold;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 12px;
+        flex-shrink: 0;
+        transition: transform 0.3s ease;
+    }
+
+    // ——— Icono cuadrado (estados, tipos) ————————————————————————————————
+    .pss-icon-square {
+        width: 30px;
+        height: 30px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 12px;
+        flex-shrink: 0;
+        transition: transform 0.3s ease;
+        color: #ffffff;
+
+        .fa {
+            font-size: 0.85rem;
+        }
+    }
+
+    // ——— Texto (nombre + detalle) ———————————————————————————————————————
+    .pss-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        min-width: 0;
+        overflow: hidden;
+        flex: 1;
+        transition: transform 0.3s ease;
+    }
+
+    .pss-name {
+        font-size: 13px;
+        font-weight: 500;
+        display: block;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .pss-details {
+        font-size: 12px;
+        color: #7f8c8d;
+    }
+
+    // ——— Sin datos ——————————————————————————————————————————————————————
+    .pss-no-data {
+        font-size: 14px;
+        color: #7f8c8d;
+        text-align: center;
+        margin-top: 8px;
+    }
+
+    // ——— Estado vacío (my_assigned activo, 0 solicitudes propias) ————————
+    .pss-empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+
+        .pss-empty-intro {
+            font-size: 13px;
+            color: #7f8c8d;
+            line-height: 1.55;
+            margin-bottom: 20px;
+        }
+
+        // ——— Skeleton ghost (replica la estructura real de ítems) ———
+        .pss-skeleton {
+            width: 100%;
+
+            .pss-skeleton-section {
+                margin-bottom: 16px;
+                &:last-child {
+                    margin-bottom: 0;
+                }
+            }
+
+            .pss-skeleton-title {
+                height: 10px;
+                width: 62%;
+                background: #e0e0e0;
+                border-radius: 4px;
+                margin-bottom: 10px;
+                &--narrow {
+                    width: 45%;
+                }
+            }
+
+            .pss-skeleton-item {
+                display: flex;
+                align-items: center;
+                padding: 4px 12px;
+                margin-bottom: 4px;
+            }
+
+            .pss-skeleton-icon {
+                width: 30px;
+                height: 30px;
+                border-radius: 6px;
+                background: #e8e8e8;
+                margin-right: 12px;
+                flex-shrink: 0;
+            }
+
+            .pss-skeleton-lines {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .pss-skeleton-name {
+                height: 9px;
+                width: 68%;
+                background: #e8e8e8;
+                border-radius: 3px;
+                &--short {
+                    width: 52%;
+                }
+                &--wide {
+                    width: 82%;
+                }
+            }
+
+            .pss-skeleton-count {
+                height: 7px;
+                width: 38%;
+                background: #efefef;
+                border-radius: 3px;
+                &--short {
+                    width: 26%;
+                }
+            }
+        }
+    }
+
+    // ——— Loading overlay ————————————————————————————————————————————————
+    .pss-loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.8);
+        z-index: 20;
+    }
+
+    .pss-spinner {
+        width: 30px;
+        height: 30px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #02143f;
+        border-radius: 50%;
+        animation: pss-spin 1s linear infinite;
+        margin-bottom: 8px;
+    }
+
+    .pss-loading-text {
+        font-size: 0.9rem;
+        color: #02143f;
+    }
+
+    @keyframes pss-spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    @keyframes pss-panel-enter {
+        from {
+            opacity: 0;
+            transform: translateX(14px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes pss-sections-enter {
+        from {
+            opacity: 0;
+            transform: translateX(-14px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    // ——— Header modo vencidas ————————————————————————————————————————————
+    .pss-sidebar-header--overdue {
+        border-bottom-color: #c0392b;
+
+        .pss-sidebar-header-icon {
+            color: #c0392b;
+        }
+        .pss-sidebar-header-text {
+            color: #c0392b;
+        }
+    }
+
+    .pss-overdue-close {
+        margin-left: auto;
+        background: none;
+        border: none;
+        padding: 2px 4px;
+        color: #7f8c8d;
+        cursor: pointer;
+        border-radius: 3px;
+        line-height: 1;
+
+        &:hover {
+            color: #c0392b;
+        }
+    }
+
+    // ——— Panel informe vencidas ——————————————————————————————————————————
+    .pss-overdue-panel {
+        margin-top: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        animation: pss-panel-enter 0.25s ease;
+    }
+
+    .pss-overdue-hero {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 16px 0 12px;
+
+        .pss-overdue-count {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #c0392b;
+            line-height: 1;
+        }
+
+        .pss-overdue-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #c0392b;
+            margin-top: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .pss-overdue-total {
+            font-size: 12px;
+            color: #7f8c8d;
+            margin-top: 4px;
+        }
+    }
+
+    .pss-overdue-divider {
+        height: 1px;
+        background: rgba(3, 20, 64, 0.1);
+        margin: 10px 0;
+    }
+
+    .pss-overdue-section-title {
+        font-size: 11px;
+        font-weight: 700;
+        color: #02143f;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        margin-bottom: 6px;
+    }
+
+    .pss-overdue-stats {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .pss-overdue-stat {
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        padding: 4px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+
+        &::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 4px;
+            bottom: 4px;
+            width: 0;
+            background-color: #5b9bd5;
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+
+        &:hover {
+            background: rgba(0, 0, 0, 0.04);
+        }
+
+        &.pss-overdue-stat--active {
+            background-color: #f5faff;
+
+            &::before {
+                width: 4px;
+            }
+
+            .pss-icon-square,
+            .pss-info {
+                transform: translateX(8px);
+            }
+        }
+
+        .pss-icon-square {
+            width: 26px;
+            height: 26px;
+            border-radius: 5px;
+        }
+    }
+
+    .pss-overdue-metrics {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .pss-overdue-metric {
+        background: #f8f9fa;
+        border-radius: 6px;
+        padding: 8px 12px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+
+        .pss-overdue-metric-left {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 38px;
+            flex-shrink: 0;
+        }
+
+        .pss-overdue-metric-num {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #02143f;
+            line-height: 1;
+        }
+
+        .pss-overdue-metric-unit {
+            font-size: 10px;
+            font-weight: 600;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-top: 1px;
+        }
+
+        .pss-overdue-metric-right {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+
+        .pss-overdue-metric-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #02143f;
+            line-height: 1.3;
+        }
+
+        .pss-overdue-metric-sub {
+            font-size: 11px;
+            color: #7f8c8d;
+            line-height: 1.3;
+        }
+    }
+
+    .pss-overdue-metric--clickable {
+        cursor: pointer;
+        transition:
+            background 0.12s,
+            border 0.12s;
+        border: 1px solid transparent;
+
+        &:hover {
+            background: #edf0f3;
+        }
+
+        &.pss-overdue-metric--active {
+            background: #f5faff;
+            border-color: #5b9bd5;
+        }
+    }
+}
+
+// ——— Responsive: ocultar sidebar en móvil ——————————————————————————————————
+@media (max-width: 767.98px) {
+    .o_purchase_status_sidebar {
+        display: none !important;
+    }
+}

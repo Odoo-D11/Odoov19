@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_assign_purchase_responsible_wizard_form" model="ir.ui.view">
+            <field name="name">assign.purchase.responsible.wizard.form</field>
+            <field name="model">assign.purchase.responsible.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Asignar Responsable de Compras">
+                    <sheet>
+                        <separator string="Responsable" />
+                        <p class="text-muted">La persona responsable de compras gestionará la
+                            solicitud de cotización, asegurando que se cumplan los requisitos y
+                            plazos establecidos. Esta asignación permitirá un seguimiento adecuado
+                            del proceso de compras, desde la evaluación inicial hasta la aprobación
+                            final de los proveedores seleccionados, garantizando la transparencia y
+                            eficiencia en todo el procedimiento de adquisición de bienes y servicios
+                            para la organización.</p>
+                        <group>
+                            <field name="responsible_id" string="Nombre"
+                                domain="[('team_id.name', '=', 'Compras')]"
+                                placeholder="Ej. Dwight Schrute, Pam Beesly, Jim Halpert, etc."
+                                options="{'no_create': True, 'no_open': True}" />
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Confirmar" type="object" name="action_assign_responsible"
+                            class="btn btn-primary" />
+                        <button string="Cancelar" class="btn btn-secondary" special="cancel" />
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

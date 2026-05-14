@@ -82,7 +82,7 @@
 
             th {
                 padding-top: var(--ListRenderer-thead-padding-y);
-                background-color: var(--ListRenderer-thead-bg-color);
+                background-color: #e9ecef; 
                 color: $headings-color;
 
                 @include media-only(print) {
@@ -102,7 +102,7 @@
             .o_column_sortable {
 
                 .o_list_sortable_icon {
-                    background: var(--ListRenderer-thead-bg-color);
+                    background: #e9ecef;
                     position: absolute;
                     right: .5rem;
                     padding: 0 .2rem;
@@ -352,7 +352,7 @@
         .o_list_actions_header {
             width: 32px;
             min-width: 32px;
-            background-color: var(--ListRenderer-thead-bg-color);
+            background-color: #e9ecef;
         }
 
         .o_data_row.o_list_no_open {

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_cancel_wizard_form" model="ir.ui.view">
+            <field name="name">cancel.request.quotation.wizard.form</field>
+            <field name="model">cancel.request.quotation.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Cancelar Solicitud de Cotización" class="o_form_small">
+                    <sheet>
+                        <field name="request_quotation_id" invisible="1"/>
+                        <separator string="Motivo de Cancelación"/>
+                        <p class="text-muted">Indique el <b class="text-primary">motivo</b>
+                            de la cancelación, el <b class="text-primary">impacto</b> en la operación,
+                            la <b class="text-primary">fecha aproximada</b> del cambio y el <b
+                                class="text-primary">contacto responsable</b>. Esta información
+                            se guardará en el historial.</p>
+                        <field name="reason"
+                            placeholder="Ej. El proveedor no está disponible actualmente para cumplir con los requisitos de entrega. Se contactará nuevamente en el futuro."/>
+                    </sheet>
+                    <footer>
+                        <button string="Confirmar" class="btn btn-primary"
+                            type="object" name="action_cancel_request_quotation"/>
+                        <button string="Cancelar" class="btn btn-secondary"
+                            special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

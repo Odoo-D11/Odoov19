@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="mail_template_approval_notification" model="mail.template">
+            <field name="name">Notificación de aprobación de solicitud de cotización</field>
+            <field name="model_id" ref="purchase_management.model_request_quotation"/>
+            <field name="subject">Tu solicitud de cotización ha sido aprobada</field>
+            <field name="email_from">odoo@tsg.net.co</field>
+            <field name="body_html" type="html">
+                <div style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;color:#222;">
+                    <p style="font-size:13px;margin:0 0 10px 0;line-height:1.45;">
+                        Buen día,
+                    </p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;">La solicitud de
+                        cotización con referencia <strong>
+                            <t t-out="object.reference"/>
+                        </strong> creada el <strong>
+                            <t t-out="object.create_date.strftime('%d/%m/%Y')"/>
+                        </strong>
+                        y con el asunto <strong>
+                            <t t-out="object.subject"/>
+                        </strong> ha sido
+                        aprobada por el comité de compras. Tu solicitud ha superado exitosamente
+                        todas las validaciones requeridas y está lista para proceder con el
+                        siguiente paso en el proceso de compra por parte del área de compras. Puedes
+                        revisar los detalles completos de la solicitud haciendo clic <t
+                            t-set="website_url" t-value="object.get_base_url()"/> <a
+                            t-att-href="website_url">aquí</a> para acceder al sistema y ver toda la
+                        información relacionada.</p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;">A continuación, se
+                        detallan los datos principales de la solicitud aprobada que te permitirá
+                        hacer seguimiento a tu requerimiento:</p>
+
+                    <ul style="font-size:13px;margin:0 0 10px 18px;line-height:1.5;padding:0;">
+                        <li>
+                            <strong>Proyecto:</strong>
+                            <t t-out="object.project_id.name"/>
+                        </li>
+                        <li>
+                            <strong>Tipo:</strong>
+                            <t t-if="object.type_id.name == 'Productos'">
+                                [PROD] Productos (Bienes físicos, Ej. Tecnología, Portátiles,
+                                Firewall, UPS)
+                            </t>
+                            <t t-if="object.type_id.name == 'Servicios'">
+                                [SERV] Servicios (Consultoría, mantenimiento, etc.)
+                            </t>
+                            <t t-if="object.type_id.name == 'Mixtos'">
+                                [MIXT] Mixtos (Incluye productos y servicios)
+                            </t>
+                        </li>
+                        <li>
+                            <strong>Motivo de la solicitud:</strong>
+                            <t t-out="object.reason"/>
+                        </li>
+                    </ul>
+                </div>
+
+            </field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+
+    </data>
+</odoo>

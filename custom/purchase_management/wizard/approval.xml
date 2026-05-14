@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_approval_wizard_form" model="ir.ui.view">
+            <field name="name">approval.observation.wizard.form</field>
+            <field name="model">approval.observation.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Approval Observation">
+                    <field name="show_instructions" invisible="1"/>
+                    <field name="add_observations" invisible="1"/>
+                    <field name="show_observation_instructions" invisible="1"/>
+                    <field name="observations_json" invisible="1"/>
+                    <field name="approved" invisible="1" readonly="1" force_save="1"/>
+                    <field name="rejected" invisible="1" readonly="1" force_save="1"/>
+                    <field name="all_rejected" invisible="1" readonly="1" force_save="1"/>
+                    <field name="approval_mode" invisible="1"/>
+                    <field name="rejected_by_project_leader" invisible="1"/>
+                    <field name="request_quotation_id" invisible="1"/>
+                    <sheet>
+                        <!-- Instrucciones para modo APROBAR/RECHAZAR -->
+                        <separator string="Aprobación"
+                            invisible="not show_instructions or approval_mode == 'recommend' or rejected_by_project_leader"/>
+                        <div
+                            invisible="not show_instructions or approval_mode == 'recommend' or rejected_by_project_leader">
+                            <p>Evalúe cada proveedor para determinar si cumple con los <b
+                                    class="text-primary">criterios establecidos</b>. Las decisiones
+                                quedarán registradas de forma <b class="text-primary">permanente</b>
+                                en el sistema.</p>
+                        </div>
+                        <ul
+                            invisible="not show_instructions or approval_mode == 'recommend' or rejected_by_project_leader">
+                            <li>Haz clic en <i class="fa fa-check text-success"/> para <b
+                                    class="text-primary">aprobar</b> o en <i
+                                    class="fa fa-times text-danger"/> para <b
+                                    class="text-primary">rechazar</b> a cada proveedor.</li>
+                            <li>Revise cuidadosamente la evidencia de cada proveedor antes de
+                                tomar una decisión.</li>
+                            <li>Las decisiones <b class="text-primary">no podrán ser modificadas</b>
+                                posteriormente.</li>
+                        </ul>
+
+                        <!-- Instrucciones para modo RECOMENDAR/NO RECOMENDAR -->
+                        <separator string="Recomendación de Proveedores"
+                            invisible="not show_instructions or approval_mode != 'recommend' or rejected_by_project_leader"/>
+                        <div
+                            invisible="not show_instructions or approval_mode != 'recommend' or rejected_by_project_leader">
+                            <p>Emita su <b class="text-primary">recomendación profesional</b> sobre
+                                qué proveedores presentar ante el <b
+                                    class="text-primary">comité de compras</b>, basándose en su
+                                análisis técnico y experiencia.</p>
+                        </div>
+                        <ul
+                            invisible="not show_instructions or approval_mode != 'recommend' or rejected_by_project_leader">
+                            <li>Haz clic en <i class="fa fa-check text-success"/> para <b
+                                    class="text-primary">recomendar</b> o en <i
+                                    class="fa fa-times text-danger"/> para <b
+                                    class="text-primary">no recomendar</b> a cada proveedor.</li>
+                            <li>Revise cuidadosamente la evidencia y cotizaciones antes de
+                                tomar una decisión.</li>
+                            <li>Las recomendaciones quedarán registradas y serán presentadas al <b
+                                    class="text-primary">comité de compras</b> para la decisión
+                                final.</li>
+                        </ul>
+                        <!-- Lista de proveedores para modo APROBAR/RECHAZAR -->
+                        <separator string="Proveedores"
+                            invisible="show_instructions or add_observations or all_rejected or approval_mode == 'recommend'"/>
+                        <p
+                            invisible="show_instructions or add_observations or all_rejected or approval_mode == 'recommend'">
+                            Use los botones de cada fila para <b class="text-primary">aprobar</b> o <b
+                                class="text-primary">rechazar</b> proveedores. Estas decisiones son <b
+                                class="text-primary">definitivas</b>.</p>
+                        <field name="supplier_ids"
+                            invisible="show_instructions or add_observations or all_rejected or approval_mode == 'recommend'"
+                            readonly="1">
+                            <list class="approval_supplier_ids" editable="bottom" create="false"
+                                delete="false">
+                                <field name="state" column_invisible="1" readonly="1"/>
+                                <field name="supplier_name" column_invisible="1" readonly="1"/>
+                                <field name="supplier_display" string="Nombre" readonly="1"/>
+                                <button type="object" name="action_approve" title="Aprobar"
+                                    invisible="state in ('approved', 'rejected')"
+                                    icon="fa-check" class="btn btn-success"/>
+                                <button type="object" name="action_reject" title="Rechazar"
+                                    invisible="state in ('rejected', 'approved')"
+                                    icon="fa-times" class="btn btn-danger"/>
+                                <button type="object" name="action_reset" title="Reiniciar"
+                                    invisible="not state"
+                                    icon="fa-undo" class="btn btn-secondary"/>
+                            </list>
+                        </field>
+
+                        <!-- Lista de proveedores para modo RECOMENDAR/NO RECOMENDAR -->
+                        <separator string="Proveedores"
+                            invisible="show_instructions or add_observations or all_rejected or approval_mode != 'recommend'"/>
+                        <p
+                            invisible="show_instructions or add_observations or all_rejected or approval_mode != 'recommend'">
+                            Use los botones de cada fila para indicar si el proveedor es <b
+                                class="text-primary">recomendado</b> o <b
+                                class="text-primary">no recomendado</b> para el comité de compras.</p>
+                        <field name="supplier_ids"
+                            invisible="show_instructions or add_observations or all_rejected or approval_mode != 'recommend'"
+                            readonly="1">
+                            <list class="approval_supplier_ids" editable="bottom" create="false"
+                                delete="false">
+                                <field name="state" column_invisible="1" readonly="1"/>
+                                <field name="supplier_name" column_invisible="1" readonly="1"/>
+                                <field name="supplier_display" string="Nombre" readonly="1"/>
+                                <button type="object" name="action_approve" title="Recomendar"
+                                    invisible="state in ('recommended', 'not_recommended')"
+                                    icon="fa-check" class="btn btn-success"/>
+                                <button type="object" name="action_reject" title="No Recomendar"
+                                    invisible="state in ('not_recommended', 'recommended')"
+                                    icon="fa-times" class="btn btn-danger"/>
+                                <button type="object" name="action_reset" title="Reiniciar"
+                                    invisible="not state"
+                                    icon="fa-undo" class="btn btn-secondary"/>
+                            </list>
+                        </field>
+                        <separator string="Proveedor"
+                            invisible="not add_observations or show_observation_instructions"/>
+                        <div
+                            invisible="not add_observations or show_observation_instructions">
+                            <p>Seleccione un proveedor del menú desplegable para agregar <b
+                                    class="text-primary">observaciones</b> sobre su evaluación.</p>
+                        </div>
+
+                        <separator string="Proveedores Rechazados"
+                            invisible="not all_rejected"/>
+                        <div invisible="not all_rejected">
+                            <p><b class="text-primary">Todos los proveedores</b> han sido <b
+                                    class="text-primary">rechazados</b>. Ingrese el <b
+                                    class="text-primary">motivo del rechazo</b> para documentar esta
+                                decisión.</p>
+                        </div>
+                        <field name="reason_for_rejection_all_suppliers"
+                            invisible="not all_rejected"
+                            placeholder="Ej. Todos los proveedores no cumplieron con los requisitos de calidad establecidos."/>
+
+                        <separator string="Aprobar" invisible="not rejected_by_project_leader"/>
+                        <div invisible="not rejected_by_project_leader">
+                            <p>Indique el <b class="text-primary">motivo por el cual aprueba
+                                    el rechazo</b> del Líder de Proyecto. El <b class="text-primary">área
+                                de compras</b> será notificada para <b class="text-primary">solicitar
+                                nuevas propuestas</b> a los proveedores.</p>
+                        </div>
+
+                        <field name="approve_project_leader_rejection"
+                            invisible="not rejected_by_project_leader"
+                            placeholder="Ej. Los proveedores no cumplieron con los requisitos de calidad establecidos."/>
+
+                        <separator string="Observaciones"
+                            invisible="not add_observations or not show_observation_instructions or all_rejected"/>
+                        <div
+                            invisible="not add_observations or not show_observation_instructions or all_rejected">
+                            <p>Registre <b class="text-primary">observaciones</b> para cada
+                                proveedor evaluado. Siga estas indicaciones:</p>
+                        </div>
+                        <ul
+                            invisible="not add_observations or not show_observation_instructions or all_rejected">
+                            <li>
+                                <b class="text-primary">Seleccione el proveedor</b> del menú
+                                desplegable y escriba sus observaciones en el campo de notas. </li>
+                            <li> Repita para cada proveedor que necesite observaciones. </li>
+                            <li> Al terminar, haga clic en <b class="text-primary">"Finalizar"</b>
+                                para registrar todas las notas en el historial. </li>
+                        </ul>
+                        <p
+                            invisible="not add_observations or not show_observation_instructions or all_rejected">
+                            <b class="text-primary">Nota:</b> Use el botón <button
+                                class="btn btn-secondary btn-sm" disabled="1">
+                                <i class="fa fa-save" title="Guardar"/>
+                            </button>
+                            para <b class="text-primary">guardar</b> antes de cambiar de proveedor.
+                            Las notas no guardadas se perderán. </p>
+                        <group
+                            invisible="not add_observations or show_observation_instructions">
+                            <label for="selected_supplier_line_id"/>
+                            <div class="o_row">
+                                <field name="selected_supplier_line_id" nolabel="1" string="Nombre"
+                                    options="{'no_create': True, 'no_open': True}"
+                                    placeholder="Ej. Michael Scott, Dwight Schrute, Pam Beesly, etc..."/>
+                                <!-- Etiquetas para modo APROBAR/RECHAZAR -->
+                                <span
+                                    invisible="not selected_supplier_line_id or not approved or approval_mode == 'recommend'">
+                                    <span class="text-success ms-1" style="font-weight:400;">-
+                                        (Aprobado)</span>
+                                </span>
+                                <span
+                                    invisible="not selected_supplier_line_id or not rejected or approval_mode == 'recommend'">
+                                    <span class="text-danger ms-1" style="font-weight:400;">-
+                                        (Rechazado)</span>
+                                </span>
+                                <!-- Etiquetas para modo RECOMENDAR/NO RECOMENDAR -->
+                                <span
+                                    invisible="not selected_supplier_line_id or not approved or approval_mode != 'recommend'">
+                                    <span class="text-success ms-1" style="font-weight:400;">-
+                                        (Recomendado)</span>
+                                </span>
+                                <span
+                                    invisible="not selected_supplier_line_id or not rejected or approval_mode != 'recommend'">
+                                    <span class="text-danger ms-1" style="font-weight:400;">-
+                                        (No Recomendado)</span>
+                                </span>
+                                <button title="Guardar Nota(s)" type="object" icon="fa-save"
+                                    name="action_save_current_observations"
+                                    class="btn btn-outline-primary btn-sm ms-2"
+                                    invisible="not selected_supplier_line_id"/>
+                            </div>
+                        </group>
+                        <field name="observations_ids"
+                            invisible="not add_observations or show_observation_instructions">
+                            <list editable="bottom">
+                                <field name="observation" string="Notas"
+                                    placeholder="Ej. El proveedor no cumplió con los requisitos de calidad establecidos."/>
+                            </list>
+                        </field>
+                    </sheet>
+
+                    <footer>
+
+                        <!--Confirma
+                        el rechazo por parte del lider de proyecto-->
+                        <button string="Confirmar" type="object"
+                            name="action_confirm_rejection_project_leader"
+                            invisible="not rejected_by_project_leader"
+                            class="btn-primary"/>
+
+                        <!-- Instrucciones de aprobación -->
+                        <button string="Siguiente" type="object" name="action_show_instructions"
+                            invisible="not show_instructions or not approval_mode"
+                            class="btn-primary"/>
+                        <button string="Cancelar" class="btn-secondary" special="cancel"
+                            invisible="not show_instructions"/>
+
+                        <!-- Lista de proveedores -->
+                        <button string="Siguiente" type="object" name="action_add_observations"
+                            invisible="show_instructions or add_observations or all_rejected"
+                            class="btn-primary"/>
+                        <button string="Volver" type="object" name="action_show_instructions"
+                            invisible="show_instructions or add_observations or all_rejected"
+                            class="btn-secondary"/>
+
+                        <!--Rechazo
+                        de todos los proveedores-->
+                        <button string="Confirmar" type="object"
+                            name="action_confirm_rejection_all_suppliers"
+                            invisible="not all_rejected"
+                            class="btn-primary"/>
+                        <button string="Volver" type="object" name="action_back_to_suppliers"
+                            invisible="not all_rejected"
+                            class="btn-secondary"/>
+
+
+                        <!-- Instrucciones de observaciones -->
+                        <button string="Siguiente" type="object"
+                            name="action_show_observations_form"
+                            invisible="not add_observations or not show_observation_instructions"
+                            class="btn-primary"/>
+                        <button string="Volver" type="object" name="action_back_to_suppliers"
+                            invisible="not add_observations or not show_observation_instructions"
+                            class="btn-secondary"/>
+
+                        <!-- Formulario de observaciones -->
+                        <button string="Finalizar" type="object" name="action_finish_approval"
+                            invisible="not add_observations or show_observation_instructions"
+                            class="btn-primary"/>
+                        <button string="Volver" type="object"
+                            name="action_back_to_observation_instructions"
+                            invisible="not add_observations or show_observation_instructions"
+                            class="btn-secondary"/>
+
+                    </footer>
+
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

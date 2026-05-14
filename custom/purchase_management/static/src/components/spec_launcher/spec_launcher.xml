@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- Widget del encabezado del formulario -->
+    <t t-name="purchase_management.AttachTechnicalSpecLauncher">
+        <div>
+            <t t-if="!hasAttachments">
+                <button class="btn btn-primary" t-on-click="openFilePicker">
+                    Adj. Ficha Técnica
+                </button>
+            </t>
+            <t t-else="">
+                <button class="btn btn-primary" t-on-click="openDialog">
+                    Ficha Técnica
+                </button>
+            </t>
+        </div>
+    </t>
+
+    <!-- Dialog: tarjetas Kanban de fichas técnicas -->
+    <t t-name="purchase_management.TechnicalSpecDialog">
+        <Dialog title="'Odoo'">
+
+            <div class="o_spec_kanban_container">
+                <t t-if="state.attachments.length === 0">
+                    <div class="o_spec_empty">
+                        No hay fichas técnicas adjuntas.
+                    </div>
+                </t>
+                <t t-else="">
+                    <div class="o_spec_kanban">
+                        <div t-foreach="state.attachments" t-as="att" t-key="att.id"
+                             class="o_spec_card">
+                            <div class="o_spec_card_preview"
+                                 t-att-class="getFileClass(att.name)"
+                                 t-on-click="() => this.openAttachment(att.id)">
+                                <button t-if="props.isDraft"
+                                        class="o_spec_delete_btn"
+                                        t-on-click.stop="() => this.deleteAttachment(att.id)">
+                                    &#x2715;
+                                </button>
+                                <span class="o_spec_card_type" t-esc="getFileType(att.name)"/>
+                            </div>
+                            <div class="o_spec_card_footer">
+                                <span class="o_spec_card_name"
+                                      t-att-title="att.name"
+                                      t-esc="att.name"/>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </div>
+
+            <t t-set-slot="footer">
+                <button t-if="props.isDraft"
+                        class="btn btn-primary"
+                        t-att-disabled="state.uploading"
+                        t-on-click="openFilePicker">
+                    <t t-if="state.uploading">Subiendo...</t>
+                    <t t-else="">Adjuntar</t>
+                </button>
+                <button class="btn btn-secondary" t-on-click="props.close">Cerrar</button>
+            </t>
+
+        </Dialog>
+    </t>
+
+</templates>

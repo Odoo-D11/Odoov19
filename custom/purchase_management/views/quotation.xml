@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_quotation_quotation_list" model="ir.ui.view">
+            <field name="name">quotation.quotation.list</field>
+            <field name="model">quotation.quotation</field>
+            <field name="arch" type="xml">
+                <list string="Cotizaciones" create="false" edit="false">
+                    <field name="supplier_name"/>
+                    <field name="request_quotation_id"/>
+                    <field name="type"/>
+                    <field name="validity_date"/>
+                    <field name="payment_term"/>
+                    <field name="currency_id"/>
+                    <field name="trm"/>
+                    <field name="delivery_date"/>
+                    <field name="total" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_quotation_quotation_form" model="ir.ui.view">
+            <field name="name">quotation.quotation.form</field>
+            <field name="model">quotation.quotation</field>
+            <field name="arch" type="xml">
+                <form duplicate="false">
+                    <field name="awarded" invisible="1"/>
+                    <field name="request_quotation_id" invisible="1" readonly="1"/>
+                    <field name="type" invisible="1" readonly="1"/>
+                    <field name="rejected" invisible="1" readonly="1"/>
+                    <sheet>
+                        <separator string="Proveedor"/>
+                        <p class="text-muted"> Usa esta interfaz para registrar y gestionar el
+                            proveedor vinculado a la solicitud <field name="request_quotation_id"
+                                class="text-primary" options="{'no_create': True, 'no_open': True}"
+                                style="margin-bottom: 0 !important; font-weight: bold;"/>. Añade
+                            detalles como el nombre del proveedor, productos o servicios ofrecidos,
+                            cantidades, precios unitarios y condiciones comerciales. Esto te ayudará
+                            a comparar ofertas y seleccionar al proveedor más adecuado para tus
+                            necesidades. </p>
+                        <group>
+                            <field name="supplier_name" string="Nombre" class="text-primary"
+                                placeholder="Ej. ACME Corp, Globex, Initech, etc..."/>
+
+                        </group>
+                        <separator string="Detalles de la Cotización"/>
+                        <p class="text-muted">
+                            Completa los detalles específicos de la cotización proporcionada por el
+                            proveedor. Incluye la fecha de validez de la oferta, los términos de
+                            pago acordados, la moneda utilizada y la tasa de cambio (TRM) si
+                            aplica. También especifica la fecha estimada de entrega de los bienes o
+                            servicios cotizados. Estos detalles son cruciales para evaluar la
+                            viabilidad de la oferta y asegurar que cumple con los requisitos de tu
+                            organización.
+                        </p>
+                        <group>
+                            <group>
+                                <field name="validity_date" placeholder="Ej. 05/31/2025"
+                                    widget="RemainingDays"/>
+                                <field name="payment_term"
+                                    placeholder="Ej. Pago Inmediato, 30 días, etc..."/>
+                                <label for="currency_id"/>
+                                <div class="o_row">
+                                    <span style="font-weight: 400;"
+                                        invisible="currency_id == 8 or not currency_id"
+                                        class="me-1">1</span>
+                                    <field name="currency_id"
+                                        placeholder="Ej. COP, USD, etc..."
+                                        options="{'no_create': True, 'no_open': True}"/>
+                                    <span style="font-weight: 400;" class="mx-1"
+                                        invisible="currency_id == 8 or not currency_id">=</span>
+                                    <field name="trm"
+                                        invisible="currency_id == 8 or not currency_id"
+                                        placeholder="Ej. 4,500.00"/>
+                                </div>
+                            </group>
+                            <group>
+                                <field name="delivery_date" placeholder="Ej. 05/01/2025"/>
+                                <field name="creation_date" placeholder="Ej. 04/01/2025"/>
+                            </group>
+                        </group>
+                        <separator string="Productos" invisible="type != 'product'"/>
+                        <separator string="Servicios" invisible="type != 'service'"/>
+                        <separator string="Elementos solicitados" invisible="type != 'mix'"/>
+                        <p class="text-muted"> Aquí puedes agregar los <span
+                                invisible="type != 'product'">productos</span><span
+                                invisible="type != 'service'">servicios</span><span
+                                invisible="type != 'mix'">elementos</span> específicos que el
+                            proveedor está ofreciendo en su cotización. Incluye detalles como
+                            descripciones, cantidades, precios unitarios y cualquier otra
+                            información relevante para cada ítem. Esto te permitirá comparar
+                            fácilmente las ofertas de diferentes proveedores y tomar decisiones
+                            informadas. </p>
+                        <field name="product_line_ids" widget="product_specification_one2many">
+                            <list editable="bottom" string="Líneas de Productos" limit="300"
+                                class="o_list_product_line_ids">
+                                <field name="request_line_id" column_invisible="1"
+                                    options="{'no_create': True, 'no_open': True}"/>
+                                <field name="sequence" column_invisible="1"/>
+                                <field name="display_type" column_invisible="1"/>
+                                <field name="currency_id" string="Moneda"
+                                    column_invisible="1" force_save="1"
+                                    options="{'no_create': True, 'no_open': True}"/>
+                                <field name="product_name" column_invisible="1"/>
+                                <field name="name" string="Nombre"
+                                    widget="product_line_name"
+                                    placeholder="Ej. Abrazadera Metalica, Tornillo, etc..."/>
+                                <field name="qty"/>
+                                <field name="price_unit" widget="monetary"/>
+                                <field name="uom_id" string="UdM" column_invisible="1"
+                                    readonly="1"
+                                    options="{'no_create': True, 'no_open': True}" force_save="1"
+                                    placeholder="Ej. Unidad, Caja, Metro, etc..."/>
+                                <field name="subtotal" readonly="1" widget="monetary"/>
+                            </list>
+                        </field>
+                        <div class="o_line_totals_container">
+                            <div class="o_line_totals_wrapper">
+                                <field name="total" widget="line-totals-field" nolabel="1"
+                                    readonly="1"
+                                    options="{'currency_field': 'currency_id'}"/>
+                            </div>
+                        </div>
+                        <separator string="Condiciones Comerciales"/>
+                        <p class="text-muted">
+                            Detalla las condiciones comerciales acordadas con el proveedor para esta
+                            cotización. Incluye el Incoterm aplicable, que define las
+                            responsabilidades de transporte y entrega entre comprador y vendedor.
+                            También puedes agregar cualquier acuerdo especial que se haya negociado,
+                            como descuentos por volumen, garantías extendidas o servicios
+                            adicionales incluidos en la oferta.
+                        </p>
+                        <field name="commercial_term_ids">
+                            <list editable="bottom" string="Condiciones Comerciales">
+                                <field name="type_id" string="Nombre"
+                                    placeholder="Ej. [IT] INCLUYE TRANSPORTE, [MD] MAYOR DESCUENTO, etc..."
+                                    options="{'no_create': True, 'no_open': True}"/>
+                            </list>
+                        </field>
+                        <separator string="Observaciones"/>
+                        <p class="text-muted">
+                            Utiliza este espacio para registrar comentarios adicionales y
+                            aclaraciones relevantes sobre la oferta del proveedor. Incluye
+                            observaciones sobre riesgos, dependencias, condiciones especiales,
+                            restricciones o acuerdos que no hayan quedado reflejados en los campos
+                            anteriores. Esta información proporcionará un contexto más completo al
+                            momento de evaluar, negociar y aprobar la solicitud.
+                        </p>
+                        <field name="observation_ids">
+                            <list editable="bottom" string="Observaciones">
+                                <field name="name" string="Nota"
+                                    placeholder="El proveedor ofrece una fecha de entrega muy competitiva y condiciones de pago flexibles."/>
+                            </list>
+                        </field>
+                        <separator string="Evidencia"/>
+                        <p class="text-muted"> Proporciona el enlace de la evidencia del producto
+                            cotizado. Esto es importante para asegurar que el producto cumple con
+                            las especificaciones técnicas requeridas y facilita la evaluación por
+                            parte del equipo técnico. </p>
+                        <group class="text-truncate">
+                            <div class="o_row">
+                                <i class="fa fa-folder ms-1 me-2" aria-hidden="true"
+                                    title="Evidencia"/>
+                                <field name="evidence" class="text-primary" widget="url"
+                                    string="Link"
+                                    placeholder="Ej. https://www.sharepoint.com/sites/ProyectoX/DocumentosCompartidos/ProductoY"/>
+                            </div>
+                        </group>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

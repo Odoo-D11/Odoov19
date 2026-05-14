@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <data>
+
+        <!-- Referencia para Solicitud de Cotización -->
+
+        <record id="seq_request_quotation" model="ir.sequence">
+            <field name="name">Solicitud de Cotización</field>
+            <field name="code">request.quotation</field>
+            <field name="prefix">/</field>
+            <field name="padding">4</field>
+        </record>
+
+        <!-- Referencia para Solicitud Administrativa -->
+
+        <record id="seq_administrative_request" model="ir.sequence">
+            <field name="name">Solicitud Administrativa</field>
+            <field name="code">administrative.request</field>
+            <field name="prefix">ADM/%(year)s/</field>
+            <field name="padding">4</field>
+        </record>
+
+        <!-- Referencia para Órdenes de Compra -->
+
+        <record id="seq_purchase_management_order" model="ir.sequence">
+            <field name="name">Órdenes de Compra</field>
+            <field name="code">purchase.management.order</field>
+            <field name="prefix">OC/%(year)s/</field>
+            <field name="padding">4</field>
+        </record>
+
+        <!-- Referencia para Órdenes de Servicio -->
+        <record id="seq_service_management_order" model="ir.sequence">
+            <field name="name">Órdenes de Servicio</field>
+            <field name="code">service.management.order</field>
+            <field name="prefix">OS/%(year)s/</field>
+            <field name="padding">4</field>
+        </record>
+
+    </data>
+</odoo>

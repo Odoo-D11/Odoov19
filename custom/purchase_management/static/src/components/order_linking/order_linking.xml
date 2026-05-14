@@ -1,0 +1,1444 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+  <t t-name="purchase_management.ProductLinkingLauncher">
+    <button class="btn btn-primary" t-on-click="openDialog">
+      Crear orden
+    </button>
+  </t>
+
+  <t t-name="purchase_management.ProductLinkingDialog">
+    <Dialog t-props="{ title: props.title or 'Crear Orden', size: 'lg' }">
+
+      <!-- ── Cuerpo ── -->
+      <div class="o_order_mapping pm-font-inter" t-ref="root">
+
+        <div t-if="state.loading"
+             class="d-flex align-items-center justify-content-center py-5">
+          <div class="text-center">
+            <div class="spinner-border text-primary mb-3" role="status">
+              <span class="visually-hidden">Cargando...</span>
+            </div>
+            <p class="text-muted">Cargando productos...</p>
+          </div>
+        </div>
+
+        <div t-elif="state.error" class="p-4">
+          <div class="alert alert-danger" role="alert">
+            <i class="fa fa-exclamation-triangle me-2"/>
+            <t t-esc="state.error"/>
+          </div>
+        </div>
+
+        <div t-else="" class="om-card-full-bleed">
+          <div class="card">
+
+            <!-- Barra de progreso (solo en modo manual) -->
+            <t t-if="state.wizardMode === 'manual'">
+              <div class="om-wizard-progress-wrap">
+                <div class="om-wizard-progress-bar" t-att-style="'width:' + wizardProgress + '%'"/>
+              </div>
+            </t>
+
+            <!-- Estado vacío -->
+            <t t-if="!state.lines.length">
+              <div class="card-body text-center py-5 text-muted">
+                <i class="fa fa-inbox fa-2x mb-2 d-block opacity-50"/>
+                No hay productos en esta solicitud.
+              </div>
+            </t>
+
+            <!-- ── Modo Excel ── -->
+            <t t-elif="state.wizardMode === 'excel'">
+              <div class="card-body om-excel-panel">
+
+                <!-- ══ INSTRUCCIONES ══ -->
+                <t t-if="state.importStep === 'instructions'">
+                  <div class="om-import-instructions">
+                    <div class="om-import-instr-label">Instrucciones</div>
+                    <p class="om-import-instr-text">
+                      Para realizar la importación de <b class="text-primary"><t t-esc="state.lines.length"/> productos</b> de forma correcta y evitar errores en el proceso, tenga en cuenta las siguientes indicaciones:
+                    </p>
+                    <ul class="om-import-instr-list">
+                      <li><b class="text-primary">Descarga la plantilla Excel:</b> Haz clic en el botón de descarga del siguiente paso. La plantilla incluye las <t t-esc="state.lines.length"/> líneas de tu solicitud prellenadas.</li>
+                      <li><b class="text-primary">Nombre del producto (Requerido):</b> Ingresa el nombre exacto o similar del producto en el catálogo. Si no existe, el sistema lo creará automáticamente al confirmar.</li>
+                      <li><b class="text-primary">Nombre de la variante (Requerido):</b> Especifica la característica que diferencia este ítem de otros del mismo producto (ej: <i>Talla M</i>, <i>Color rojo</i>, <i>Referencia 100</i>).</li>
+                      <li><b class="text-primary">Categoría (Obligatorio):</b> Categoría del producto en bodega. Debe coincidir con una categoría existente en el sistema.</li>
+                      <li><b class="text-primary">Centro de costo (Opcional):</b> Si se deja vacío, se aplica por defecto la categoría <b class="text-primary">Suministro de materiales</b>.</li>
+                      <li><b class="text-primary">Mismo producto, distintas variantes:</b> Si varias filas comparten el mismo nombre de producto, el sistema crea un único producto padre con una variante por cada fila. Todas se conservan — ninguna se elimina ni fusiona.</li>
+                    </ul>
+                  </div>
+                </t>
+
+                <!-- ══ DESCARGA + CARGA + RESULTADOS ══ -->
+                <t t-else="">
+
+                  <!-- Step tracker: Plantilla → Carga → Resultados -->
+                  <div class="om-excel-track">
+                    <div t-att-class="'om-track-step ' + (state.importTemplateDownloaded ? 'om-track-done' : 'om-track-active')">
+                      <div class="om-track-dot">
+                        <i t-if="state.importTemplateDownloaded" class="fa fa-check"/>
+                        <t t-else="">1</t>
+                      </div>
+                      <span class="om-track-label">Plantilla</span>
+                    </div>
+                    <div class="om-track-line"/>
+                    <div t-att-class="'om-track-step ' + (!state.importTemplateDownloaded ? 'om-track-pending' : (state.importResults and importErrorCount === 0 ? 'om-track-done' : 'om-track-active'))">
+                      <div class="om-track-dot">
+                        <i t-if="state.importResults and importErrorCount === 0" class="fa fa-check"/>
+                        <t t-else="">2</t>
+                      </div>
+                      <span class="om-track-label">Carga</span>
+                    </div>
+                    <div class="om-track-line"/>
+                    <div t-att-class="'om-track-step ' + (state.importResults ? (importErrorCount === 0 ? 'om-track-active' : 'om-track-error') : 'om-track-pending')">
+                      <div class="om-track-dot">
+                        <i t-if="state.importResults and importErrorCount === 0" class="fa fa-check"/>
+                        <i t-elif="state.importResults and importErrorCount > 0" class="fa fa-exclamation"/>
+                        <t t-else="">3</t>
+                      </div>
+                      <span class="om-track-label">Resultados</span>
+                    </div>
+                  </div>
+
+                  <!-- Tarjetas: Descarga + Carga (solo cuando no hay resultados) -->
+                  <t t-if="!state.importResults">
+                    <div class="om-excel-cards">
+
+                      <!-- Tarjeta 1: Descarga -->
+                      <div class="om-excel-card">
+
+                        <t t-if="state.importTemplateDownloaded">
+                          <span class="om-card-done-check"><i class="fa fa-check"/></span>
+                        </t>
+                        <div class="om-excel-card-icon om-card-icon-download">
+                          <i class="fa fa-file-excel-o"/>
+                        </div>
+                        <div class="om-excel-card-body">
+                          <span class="om-excel-card-title">Descarga la plantilla</span>
+                          <p class="om-excel-card-desc">
+                            Completa los <b><t t-esc="state.lines.length"/> productos</b> en el Excel siguiendo el formato indicado para asegurar su correcta importación.
+                          </p>
+                          <label class="om-upload-zone om-download-zone" t-on-click="onDownloadTemplate">
+                            <i t-att-class="state.importTemplateDownloaded ? 'fa fa-refresh om-upload-zone-icon' : 'fa fa-download om-upload-zone-icon'"/>
+                            <span class="om-upload-zone-text">
+                              <t t-if="state.importTemplateDownloaded">Descargar de nuevo</t>
+                              <t t-else="">Descargar plantilla <b>.xlsx</b></t>
+                            </span>
+                          </label>
+                        </div>
+                      </div>
+
+                      <!-- Separador central con botón de salto -->
+                      <div class="om-excel-cards-sep">
+                        <t t-if="!state.importTemplateDownloaded">
+                          <button class="om-skip-download-btn"
+                                  t-on-click="() => { state.importTemplateDownloaded = true; }"
+                                  title="Ya tengo el archivo descargado">
+                            <i class="fa fa-arrow-right"/>
+                          </button>
+                          <span class="om-skip-download-label">Ya lo<br/>tengo</span>
+                        </t>
+                        <t t-else="">
+                          <div class="om-excel-cards-sep-line"/>
+                        </t>
+                      </div>
+
+                      <!-- Tarjeta 2: Carga (zona de drop) -->
+                      <div t-att-class="'om-excel-card ' + (!state.importTemplateDownloaded ? 'om-excel-card-disabled' : '')">
+                        <div class="om-excel-card-icon om-card-icon-upload">
+                          <i class="fa fa-cloud-upload"/>
+                        </div>
+                        <div class="om-excel-card-body">
+                          <span class="om-excel-card-title">Carga el archivo completado</span>
+                          <p class="om-excel-card-desc">
+                            Selecciona el Excel completado. El sistema buscará o creará las variantes en bodega
+                            para previsualización antes de confirmar.
+                          </p>
+                          <label t-att-class="'om-upload-zone' + (state.importUploading ? ' om-upload-zone-loading' : '') + (!state.importTemplateDownloaded ? ' om-upload-zone-locked' : '')">
+                            <t t-if="state.importUploading">
+                              <span class="spinner-border spinner-border-sm text-primary mb-1" role="status"/>
+                              <span class="om-upload-zone-text">Procesando archivo…</span>
+                            </t>
+                            <t t-else="">
+                              <i class="fa fa-upload om-upload-zone-icon"/>
+                              <span class="om-upload-zone-text">
+                                Haz clic para seleccionar el archivo <b>.xlsx</b>
+                              </span>
+                            </t>
+                            <input type="file" accept=".xlsx" class="d-none"
+                                   t-att-disabled="!state.importTemplateDownloaded or state.importUploading"
+                                   t-on-change="(ev) => this.onImportExcel(ev)"/>
+                          </label>
+                        </div>
+                      </div>
+
+                    </div>
+                  </t>
+
+                  <!-- Resultados del import -->
+                  <t t-if="state.importResults">
+
+                    <!-- ── Estado: hay errores ── -->
+                    <t t-if="importErrorCount > 0">
+                      <div class="bg-white rounded border overflow-hidden">
+                        <div class="row g-0">
+
+                          <div class="col-md-4 bg-danger text-white d-flex flex-column align-items-center justify-content-center p-4 text-center">
+                            <div class="mb-3">
+                              <i class="fa fa-exclamation-triangle fa-4x text-white"/>
+                            </div>
+                            <h5 class="fw-bold m-0 text-white">ERRORES</h5>
+                            <p class="mb-0 mt-3 text-white" style="opacity: 0.9; font-size: 0.9rem;">
+                              <t t-esc="importErrorCount"/> <t t-if="importErrorCount === 1">fila</t><t t-else="">filas</t> con error.
+                            </p>
+                          </div>
+
+                          <div class="col-md-8 p-0 d-flex flex-column">
+                            <div class="px-4 py-3 border-bottom bg-white d-flex justify-content-between align-items-center">
+                              <span style="font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #8392a5;">Detalle de errores</span>
+                              <span class="badge bg-danger text-white"><t t-esc="importErrorCount"/> <t t-if="importErrorCount === 1">Error</t><t t-else="">Errores</t></span>
+                            </div>
+                            <div class="bg-light flex-grow-1" style="max-height: 280px; overflow-y: auto; padding: 12px 16px;">
+                              <t t-foreach="state.importResults.rows" t-as="row" t-key="row.line_id">
+                                <t t-if="row.status === 'error'">
+                                  <div class="d-flex align-items-baseline bg-white p-2 mb-2 rounded border">
+                                    <div class="text-danger me-2 flex-shrink-0 text-center" style="min-width: 18px;">
+                                      <i class="fa fa-times-circle" style="font-size: 0.9rem;"/>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                      <span class="fw-semibold text-dark" style="font-size: 0.88rem;"><t t-esc="row.line_name"/></span>
+                                      <span class="text-muted ms-2" style="font-size: 0.82rem; line-height: 1.5;"><t t-esc="row.message"/></span>
+                                    </div>
+                                  </div>
+                                </t>
+                              </t>
+                            </div>
+                            <div class="px-4 py-2 border-top bg-white" style="font-size: 0.8rem; color: #6c757d;">
+                              Descarga el archivo original, corrige las filas marcadas y vuelve a cargarlo usando el botón <b>Volver</b>.
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+                    </t>
+
+                    <!-- ── Estado: import exitoso ── -->
+                    <t t-else="">
+                      <div class="bg-white rounded border overflow-hidden">
+                        <div class="row g-0">
+
+                          <div class="col-md-4 bg-success text-white d-flex flex-column align-items-center justify-content-center p-4 text-center">
+                            <div class="mb-3">
+                              <i class="fa fa-check-circle fa-4x text-white"/>
+                            </div>
+                            <span style="font-size: 0.95rem; font-weight: 700; color: #fff; margin-top: 0.3rem;">
+                              ¡Todo listo!
+                            </span>
+                            <p class="mb-0 mt-3 text-white" style="font-size: 0.82rem; line-height: 1.5; opacity: 0.92;">
+                              <t t-if="importPendingCount > 0 and excelMultiSupplierLines.length > 0">
+                                Nuevos productos serán creados al confirmar. Completa la distribución de cantidades.
+                              </t>
+                              <t t-elif="importPendingCount > 0">
+                                Algunos productos se crearán en el catálogo al confirmar la vinculación.
+                              </t>
+                              <t t-else="">
+                                Todos los productos ya existen en el catálogo. Confirma para finalizar la vinculación.
+                              </t>
+                            </p>
+                          </div>
+
+                          <div class="col-md-8 p-0 d-flex flex-column">
+                            <div class="px-4 py-2 border-bottom bg-white d-flex align-items-center justify-content-between">
+                              <span style="font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: #8392a5;">
+                                Productos vinculados
+                              </span>
+                              <div class="d-flex gap-1">
+                                <t t-if="importPendingCount > 0">
+                                  <span class="badge bg-warning text-white" style="font-size: 0.7rem;" title="Se crearán en el catálogo al confirmar"><t t-esc="importPendingCount"/> Por confirmar</span>
+                                </t>
+                                <t t-if="importReutilizadaCount > 0">
+                                  <span class="badge bg-success text-white" style="font-size: 0.7rem;"><t t-esc="importReutilizadaCount"/> <t t-if="importReutilizadaCount === 1">Listo</t><t t-else="">Listos</t></span>
+                                </t>
+                              </div>
+                            </div>
+                            <t t-if="importEmptyPendingProductCount > 0">
+                              <div class="px-4 py-2 border-bottom bg-light d-flex align-items-center justify-content-between"
+                                   style="font-size: 0.82rem;">
+                                <span class="text-muted">
+                                  <t t-esc="importEmptyPendingProductCount"/> producto(s) nuevo(s) sin descripción
+                                </span>
+                                <button class="btn btn-outline-secondary btn-sm"
+                                        style="font-size: 0.75rem;"
+                                        t-on-click="onSuggestAllDescriptions"
+                                        t-att-disabled="state.suggestingDescriptions">
+                                  <t t-if="state.suggestingDescriptions">
+                                    <i class="fa fa-spinner fa-spin" style="font-size: 0.7rem;"/>
+                                  </t>
+                                  <t t-else="">
+                                    <i class="fa fa-lightbulb-o" style="font-size: 0.8rem;"/>
+                                  </t>
+                                  <span class="ms-1">Sugerir descripciones</span>
+                                </button>
+                              </div>
+                            </t>
+                            <div class="bg-light flex-grow-1" style="max-height: 280px; overflow-y: auto; padding: 12px 16px;">
+                              <t t-foreach="state.importResults.rows" t-as="row" t-key="row.line_id">
+                                <div class="d-flex align-items-center bg-white p-2 mb-2 rounded" style="border: 1px solid #f0f0f0; border-left: 2px solid #198754;">
+                                  <div class="text-success me-2 flex-shrink-0 text-center" style="min-width: 18px;">
+                                    <i class="fa fa-check-circle" style="font-size: 0.9rem;"/>
+                                  </div>
+                                  <div class="flex-grow-1">
+                                    <span class="fw-semibold text-dark" style="font-size: 0.88rem;"><t t-esc="row.line_name"/></span>
+                                    <span class="text-muted" style="font-size: 0.82rem; line-height: 1.5;"> → <t t-esc="row.product_name"/> — <t t-esc="row.variant_name"/></span>
+                                    <t t-if="row.pending_creation">
+                                      <span class="om-pending-tag ms-1" title="Se creará en el catálogo al confirmar">Por confirmar</span>
+                                      <t t-if="row.shared_product_count and row.shared_product_count > 1">
+                                        <span class="om-pending-tag" style="font-weight: 400;"
+                                              t-att-title="'El producto \'' + row.product_name + '\' agrupa ' + row.shared_product_count + ' variantes de este Excel'">
+                                          <t t-esc="row.shared_product_count"/> variantes
+                                        </span>
+                                      </t>
+                                    </t>
+                                    <t t-elif="row.already_existed">
+                                    </t>
+                                  </div>
+                                </div>
+                              </t>
+                            </div>
+                            <div class="px-4 py-2 border-top bg-white" style="font-size: 0.8rem; color: #0d274d;">
+                              <t t-if="excelMultiSupplierLines.length > 0">
+                                Completa la distribución de cantidades abajo antes de confirmar.
+                              </t>
+                              <t t-else="">
+                                Haz clic en <b>Confirmar</b> para finalizar la vinculación.
+                              </t>
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+
+                      <!-- Panel de distribución multi-proveedor -->
+                      <t t-if="excelMultiSupplierLines.length > 0">
+                        <div class="om-dist-excel-section">
+                          <div class="om-dist-excel-header">
+                            Distribución de cantidades por proveedor
+                            <span class="text-muted small ms-2">— Ajusta antes de confirmar</span>
+                          </div>
+                          <t t-foreach="excelMultiSupplierLines" t-as="eline" t-key="eline.id">
+                            <div class="om-dist-excel-line">
+                              <div class="om-dist-line-name">
+                                <b t-esc="eline.name"/>
+                                <span class="text-muted ms-2">(<t t-esc="eline.qty"/> <t t-esc="eline.uom"/> solicitados)</span>
+                                <span t-att-class="'badge ms-2 om-dist-status-badge om-dist-status-badge--' + getDistributionStatus(eline)"
+                                      style="font-size: 0.65rem;">
+                                  <t t-if="getDistributionStatus(eline) === 'ok'">
+                                    <i class="fa fa-check me-1"/>Completo
+                                  </t>
+                                  <t t-elif="getDistributionStatus(eline) === 'over'">
+                                    <i class="fa fa-exclamation-triangle me-1"/>Excede (<t t-esc="getDistributionTotal(eline)"/> / <t t-esc="eline.qty"/>)
+                                  </t>
+                                  <t t-else="">
+                                    <i class="fa fa-clock-o me-1"/>Pendiente (<t t-esc="getDistributionTotal(eline)"/> / <t t-esc="eline.qty"/>)
+                                  </t>
+                                </span>
+                              </div>
+                              <div class="om-dist-excel-suppliers">
+                                <t t-foreach="eline.distributions" t-as="dist" t-key="dist.qline_id">
+                                  <div class="om-dist-supplier-row">
+                                    <div class="om-dist-supplier-info">
+                                      <span class="om-dist-supplier-name" t-esc="dist.partner_name"/>
+                                      <span class="om-dist-supplier-price">
+                                        $<t t-esc="formatPrice(dist.unit_price_cop)"/>
+                                        <t t-if="dist.currency_name !== 'COP'"> · <t t-esc="dist.currency_name"/></t>
+                                        / u
+                                      </span>
+                                    </div>
+                                    <div class="om-dist-supplier-qty">
+                                      <input type="number" class="om-dist-qty-input"
+                                             min="0" t-att-max="eline.qty"
+                                             t-att-value="dist.assigned_qty"
+                                             t-on-change="(ev) => this.onDistributionQtyChange(eline.id, dist.qline_id, ev)"
+                                             placeholder="0"/>
+                                      <span class="om-dist-qty-uom" t-esc="eline.uom"/>
+                                    </div>
+                                  </div>
+                                </t>
+                                <div t-att-class="'om-dist-summary om-dist-status-' + getDistributionStatus(eline)">
+                                  <span class="om-dist-summary-fraction">
+                                    <t t-esc="getDistributionTotal(eline)"/> / <t t-esc="eline.qty"/> <t t-esc="eline.uom"/>
+                                  </span>
+                                  <t t-if="getDistributionStatus(eline) === 'over'">
+                                    <span class="om-dist-summary-msg">Supera lo solicitado</span>
+                                  </t>
+                                  <t t-elif="getDistributionStatus(eline) === 'partial'">
+                                    <span class="om-dist-summary-msg">Distribución parcial</span>
+                                  </t>
+                                  <t t-elif="getDistributionStatus(eline) === 'ok'">
+                                    <span class="om-dist-summary-ok">Completo</span>
+                                  </t>
+                                </div>
+                              </div>
+                            </div>
+                          </t>
+                        </div>
+                      </t>
+
+                    </t>
+
+                  </t>
+
+                </t>
+
+              </div>
+            </t>
+            <!-- ── Wizard Manual ── -->
+            <t t-elif="currentLine">
+              <div class="card-body p-0 om-wizard-split">
+
+                <!-- ── Panel izquierdo: contexto del producto + campos de vinculación ── -->
+                <div class="om-wzd-left">
+
+                  <!-- Encabezado del producto -->
+                  <div class="om-wzd-product-header">
+                    <span class="om-wzd-step-label">
+                      Producto&#160;<b t-esc="state.wizardIndex + 1"/> de <t t-esc="state.lines.length"/>
+                      &#160;·&#160;<t t-esc="mappedCount"/>/<t t-esc="state.lines.length"/> vinculados
+                    </span>
+                    <div class="d-flex align-items-center justify-content-center">
+                      <h3 class="om-wzd-product-name mb-0" t-esc="currentLine.name"/>
+                      <button class="om-row-search-btn om-wzd-search-btn"
+                              t-on-click="() => openProductSearch(currentLine.name, '')"
+                              title="Buscar en Google qué es este producto">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" width="16" height="16" style="display:block;" aria-hidden="true">
+                          <path fill="#34A853" d="M64 320C64 273.4 76.5 229.6 98.3 191.1L208.1 382.3C230 421.5 271.9 448 320 448C334.3 448 347.1 445.7 360.8 441.4L284.5 573.6C159.9 556.3 64 449.3 64 320z"/>
+                          <path fill="#FBBC05" d="M429.1 385.6C441.4 366.4 448 343.1 448 320C448 281.8 431.2 247.5 404.7 224L557.4 224C569.4 253.6 576 286.1 576 320C576 461.4 461.4 575.1 320 576L429.1 385.6z"/>
+                          <path fill="#EA4335" d="M541.8 192L320 192C257.1 192 206.3 236.1 194.5 294.7L118.2 162.5C165 102.5 238 64 320 64C414.8 64 497.5 115.5 541.8 192z"/>
+                          <path fill="#4285F4" d="M408 320C408 368.6 368.6 408 320 408C271.4 408 232 368.6 232 320C232 271.4 271.4 232 320 232C368.6 232 408 271.4 408 320z"/>
+                        </svg>
+                      </button>
+                    </div>
+                    <span class="om-wzd-product-meta">
+                      <t t-esc="currentLine.qty"/>&#160;<t t-esc="currentLine.uom"/>
+                    </span>
+                  </div>
+
+                  <div class="om-wzd-left-rule"/>
+
+                  <!-- Campos centrados verticalmente -->
+                  <div class="om-wzd-fields-block">
+
+                    <!-- Campo: Producto / variante de bodega -->
+                    <div class="om-wzd-field om-variant-cell">
+                      <label class="om-wizard-field-label">Producto</label>
+                      <t t-if="currentLine.selectedVariantId">
+                        <div t-att-class="'om-ghost-wrap om-mapped-row' + (isPendingVariant(currentLine) ? ' om-mapped-row--pending' : '')">
+                          <div class="om-mapped-main">
+                            <span class="om-ghost-value"
+                                  t-att-title="getVariantLabel(currentLine)"
+                                  t-esc="getVariantLabel(currentLine)"/>
+                          </div>
+                          <div class="om-row-actions">
+                            <t t-if="isPendingVariant(currentLine)">
+                              <button class="om-pending-btn"
+                                      t-on-click="() => this.editPendingCreation(currentLine.id)"
+                                      title="Pendiente de crear — clic para editar">
+                                <i class="fa fa-exclamation-circle"/>
+                              </button>
+                            </t>
+                            <button class="om-action-icon om-action-icon--remove"
+                                    t-on-click="() => this.clearVariant(currentLine.id)"
+                                    title="Eliminar vinculación">
+                              <i class="fa fa-times"/>
+                            </button>
+                          </div>
+                        </div>
+                      </t>
+                      <t t-else="">
+                        <div class="om-m2o-input-wrap">
+                          <div class="om-ghost-wrap" t-att-data-dd-v="currentLine.id">
+                            <input type="text"
+                                   class="om-ghost-input"
+                                   t-att-placeholder="getVariantPlaceholder(currentLine)"
+                                   t-att-value="currentLine.inputText"
+                                   t-on-mousedown="() => this.onInputMousedown(currentLine.id)"
+                                   t-on-blur="() => this.onInputBlur(currentLine.id)"
+                                   t-on-input="(ev) => this.onInputChange(currentLine.id, ev)"
+                                   t-on-keydown="(ev) => this.onInputKeydown(currentLine.id, ev)"
+                            />
+                            <span class="om-ghost-spinner" t-if="currentLine.searching">
+                              <span class="spinner-border spinner-border-sm text-muted" role="status"/>
+                            </span>
+                            <!-- Ícono restablecer — visible solo cuando hay auto-match y el campo
+                            está vacío -->
+                            <t t-if="currentLine.autoVariantId">
+                              <button class="om-restore-auto-icon"
+                                      t-on-mousedown="(ev) => { ev.preventDefault(); this.resetToAuto(currentLine.id); }"
+                                      t-att-title="'Restablecer: ' + (currentLine.autoVariantProductName || '') + ' · ' + (currentLine.autoVariantName || '')">
+                                <i class="fa fa-history"/>
+                              </button>
+                            </t>
+                          </div>
+                          <t t-if="currentLine.dropdownOpen">
+                            <div class="om-m2o-dropdown" t-att-style="getDropdownStyle(currentLine.id)">
+                              <t t-if="!currentLine.dropdownItems.length and !currentLine.searching">
+                                <div class="om-dd-empty text-muted fst-italic">
+                                  <t t-if="currentLine.inputText.trim()">
+                                    Sin resultados para "<t t-esc="currentLine.inputText"/>"
+                                  </t>
+                                  <t t-else="">No hay variantes en bodega</t>
+                                </div>
+                              </t>
+                              <t t-else="">
+                                <t t-set="suggItems" t-value="currentLine.dropdownItems.filter(i => i.isSuggestion)"/>
+                                <t t-set="otherItems" t-value="currentLine.dropdownItems.filter(i => !i.isSuggestion)"/>
+                                <t t-if="suggItems.length">
+                                  <div class="om-dd-section-label">Sugerencias</div>
+                                  <t t-foreach="suggItems" t-as="item" t-key="'s-' + item.id">
+                                    <div class="om-dd-item om-dd-item-suggestion"
+                                         t-on-mousedown="(ev) => { ev.preventDefault(); this.onItemMousedown(currentLine.id, item); }">
+                                      <span class="om-dd-label" t-esc="getDropdownItemLabel(item)"/>
+                                    </div>
+                                  </t>
+                                  <t t-if="otherItems.length"><hr class="my-1 opacity-25"/></t>
+                                </t>
+                                <t t-foreach="otherItems" t-as="item" t-key="'o-' + item.id">
+                                  <div class="om-dd-item"
+                                       t-on-mousedown="(ev) => { ev.preventDefault(); this.onItemMousedown(currentLine.id, item); }">
+                                    <span class="om-dd-label" t-esc="getDropdownItemLabel(item)"/>
+                                  </div>
+                                </t>
+                              </t>
+                              <t t-if="currentLine.inputText.trim()">
+                                <div class="om-dd-create"
+                                     t-on-mousedown="(ev) => { ev.preventDefault(); this.openCreateModal(currentLine.id); }">
+                                  Crear "<t t-esc="currentLine.inputText.trim()"/>" en bodega
+                                </div>
+                              </t>
+                            </div>
+                          </t>
+                        </div>
+                      </t>
+                    </div>
+
+                    <!-- Campo: Centro de costo -->
+                    <div class="om-wzd-field om-variant-cell">
+                      <label class="om-wizard-field-label">Centro de costo</label>
+                      <t t-if="currentLine.costCenterId">
+                        <div class="om-ghost-wrap om-mapped-row">
+                          <span class="om-ghost-value"
+                                t-att-title="getCostCenterLabel(currentLine)"
+                                t-esc="getCostCenterLabel(currentLine)"/>
+                          <button class="om-unlink-btn om-unlink-btn--icon"
+                                  t-on-click="() => this.clearCostCenter(currentLine.id)"
+                                  title="Quitar centro de costo">
+                            <i class="fa fa-times"/>
+                          </button>
+                        </div>
+                      </t>
+                      <t t-else="">
+                        <div class="om-m2o-input-wrap">
+                          <div class="om-ghost-wrap" t-att-data-dd-cc="currentLine.id">
+                            <input type="text"
+                                   class="om-ghost-input"
+                                   placeholder="Ej. Gastos administrativos, Mano de obra..."
+                                   t-att-value="currentLine.ccInputText"
+                                   t-on-mousedown="() => this.onCcInputMousedown(currentLine.id)"
+                                   t-on-blur="() => this.onCcInputBlur(currentLine.id)"
+                                   t-on-input="(ev) => this.onCcInputChange(currentLine.id, ev)"
+                                   t-on-keydown="(ev) => this.onCcInputKeydown(currentLine.id, ev)"
+                            />
+                            <span class="om-ghost-spinner" t-if="currentLine.ccSearching">
+                              <span class="spinner-border spinner-border-sm text-muted" role="status"/>
+                            </span>
+                          </div>
+                          <t t-if="currentLine.ccDropdownOpen">
+                            <div class="om-m2o-dropdown" t-att-style="getCcDropdownStyle(currentLine.id)">
+                              <t t-if="!currentLine.ccDropdownItems.length and !currentLine.ccSearching">
+                                <div class="om-dd-empty text-muted fst-italic">
+                                  <t t-if="currentLine.ccInputText.trim()">
+                                    Sin resultados para "<t t-esc="currentLine.ccInputText"/>"
+                                  </t>
+                                  <t t-else="">No hay centros de costo disponibles</t>
+                                </div>
+                              </t>
+                              <t t-else="">
+                                <t t-foreach="currentLine.ccDropdownItems" t-as="cc" t-key="'cc-' + cc.id">
+                                  <div class="om-dd-item"
+                                       t-on-mousedown="(ev) => { ev.preventDefault(); this.onCcItemMousedown(currentLine.id, cc); }">
+                                    <span class="om-dd-label" t-esc="cc.name"/>
+                                  </div>
+                                </t>
+                              </t>
+                            </div>
+                          </t>
+                        </div>
+                      </t>
+                    </div>
+
+                  </div>
+
+                  <!-- Navegación entre productos: flechas + dots (o contador si hay muchos) -->
+                  <div class="om-wzd-nav-bar">
+                    <button class="om-wzd-nav-arrow" t-att-disabled="!hasPrev" t-on-click="goPrev" title="Anterior">
+                      <i class="fa fa-chevron-left"/>
+                    </button>
+                    <t t-if="state.lines.length &lt;= 30">
+                      <div class="om-wizard-dots-bar om-wzd-dots-inline">
+                        <t t-foreach="state.lines" t-as="l" t-key="l.id">
+                          <span class="om-wizard-dot"
+                                t-att-class="getWizardDotClass(l, l_index)"
+                                t-att-title="l.name"
+                                t-on-click="() => this.goTo(l_index)"/>
+                        </t>
+                      </div>
+                    </t>
+                    <t t-else="">
+                      <span class="om-wzd-nav-counter">
+                        <t t-esc="state.wizardIndex + 1"/> / <t t-esc="state.lines.length"/>
+                      </span>
+                    </t>
+                    <button class="om-wzd-nav-arrow" t-att-disabled="!hasNext" t-on-click="goNext" title="Siguiente">
+                      <i class="fa fa-chevron-right"/>
+                    </button>
+                  </div>
+
+                </div>
+
+                <!-- Panel derecho: proveedores -->
+                <div class="om-wzd-right">
+
+                  <!-- Caso A: proveedor único -->
+                  <t t-if="currentLine.distributions.length === 1">
+                    <t t-set="soloDist" t-value="currentLine.distributions[0]"/>
+                    <t t-set="isForeign" t-value="soloDist.currency_name !== 'COP'"/>
+                    <div class="om-wzd-supplier-solo">
+                      <div class="om-wzd-supplier-label-row">
+                        <span class="om-wzd-supplier-label">Proveedor</span>
+                        <t t-if="!soloDist.partnerFound">
+                          <button class="om-partner-status-dot"
+                                  t-on-click="() => this.openPartnerPanel(soloDist)"
+                                  title="Sin registro en el sistema — clic para crear">
+                            <i class="fa fa-exclamation-circle om-partner-dot-icon"/>
+                            <span class="om-partner-dot-ring"/>
+                          </button>
+                        </t>
+                        <t t-if="soloDist.pendingPartnerData">
+                          <button class="om-edit-pending-btn om-edit-pending-btn--partner"
+                                  t-on-click="() => this.editPendingPartner(soloDist)"
+                                  title="Editar datos del proveedor">
+                            <i class="fa fa-pencil-square-o"/>
+                          </button>
+                        </t>
+                      </div>
+                      <span class="om-wzd-supplier-name" t-esc="soloDist.partner_name"/>
+                      <span class="om-wzd-supplier-price">
+                        <t t-if="isForeign">
+                          <t t-esc="formatPrice(soloDist.unit_price)"/>&#160;<t t-esc="soloDist.currency_name"/>&#160;×&#160;$<t t-esc="formatPrice(soloDist.trm)"/>&#160;=&#160;$<t t-esc="formatPrice(soloDist.unit_price_cop)"/>&#160;COP / u
+                        </t>
+                        <t t-else="">
+                          $<t t-esc="formatPrice(soloDist.unit_price_cop)"/>&#160;/ u
+                        </t>
+                      </span>
+                      <div class="om-wzd-solo-divider"/>
+                      <span class="om-wzd-solo-qty-label">Cantidad solicitada</span>
+                      <div class="om-wzd-solo-qty">
+                        <t t-esc="currentLine.qty"/>
+                        <span class="om-wzd-solo-qty-uom">&#160;<t t-esc="currentLine.uom"/></span>
+                      </div>
+                    </div>
+                  </t>
+
+                  <!-- Caso B: múltiples proveedores — carousel -->
+                  <t t-elif="currentLine.distributions.length > 1">
+                    <div class="om-wzd-carousel">
+                      <div class="om-wzd-carousel-card">
+                        <button class="om-wzd-carousel-arrow"
+                                t-att-class="{ 'om-wzd-carousel-arrow--disabled': currentLine.carouselIndex === 0 }"
+                                t-on-click="() => this.prevCarousel(currentLine.id)">
+                          &#8249;
+                        </button>
+                        <t t-set="activeDist" t-value="currentLine.distributions[currentLine.carouselIndex]"/>
+                        <div class="om-wzd-carousel-content">
+                          <div class="om-wzd-supplier-label-row">
+                            <span class="om-wzd-carousel-supplier-label">Proveedor <b t-esc="currentLine.carouselIndex + 1"/> de <t t-esc="currentLine.distributions.length"/></span>
+                            <t t-if="!activeDist.partnerFound">
+                              <button class="om-partner-status-dot"
+                                      t-on-click="() => this.openPartnerPanel(activeDist)"
+                                      title="Sin registro en el sistema — clic para crear">
+                                <i class="fa fa-exclamation-circle om-partner-dot-icon"/>
+                                <span class="om-partner-dot-ring"/>
+                              </button>
+                            </t>
+                            <t t-if="activeDist.pendingPartnerData">
+                              <button class="om-edit-pending-btn om-edit-pending-btn--partner"
+                                      t-on-click="() => this.editPendingPartner(activeDist)"
+                                      title="Editar datos del proveedor">
+                                <i class="fa fa-pencil"/>
+                              </button>
+                            </t>
+                          </div>
+                          <span class="om-wzd-carousel-supplier-name" t-esc="activeDist.partner_name"/>
+                          <span class="om-wzd-carousel-supplier-price">
+                            <t t-if="activeDist.currency_name !== 'COP'">
+                              <t t-esc="formatPrice(activeDist.unit_price)"/>&#160;<t t-esc="activeDist.currency_name"/>&#160;×&#160;$<t t-esc="formatPrice(activeDist.trm)"/>&#160;=&#160;$<t t-esc="formatPrice(activeDist.unit_price_cop)"/>&#160;COP / u
+                            </t>
+                            <t t-else="">
+                              $<t t-esc="formatPrice(activeDist.unit_price_cop)"/>&#160;/ u
+                            </t>
+                          </span>
+                          <div class="om-wzd-carousel-qty-wrap">
+                            <input type="number" class="om-wzd-carousel-qty-input"
+                                   min="0" t-att-max="currentLine.qty"
+                                   t-att-value="activeDist.assigned_qty"
+                                   t-on-change="(ev) => this.onDistributionQtyChange(currentLine.id, activeDist.qline_id, ev)"
+                                   placeholder="0"/>
+                            <span class="om-wzd-carousel-qty-uom" t-esc="currentLine.uom"/>
+                          </div>
+                        </div>
+                        <button class="om-wzd-carousel-arrow"
+                                t-att-class="{ 'om-wzd-carousel-arrow--disabled': currentLine.carouselIndex >= currentLine.distributions.length - 1 }"
+                                t-on-click="() => this.nextCarousel(currentLine.id)">
+                          &#8250;
+                        </button>
+                      </div>
+                      <div t-att-class="'om-wzd-carousel-summary om-dist-status-' + getDistributionStatus(currentLine)">
+                        <span class="om-wzd-carousel-summary-fraction">
+                          <t t-esc="getDistributionTotal(currentLine)"/> / <t t-esc="currentLine.qty"/>&#160;<t t-esc="currentLine.uom"/> asignadas
+                        </span>
+                        <t t-if="getDistributionStatus(currentLine) === 'over'">
+                          <span class="om-dist-summary-msg">Supera lo solicitado</span>
+                        </t>
+                        <t t-elif="getDistributionStatus(currentLine) === 'partial'">
+                          <span class="om-dist-summary-msg">Distribución parcial</span>
+                        </t>
+                        <t t-elif="getDistributionStatus(currentLine) === 'ok'">
+                          <span class="om-dist-summary-ok">Completo</span>
+                        </t>
+                      </div>
+                    </div>
+                  </t>
+
+                  <!-- Caso C: sin proveedores adjudicados -->
+                  <t t-else="">
+                    <div class="om-wzd-no-supplier">
+                      <i class="fa fa-user-o mb-2 d-block" style="font-size:1.6rem;opacity:0.25"/>
+                      Sin proveedores adjudicados
+                    </div>
+                  </t>
+
+                  <!-- Dirección de entrega: todos los casos -->
+                  <div class="om-wzd-delivery-strip">
+                    <button t-att-class="'om-wzd-delivery-btn' + (state.deliveryData ? ' om-wzd-delivery-btn--set' : '')"
+                            t-on-click="openDeliveryPanel"
+                            t-att-title="state.deliveryData ? ('Entrega: ' + state.deliveryData.name + ' · ' + state.deliveryData.address) : 'Entregar en...'">
+                      <i class="fa fa-truck om-wzd-delivery-truck"/>
+                      <span class="om-wzd-delivery-label">
+                        <t t-if="deliveryDisplayName">Entregar a <b t-esc="deliveryDisplayName"/></t>
+                        <t t-else="">Entregar en...</t>
+                      </span>
+                      <t t-if="state.deliveryData">
+                        <i class="fa fa-pencil om-wzd-delivery-edit"/>
+                      </t>
+                      <t t-else=""><span class="om-wzd-delivery-arrow">→</span></t>
+                    </button>
+                  </div>
+
+                </div>
+
+              </div>
+            </t>
+
+          </div>
+
+        </div>
+
+        <t t-if="state.createModal.open">
+          <div class="om-modal-backdrop">
+            <div class="om-modal">
+
+              <!-- ══ PANEL IZQUIERDO: contexto oscuro ══ -->
+              <div class="om-split-left">
+
+                <div class="om-split-icon-wrap">
+                  <i t-att-class="state.createModal.mode === 'product'
+                                  ? 'fa fa-folder om-split-icon'
+                                  : 'fa fa-tag om-split-icon'"/>
+                </div>
+
+                <span class="om-split-mode-label">
+                  <t t-if="state.createModal.mode === 'product'">Nuevo producto</t>
+                  <t t-else="">Nueva variante</t>
+                </span>
+
+                <!-- Toggle de modo en el panel izquierdo -->
+                <div class="om-mode-toggle om-mode-toggle-dark">
+                  <button class="om-mode-btn"
+                          t-att-class="{ 'om-mode-btn-active': state.createModal.mode === 'product' }"
+                          t-on-click="() => this.setCreateMode('product')">
+                    Producto
+                  </button>
+                  <button class="om-mode-btn"
+                          t-att-class="{ 'om-mode-btn-active': state.createModal.mode === 'variant' }"
+                          t-on-click="() => this.setCreateMode('variant')">
+                    Variante
+                  </button>
+                </div>
+
+                <div class="om-split-divider"/>
+
+                <t t-if="createModalLine">
+                  <span class="om-split-context-label">Solicitado</span>
+                  <p class="om-split-product-name" t-esc="createModalLine.name"/>
+                  <span class="om-split-product-meta">
+                    <t t-esc="createModalLine.qty"/>
+                    <t t-if="createModalLine.uom"> <t t-esc="createModalLine.uom"/></t>
+                  </span>
+                  <!-- Nota sobre creación diferida — debajo del contexto, con separación -->
+                  <div class="om-split-deferred-note">Se guardará al confirmar</div>
+                </t>
+                <t t-else="">
+                  <span class="om-split-context-label">Catálogo de bodega</span>
+                  <p class="om-split-product-name">
+                    <t t-if="state.createModal.mode === 'product'">Registra el producto</t>
+                    <t t-else="">Agrega una variante</t>
+                  </p>
+                  <div class="om-split-deferred-note">Se guardará al confirmar</div>
+                </t>
+
+              </div>
+
+              <!-- ══ PANEL DERECHO: formulario ══ -->
+              <div class="om-split-right">
+
+                <!-- Header: solo cerrar -->
+                <div class="om-split-header">
+                  <button class="om-modal-close-btn" t-on-click="closeCreateModal" title="Cerrar">
+                    <i class="fa fa-times"/>
+                  </button>
+                </div>
+
+                <!-- Body: campos del formulario -->
+                <div class="om-modal-body">
+                <div class="om-modal-form">
+
+                    <!-- ═══ MODO PRODUCTO ═══ -->
+                  <t t-if="state.createModal.mode === 'product'">
+
+                    <div class="om-field">
+                      <label class="om-field-label">
+                        Nombre del producto <span class="text-danger">*</span>
+                      </label>
+                      <input type="text" class="om-field-input"
+                             placeholder="Ej. Impresora, Monitor, Silla ergonómica…"
+                             t-att-value="state.createModal.productName"
+                             t-on-input="(ev) => this.onModalFieldChange('productName', ev)"
+                             t-on-blur="(ev) => this.onProductNameBlur(ev)"/>
+                      <span t-att-class="'om-field-counter' + (productNameCharCount > 25 ? ' om-field-counter--over' : (productNameCharCount >= 20 ? ' om-field-counter--warn' : ''))">
+                        <t t-esc="productNameCharCount"/> / 25
+                      </span>
+                    </div>
+
+                    <div class="om-field-row">
+                      <div class="om-field">
+                        <label class="om-field-label">
+                          Categoría <span class="text-danger">*</span>
+                        </label>
+                        <select class="om-field-input om-field-select"
+                                t-att-class="{ 'om-select-empty': !state.createModal.categoryId }"
+                                t-on-change="(ev) => this.onModalFieldChange('categoryId', ev)">
+                          <option value="">Ej. Tecnología, Materiales…</option>
+                          <t t-foreach="state.categories" t-as="cat" t-key="cat.id">
+                            <option t-att-value="cat.id"
+                                    t-att-selected="state.createModal.categoryId == cat.id">
+                              <t t-esc="cat.name"/>
+                            </option>
+                          </t>
+                        </select>
+                      </div>
+                      <div class="om-field">
+                        <label class="om-field-label">
+                          Tipo <span class="text-danger">*</span>
+                        </label>
+                        <select class="om-field-input om-field-select"
+                                t-att-class="{ 'om-select-empty': !state.createModal.typeProductId }"
+                                t-on-change="(ev) => this.onModalFieldChange('typeProductId', ev)">
+                          <option value="">Ej. Producto, Servicio…</option>
+                          <t t-foreach="state.productTypes" t-as="pt" t-key="pt.id">
+                            <option t-att-value="pt.id"
+                                    t-att-selected="state.createModal.typeProductId == pt.id">
+                              <t t-esc="pt.name"/>
+                            </option>
+                          </t>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="om-field">
+                      <div class="d-flex align-items-center justify-content-between mb-1">
+                        <label class="om-field-label mb-0">
+                          Descripción <span class="text-danger">*</span>
+                        </label>
+                        <button class="btn btn-link btn-sm p-0"
+                                style="font-size: 0.75rem; text-decoration: none; color: #6c7a8d; letter-spacing: 0.01em;"
+                                t-on-click="onSuggestDescription"
+                                t-att-disabled="state.createModal.suggestingDescription or !state.createModal.productName.trim()">
+                          <t t-if="state.createModal.suggestingDescription">
+                            <i class="fa fa-spinner fa-spin" style="font-size: 0.7rem;"/>
+                          </t>
+                          <t t-else="">
+                            <i class="fa fa-lightbulb-o" style="font-size: 0.8rem;"/>
+                          </t>
+                          <span class="ms-1">Sugerir</span>
+                        </button>
+                      </div>
+                      <textarea class="om-field-input" rows="3"
+                                placeholder="Ej. Es un periférico de computadora que transforma documentos digitales (texto o imágenes) en copias físicas, generalmente sobre papel."
+                                t-att-value="state.createModal.description"
+                                t-on-input="(ev) => this.onModalFieldChange('description', ev)"
+                                t-on-blur="(ev) => this.onDescriptionBlur(ev)"/>
+                      <span t-att-class="'om-field-counter' + (descriptionCharCount > 200 ? ' om-field-counter--over' : (descriptionCharCount >= 180 ? ' om-field-counter--warn' : ''))">
+                        <t t-esc="descriptionCharCount"/> / 200
+                      </span>
+                    </div>
+
+                    <div class="om-section-sep"><span>Variante</span></div>
+
+                  </t>
+
+                    <!-- ═══ MODO VARIANTE ═══ -->
+                  <t t-if="state.createModal.mode === 'variant'">
+
+                    <div class="om-field">
+                      <label class="om-field-label">
+                        Producto <span class="text-danger">*</span>
+                      </label>
+
+                      <t t-if="state.createModal.selectedProductId">
+                        <div class="om-ghost-wrap om-mapped-row">
+                          <span class="om-ghost-value" t-esc="state.createModal.selectedProductName"/>
+                          <button class="om-unlink-btn om-unlink-btn--icon"
+                                  t-on-click="clearSelectedProduct"
+                                  title="Cambiar producto">
+                            <i class="fa fa-times"/>
+                          </button>
+                        </div>
+                      </t>
+
+                      <t t-else="">
+                        <div class="om-m2o-input-wrap">
+                          <div class="om-ghost-wrap" data-dd-pt="modal">
+                            <input type="text"
+                                   class="om-ghost-input"
+                                   placeholder="Ej. Impresora, Monitor, Silla ergonómica…"
+                                   t-att-value="state.createModal.productSearchText"
+                                   t-on-mousedown="() => this.onProductSearchMousedown()"
+                                   t-on-blur="() => this.onProductSearchBlur()"
+                                   t-on-input="(ev) => this.onProductSearchChange(ev)"
+                                   t-on-keydown="(ev) => this.onProductSearchKeydown(ev)"
+                            />
+                            <span class="om-ghost-spinner" t-if="state.createModal.productSearching">
+                              <span class="spinner-border spinner-border-sm text-muted" role="status"/>
+                            </span>
+                          </div>
+                          <t t-if="state.createModal.productDropdownOpen">
+                            <div class="om-m2o-dropdown" t-att-style="getProductDropdownStyle()">
+                              <t t-if="!state.createModal.productDropdownItems.length and !state.createModal.productSearching">
+                                <div class="om-dd-empty text-muted fst-italic">
+                                  <t t-if="state.createModal.productSearchText.trim()">
+                                    Sin resultados para "<t t-esc="state.createModal.productSearchText"/>"
+                                  </t>
+                                  <t t-else="">Escribe para buscar un producto…</t>
+                                </div>
+                              </t>
+                              <t t-foreach="state.createModal.productDropdownItems" t-as="prod" t-key="prod.id">
+                                <div t-att-class="'om-dd-item' + (prod['__pending__'] ? ' om-dd-item--pending' : '')"
+                                     t-on-mousedown="(ev) => { ev.preventDefault(); this.onProductTemplateMousedown(prod); }">
+                                  <span class="om-dd-label" t-esc="prod.name"/>
+                                  <span t-if="prod['__pending__']" class="om-dd-pending-tag">
+                                    <i class="fa fa-exclamation-circle om-dd-pending-tag-icon"/>Pend. de crear
+                                  </span>
+                                </div>
+                              </t>
+                            </div>
+                          </t>
+                        </div>
+                      </t>
+                    </div>
+
+                  </t>
+
+                    <!-- Nombre variante + precio (ambos modos) -->
+                  <div class="om-field-row">
+                    <div class="om-field om-field-grow">
+                      <label class="om-field-label">
+                        Nombre variante <span class="text-danger">*</span>
+                      </label>
+                      <input type="text" class="om-field-input"
+                             placeholder="Ej. HP LaserJet Pro M404dn"
+                             t-att-value="state.createModal.variantName"
+                             t-on-input="(ev) => this.onModalFieldChange('variantName', ev)"
+                             t-on-blur="(ev) => this.onVariantNameBlur(ev)"/>
+                    </div>
+                    <div class="om-field">
+                      <label class="om-field-label">
+                        Precio estimado <span class="text-danger">*</span>
+                      </label>
+                      <input type="text" class="om-field-input"
+                             placeholder="0"
+                             t-att-value="formattedEstimatedPrice"
+                             t-on-input="(ev) => this.onModalFieldChange('estimatedPrice', ev)"/>
+                    </div>
+                  </div>
+
+                    <!-- Advertencia: nombre de producto similar ya existe (solo modo 'product') -->
+                  <t t-if="state.createModal.productWarning and state.createModal.mode === 'product'">
+                    <div class="om-modal-warning">
+                      <i class="fa fa-exclamation-triangle om-modal-warning-icon"/>
+                      <div class="om-modal-warning-body">
+                        <span class="om-modal-warning-text" t-esc="state.createModal.productWarning"/>
+                        <ul t-if="state.createModal.productWarningMatches.length" class="om-modal-warning-list">
+                          <li t-foreach="state.createModal.productWarningMatches" t-as="match" t-key="match.id">
+                            <t t-esc="match.name"/>
+                          </li>
+                        </ul>
+                        <span class="om-modal-warning-hint">
+                          Si el producto que buscas ya está en la lista, cierra este modal y selecciónalo desde el campo principal del wizard o crea una variante para ese producto.
+                        </span>
+                      </div>
+                    </div>
+                  </t>
+
+                    <!-- Advertencia: variante similar ya existe en el producto (ambos modos) -->
+                  <t t-if="state.createModal.variantWarning">
+                    <div class="om-modal-warning">
+                      <i class="fa fa-exclamation-triangle om-modal-warning-icon"/>
+                      <div class="om-modal-warning-body">
+                        <span class="om-modal-warning-text" t-esc="state.createModal.variantWarning"/>
+                        <ul t-if="state.createModal.variantWarningMatches.length" class="om-modal-warning-list">
+                          <li t-foreach="state.createModal.variantWarningMatches" t-as="match" t-key="match.id">
+                            <t t-esc="match.name"/>
+                          </li>
+                        </ul>
+                        <span class="om-modal-warning-hint">
+                          Si la variante ya existe, cierra este modal y selecciónala desde el campo principal del wizard.
+                        </span>
+                      </div>
+                    </div>
+                  </t>
+
+                  <t t-if="state.createModal.error">
+                    <div class="om-modal-error">
+                      <i class="fa fa-exclamation-circle"/>
+                      <span t-esc="state.createModal.error"/>
+                    </div>
+                  </t>
+
+                </div><!--
+                  /om-modal-form -->
+                </div><!--
+                /om-modal-body -->
+
+                <!-- Footer: acciones -->
+                <div class="om-modal-footer">
+                  <button class="btn btn-secondary"
+                          t-on-click="closeCreateModal">
+                    Cancelar
+                  </button>
+                  <button class="btn btn-primary"
+                          t-att-disabled="!!((state.createModal.mode === 'product' and state.createModal.productWarning) or state.createModal.variantWarning)"
+                          t-att-title="((state.createModal.mode === 'product' and state.createModal.productWarning) or state.createModal.variantWarning) ? 'Resuelve las coincidencias antes de guardar' : ''"
+                          t-on-click="onSaveNewProduct">
+                    Guardar
+                  </button>
+                </div>
+
+              </div><!--
+              /om-split-right -->
+
+            </div><!--
+            /om-modal -->
+          </div><!--
+          /om-modal-backdrop -->
+        </t>
+
+        <!-- ══ Modal de creación de proveedor ══ -->
+        <t t-if="state.partnerModal.open">
+          <div class="om-modal-backdrop">
+            <div class="om-modal">
+
+              <!-- Panel izquierdo: contexto navy -->
+              <div class="om-split-left">
+                <div class="om-split-icon-wrap">
+                  <i class="fa fa-building-o om-split-icon"/>
+                </div>
+                <span class="om-split-mode-label">Nuevo proveedor</span>
+                <div class="om-split-divider"/>
+                <span class="om-split-context-label">Nombre</span>
+                <p class="om-split-product-name" t-esc="state.partnerModal.name"/>
+                <div class="om-split-deferred-note">Se registrará en el sistema de contactos</div>
+              </div>
+
+              <!-- Panel derecho: formulario -->
+              <div class="om-split-right">
+
+                <div class="om-split-header">
+                  <button class="om-modal-close-btn" t-on-click="closePartnerPanel" title="Cerrar">
+                    <i class="fa fa-times"/>
+                  </button>
+                </div>
+
+                <div class="om-modal-body">
+                  <div class="om-modal-form">
+
+                    <!-- Fila 1: Nombre + NIT -->
+                    <div class="om-field-row">
+                      <div class="om-field om-field--grow">
+                        <label class="om-field-label">Nombre <span class="text-danger">*</span></label>
+                        <input type="text" class="om-field-input"
+                               t-att-value="state.partnerModal.name"
+                               t-on-input="(ev) => this.onPartnerFieldChange('name', ev)"
+                               placeholder="Nombre completo o razón social"/>
+                      </div>
+                      <div class="om-field" style="min-width:140px;">
+                        <label class="om-field-label">NIT <span class="text-danger">*</span></label>
+                        <input type="text" class="om-field-input"
+                               t-att-value="state.partnerModal.nit"
+                               t-on-input="onNitInput"
+                               placeholder="900.123.456-7"
+                               maxlength="15"/>
+                      </div>
+                    </div>
+
+                    <!-- Fila 2: Email + Teléfono -->
+                    <div class="om-field-row">
+                      <div class="om-field om-field--grow">
+                        <label class="om-field-label">Correo electrónico <span class="text-danger">*</span></label>
+                        <input type="email" class="om-field-input"
+                               t-att-value="state.partnerModal.email"
+                               t-on-input="(ev) => this.onPartnerFieldChange('email', ev)"
+                               placeholder="contacto@empresa.com"/>
+                      </div>
+                      <div class="om-field" style="min-width:150px;">
+                        <label class="om-field-label">Teléfono <span class="text-danger">*</span></label>
+                        <input type="tel" class="om-field-input"
+                               t-att-value="state.partnerModal.phone"
+                               t-on-input="onPhoneInput"
+                               placeholder="3001234567"/>
+                      </div>
+                    </div>
+
+                    <!-- Fila 3: Dirección -->
+                    <div class="om-field">
+                      <label class="om-field-label">Dirección <span class="text-danger">*</span></label>
+                      <input type="text" class="om-field-input"
+                             t-att-value="state.partnerModal.address"
+                             t-on-input="(ev) => this.onPartnerFieldChange('address', ev)"
+                             placeholder="Calle 123 # 45-67"/>
+                    </div>
+
+                    <!-- Fila 4: Ciudad (Many2one) -->
+                    <div class="om-field">
+                      <label class="om-field-label">Ciudad <span class="text-danger">*</span></label>
+                      <t t-if="state.partnerModal.cityId">
+                        <div class="om-ghost-wrap om-ghost-wrap--selected">
+                          <span class="om-ghost-value" t-esc="state.partnerModal.cityName"/>
+                          <button class="om-unlink-btn om-unlink-btn--icon om-unlink-btn--visible" t-on-click="clearCity" title="Quitar ciudad"><i class="fa fa-times"/></button>
+                        </div>
+                      </t>
+                      <t t-else="">
+                        <div class="om-ghost-wrap" data-dd-pcity="1">
+                          <input type="text"
+                                 class="om-ghost-input"
+                                 placeholder="Buscar ciudad..."
+                                 t-att-value="state.partnerModal.cityInputText"
+                                 t-on-mousedown="onCityMousedown"
+                                 t-on-blur="onCityBlur"
+                                 t-on-input="onCityInput"
+                                 t-on-keydown="onCityKeydown"/>
+                          <span class="om-ghost-spinner" t-if="state.partnerModal.citySearching">
+                            <span class="spinner-border spinner-border-sm text-muted" role="status"/>
+                          </span>
+                        </div>
+                        <t t-if="state.partnerModal.cityDropdownOpen">
+                          <div class="om-m2o-dropdown" t-att-style="getCityDropdownStyle()">
+                            <t t-if="!state.partnerModal.cityDropdownItems.length and !state.partnerModal.citySearching">
+                              <div class="om-dd-empty text-muted fst-italic">
+                                <t t-if="state.partnerModal.cityInputText.trim()">
+                                  Sin resultados para "<t t-esc="state.partnerModal.cityInputText"/>"
+                                </t>
+                                <t t-else="">Escribe para buscar ciudades</t>
+                              </div>
+                            </t>
+                            <t t-else="">
+                              <t t-foreach="state.partnerModal.cityDropdownItems" t-as="city" t-key="city.id">
+                                <div class="om-dd-item"
+                                     t-on-mousedown="(ev) => { ev.preventDefault(); this.selectCity(city); }">
+                                  <span class="om-dd-label" t-esc="city.name"/>
+                                </div>
+                              </t>
+                            </t>
+                          </div>
+                        </t>
+                      </t>
+                    </div>
+
+                    <!-- Categorías de producto (multi-select) -->
+                    <div class="om-field">
+                      <label class="om-field-label">Categorías de producto <span class="text-danger">*</span></label>
+                      <div class="om-cat-multiselect" data-dd-pcat="1"
+                           t-on-click="() => this.state.partnerModal.catDropdownOpen = true">
+                        <t t-foreach="state.partnerModal.categoryIds" t-as="sel" t-key="sel.id">
+                          <span class="om-cat-tag">
+                            <span t-esc="sel.name"/>
+                            <button class="om-cat-tag-remove"
+                                    t-on-click.stop="() => this.removeCategory(sel.id)"
+                                    title="Quitar">×</button>
+                          </span>
+                        </t>
+                        <input type="text"
+                               class="om-cat-input"
+                               placeholder="Buscar categoría..."
+                               t-att-value="state.partnerModal.catInputText"
+                               t-on-mousedown.stop="onCatMousedown"
+                               t-on-blur="onCatBlur"
+                               t-on-input="onCatInput"
+                               t-on-keydown="onCatKeydown"/>
+                      </div>
+                      <t t-if="state.partnerModal.catDropdownOpen">
+                        <div class="om-m2o-dropdown" t-att-style="getCatDropdownStyle()">
+                          <t t-if="!state.partnerModal.catDropdownItems.length">
+                            <div class="om-dd-empty text-muted fst-italic">
+                              <t t-if="state.partnerModal.catInputText.trim()">
+                                Sin resultados para "<t t-esc="state.partnerModal.catInputText"/>"
+                              </t>
+                              <t t-else="">Sin categorías disponibles</t>
+                            </div>
+                          </t>
+                          <t t-else="">
+                            <t t-foreach="state.partnerModal.catDropdownItems" t-as="cat" t-key="cat.id">
+                              <div class="om-dd-item"
+                                   t-on-mousedown="(ev) => { ev.preventDefault(); this.selectCat(cat); }">
+                                <span class="om-dd-label" t-esc="cat.name"/>
+                              </div>
+                            </t>
+                          </t>
+                        </div>
+                      </t>
+                    </div>
+
+                    <t t-if="state.partnerModal.error">
+                      <div class="om-field-error">
+                        <i class="fa fa-exclamation-circle me-1"/>
+                        <t t-esc="state.partnerModal.error"/>
+                      </div>
+                    </t>
+
+                  </div>
+                </div>
+
+                <!-- Footer del modal -->
+                <div class="om-modal-actions">
+                  <button class="btn btn-secondary" t-on-click="closePartnerPanel">
+                    Cancelar
+                  </button>
+                  <button class="btn btn-primary"
+                          t-att-disabled="state.partnerModal.submitting"
+                          t-on-click="onSavePartner">
+                    <t t-if="state.partnerModal.submitting">
+                      <span class="spinner-border spinner-border-sm me-1" role="status"/>
+                      Guardando...
+                    </t>
+                    <t t-else="">
+                      Guardar
+                    </t>
+                  </button>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+        </t>
+
+        <!-- ══ Modal: dirección de entrega de la SDC ══ -->
+        <t t-if="state.deliveryModal.open">
+          <div class="om-modal-backdrop">
+            <div class="om-modal">
+
+              <!-- Panel izquierdo: contexto navy -->
+            <div class="om-split-left">
+              <div class="om-split-icon-wrap">
+                <i class="fa fa-truck om-split-icon"/>
+              </div>
+              <span class="om-split-mode-label">Dirección de entrega</span>
+              <div class="om-split-divider"/>
+              <span class="om-split-context-label">Destinatario</span>
+              <p class="om-split-product-name">
+                <t t-if="state.deliveryData">
+                  <t t-esc="state.deliveryData.name"/>
+                </t>
+                <t t-else="">Sin asignar</t>
+              </p>
+              <div class="om-split-deferred-note">
+                Se asignará la dirección cuando confirmes la SDC.
+              </div>
+            </div>
+
+              <!-- Panel derecho: formulario -->
+            <div class="om-split-right">
+
+              <div class="om-split-header">
+                <button class="om-modal-close-btn" t-on-click="closeDeliveryPanel" title="Cerrar">
+                  <i class="fa fa-times"/>
+                </button>
+              </div>
+
+              <div class="om-modal-body">
+                <div class="om-modal-form">
+
+                    <!-- Nombre + Teléfono -->
+                  <div class="om-field-row">
+                    <div class="om-field om-field--grow">
+                      <label class="om-field-label">Nombre <span class="text-danger">*</span></label>
+                      <input type="text" class="om-field-input" placeholder="Ej. Juan Pérez"
+                             t-att-value="state.deliveryModal.name"
+                             t-on-input="(ev) => this.onDeliveryFieldChange('name', ev)"/>
+                    </div>
+                    <div class="om-field" style="min-width:150px;">
+                      <label class="om-field-label">Teléfono <span class="text-danger">*</span></label>
+                      <input type="tel" class="om-field-input" placeholder="Ej. 3001234567"
+                             maxlength="10"
+                             t-att-value="state.deliveryModal.phone"
+                             t-on-input="onDeliveryPhoneInput"/>
+                    </div>
+                  </div>
+
+                    <!-- Correo -->
+                  <div class="om-field">
+                    <label class="om-field-label">Correo electrónico</label>
+                    <input type="email" class="om-field-input" placeholder="Ej. juan@empresa.com"
+                           t-att-value="state.deliveryModal.email"
+                           t-on-input="(ev) => this.onDeliveryFieldChange('email', ev)"/>
+                  </div>
+
+                    <!-- Dirección -->
+                  <div class="om-field">
+                    <label class="om-field-label">Dirección <span class="text-danger">*</span></label>
+                    <input type="text" class="om-field-input" placeholder="Ej. Calle 123 # 45-67, Bogotá"
+                           t-att-value="state.deliveryModal.address"
+                           t-on-input="(ev) => this.onDeliveryFieldChange('address', ev)"/>
+                  </div>
+
+                  <t t-if="state.deliveryModal.error">
+                    <div class="om-modal-error">
+                      <i class="fa fa-exclamation-circle"/>
+                      <span t-esc="state.deliveryModal.error"/>
+                    </div>
+                  </t>
+
+                </div>
+              </div>
+
+                <!-- Footer del modal -->
+              <div class="om-modal-actions">
+                <t t-if="state.deliveryData">
+                  <button class="btn btn-outline-danger me-auto"
+                          t-on-click="() => { this.state.deliveryData = null; this.closeDeliveryPanel(); }">
+                    <i class="fa fa-trash-o"/>
+                  </button>
+                </t>
+                <button class="btn btn-secondary" t-on-click="closeDeliveryPanel">
+                  Cancelar
+                </button>
+                <button class="btn btn-primary" t-on-click="onSaveDelivery">
+                  Guardar
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </t>
+
+      </div>
+
+      <!-- ── Footer ── -->
+      <t t-set-slot="footer">
+        <div class="om-dialog-footer">
+
+          <!-- Selector de modo -->
+          <div class="om-footer-mode-group">
+            <button t-att-class="'om-footer-mode-btn' + (state.wizardMode === 'manual' ? ' active' : '')"
+                    t-on-click="() => this.setWizardMode('manual')">Manual</button>
+            <span class="om-footer-mode-sep"/>
+            <button t-att-class="'om-footer-mode-btn' + (state.wizardMode === 'excel' ? ' active' : '')"
+                    t-on-click="() => this.setWizardMode('excel')">Importar</button>
+          </div>
+
+          <!-- Acciones -->
+          <div class="om-footer-actions">
+            <!-- Cancelar: oculto cuando aparecen Volver + Confirmar juntos -->
+            <t t-if="!(state.wizardMode === 'excel' and state.importStep === 'main' and state.importResults and importErrorCount === 0)">
+              <button class="btn btn-secondary px-3"
+                      t-on-click="onCancel"
+                      t-att-disabled="state.submitting">
+                Cancelar
+              </button>
+            </t>
+
+            <!-- Botón Atrás contextual (solo en modo excel, no en instrucciones) -->
+            <t t-if="state.wizardMode === 'excel' and state.importStep === 'main'">
+              <t t-if="!state.importResults">
+                <!-- Desde descarga/carga → volver a instrucciones -->
+                <button class="btn btn-primary px-3"
+                        t-on-click="() => this.goToImportStep('instructions')">
+                  Instrucciones
+                </button>
+              </t>
+              <t t-elif="importErrorCount > 0">
+                <!-- Resultados con errores: Volver es la acción principal (primary) -->
+                <button class="btn btn-primary px-3"
+                        t-on-click="resetImport">
+                  Volver
+                </button>
+              </t>
+              <t t-else="">
+                <!-- Resultados exitosos: Volver es secundario (Confirmar es el primary) -->
+                <button class="btn btn-secondary px-3"
+                        t-on-click="resetImport">
+                  Volver
+                </button>
+              </t>
+            </t>
+
+            <!-- Botón primario -->
+            <t t-if="state.wizardMode === 'excel' and state.importStep === 'instructions'">
+              <!-- En instrucciones: Siguiente -->
+              <button class="btn btn-primary px-4"
+                      t-on-click="() => this.goToImportStep('main')">
+                Siguiente
+              </button>
+            </t>
+            <t t-elif="state.wizardMode === 'manual' or (state.wizardMode === 'excel' and state.importResults and importErrorCount === 0)">
+              <!-- En modo manual o excel con resultados exitosos: Confirmar -->
+              <button class="btn btn-primary px-4"
+                      t-on-click="onConfirm"
+                      t-att-disabled="!allMapped or !allPartnersResolved or !state.deliveryData or state.submitting">
+                <t t-if="state.submitting">
+                  <span class="spinner-border spinner-border-sm me-1" role="status"/>Procesando...
+                </t>
+                <t t-else="">Confirmar</t>
+              </button>
+            </t>
+          </div>
+
+        </div>
+      </t>
+
+    </Dialog>
+  </t>
+
+</templates>

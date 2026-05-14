@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="mail_template_return_to_requester" model="mail.template">
+            <field name="name">Notificación de devolución de SDC al solicitante</field>
+            <field name="model_id" ref="purchase_management.model_request_quotation"/>
+            <field name="subject">SDC Devuelta - {{ object.reference }}</field>
+            <field name="email_from">odoo@tsg.net.co</field>
+            <field name="body_html" type="html">
+                <div style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;color:#222;">
+                    <p style="font-size:13px;margin:0 0 10px 0;line-height:1.45;">
+                        Estimado(a) <t t-out="object.responsible_id.name"/>,
+                    </p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;">
+                        Le informamos que la solicitud de cotización
+                        <strong><t t-out="object.reference"/></strong>
+                        ha sido <strong>devuelta</strong> por el área de
+                        <strong>Compras</strong> para que realice los ajustes necesarios.
+                    </p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;">
+                        <strong>Motivo de la devolución:</strong><br/>
+                        "<t t-out="ctx.get('return_reason')"/>"
+                    </p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;">
+                        Por favor, revise la solicitud, realice las correcciones indicadas y
+                        reenvíela al área de Compras cuando esté lista.
+                    </p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;">
+                        Gracias por su atención.
+                    </p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

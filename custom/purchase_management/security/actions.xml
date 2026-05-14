@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="action_view_dashboard" model="ir.actions.client">
+            <field name="name">Dashboard</field>
+            <field name="tag">purchase_management_dashboard</field>
+        </record>
+
+        <record id="action_view_request_quotation" model="ir.actions.act_window">
+            <field name="name">Solicitudes de Cotización</field>
+            <field name="res_model">request.quotation</field>
+            <field name="view_mode">list,form</field>
+            <field name="view_ids"
+                eval="[(5, 0, 0),
+                                         (0, 0, {'view_mode': 'list', 'view_id': ref('purchase_management.view_request_quotation_list')}),
+                                         (0, 0, {'view_mode': 'form', 'view_id': ref('purchase_management.view_request_quotation_form')})]"/>
+            <field name="context">{'search_default_my_assigned': 1}</field>
+            <field name="domain">[]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No se ha encontrado ninguna solicitud de cotización.
+                </p>
+                <p> Una <b class="text-primary">solicitud de cotización</b> es un documento que una
+                    empresa envía a varios proveedores potenciales para solicitar ofertas o
+                    presupuestos para bienes o servicios específicos. Este proceso es esencial en la
+                    gestión de compras, ya que permite a la empresa comparar precios, condiciones y
+                    calidad entre diferentes proveedores antes de tomar una decisión de compra. La
+                    solicitud de cotización suele incluir detalles como la descripción del producto
+                    o servicio, las cantidades requeridas, las especificaciones técnicas, los plazos
+                    de entrega y las condiciones de pago. </p>
+            </field>
+        </record>
+
+        <record id="action_view_purchase_order" model="ir.actions.act_window">
+            <field name="name">Órdenes de Compra</field>
+            <field name="res_model">purchase.management.order</field>
+            <field name="view_mode">list,form</field>
+            <field name="view_ids"
+                eval="[(5, 0, 0),
+                                         (0, 0, {'view_mode': 'list', 'view_id': ref('purchase_management.view_purchase_management_order_list')}),
+                                         (0, 0, {'view_mode': 'form', 'view_id': ref('purchase_management.view_purchase_management_order_form')})]"/>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No se ha encontrado ninguna orden de compra.
+                </p>
+                <p> Una <b class="text-primary">orden de compra</b> es un documento formal que una
+                    empresa emite a un proveedor para solicitar la entrega de bienes o servicios
+                    específicos. Este documento es esencial en el proceso de compras, ya que
+                    establece los términos y condiciones de la transacción, incluyendo la
+                    descripción del producto o servicio, las cantidades solicitadas, el precio
+                    acordado, los plazos de entrega y las condiciones de pago. La orden de compra
+                    sirve como un contrato vinculante entre la empresa y el proveedor, garantizando
+                    que ambas partes cumplan con sus obligaciones y facilitando la gestión y el
+                    seguimiento de las compras realizadas. </p>
+            </field>
+        </record>
+
+        <record id="action_view_administrative_expenses" model="ir.actions.act_window">
+            <field name="name">Gastos Administrativos</field>
+            <field name="res_model">purchase.administrative.expense</field>
+            <field name="view_mode">list,form</field>
+            <field name="view_ids"
+                eval="[(5, 0, 0),
+                                         (0, 0, {'view_mode': 'list', 'view_id': ref('purchase_management.view_purchase_administrative_expense_list')}),
+                                         (0, 0, {'view_mode': 'form', 'view_id': ref('purchase_management.view_purchase_administrative_expense_form')})]"/>
+            <field name="context">{}</field>
+            <field name="domain">[]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No se ha encontrado ningún gasto administrativo.
+                </p>
+                <p> Un <b class="text-primary">gasto administrativo</b> es un costo asociado a las
+                    actividades de gestión y administración de una empresa, que no está directamente
+                    relacionado con la producción o venta de bienes y servicios. Estos gastos
+                    incluyen costos como salarios del personal administrativo, alquiler de oficinas,
+                    suministros de oficina, servicios públicos, entre otros. En el contexto de
+                    compras, los gastos administrativos pueden surgir durante el proceso de
+                    adquisición, como costos de licitación, honorarios de consultoría o gastos de
+                    transporte relacionados con la gestión de proveedores. La correcta gestión de
+                    los gastos administrativos es esencial para mantener la eficiencia operativa y
+                    controlar los costos dentro de la organización. </p>
+            </field>
+        </record>
+
+        <record id="action_view_supplier" model="ir.actions.act_window">
+            <field name="name">Proveedores</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">kanban,list,form</field>
+            <field name="domain">[('name', '!=', 'Tsg The It Experts Sas')]</field>
+            <field name="context">{'default_is_supplier': True, 'search_default_is_supplier': 1}</field>
+            <field name="view_ids"
+                eval="[(5, 0, 0),
+                                         (0, 0, {'view_mode': 'kanban', 'view_id': ref('contacts_management.new_view_kanban_res_partner')}),
+                                         (0, 0, {'view_mode': 'list', 'view_id': ref('contacts_management.new_view_list_res_partner')}),
+                                         (0, 0, {'view_mode': 'form', 'view_id': ref('contacts_management.new_view_form_res_partner')})]"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No se ha encontrado ningún proveedor.
+                </p>
+                <p> Un proveedor es una persona o empresa que suministra <b class="text-primary">
+                    bienes</b> o <b class="text-primary">servicios</b> a otra organización,
+                    generalmente a cambio de un <b class="text-primary">pago</b>. En el contexto de <b
+                        class="text-primary">compras</b>, los proveedores son esenciales para
+                    garantizar el <b class="text-primary">abastecimiento</b> oportuno y de <b
+                        class="text-primary">calidad</b> de los productos o servicios necesarios
+                    para el funcionamiento de la empresa. La <b class="text-primary">gestión
+                        adecuada de proveedores</b> permite optimizar <b class="text-primary">costos</b>,
+                    asegurar la <b class="text-primary">continuidad operativa</b> y establecer <b
+                        class="text-primary">relaciones comerciales</b> beneficiosas para ambas
+                    partes. </p>
+            </field>
+        </record>
+
+        <record id="action_view_request_quotation_report" model="ir.actions.act_window">
+            <field name="name">Informes de Solicitudes</field>
+            <field name="res_model">request.quotation</field>
+            <field name="view_mode">graph,pivot,list</field>
+            <field name="view_ids"
+                eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'graph', 'view_id': ref('purchase_management.view_request_quotation_graph')}),
+                (0, 0, {'view_mode': 'pivot', 'view_id': ref('purchase_management.view_request_quotation_pivot')})]"/>
+            <field name="domain">[('state', 'not in', ['draft', 'cancelled', 'order_created'])]</field>
+        </record>
+
+        <record id="action_purchase_management_payment_term" model="ir.actions.act_window">
+            <field name="name">Plazos de pago</field>
+            <field name="res_model">accounting.payment.term</field>
+            <field name="view_mode">list</field>
+            <field name="view_ids"
+                eval="[(5, 0, 0), (0, 0, {'view_mode': 'list', 'view_id': ref('accounting.view_list_accounting_payment_term')})]"/>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No se encontró ningún plazo de pago.
+                </p>
+                <p> El <b class="text-primary">plazo de pago</b> es el periodo acordado para que un
+                    cliente realice el <b class="text-primary">pago</b> de una <b
+                        class="text-primary">
+                        factura</b> sin incurrir en intereses o penalizaciones. En <b
+                        class="text-primary">
+                        contabilidad</b>, los plazos de pago permiten gestionar el <b
+                        class="text-primary">flujo
+                        de efectivo</b> y la <b class="text-primary">liquidez</b> de la empresa. En <b
+                        class="text-primary">proyectos</b>, ayudan a planificar los <b
+                        class="text-primary">desembolsos</b> y controlar los <b class="text-primary">
+                    costos</b>. Para <b class="text-primary">proveedores</b>, los plazos de pago
+                    definen cuándo recibirán el <b class="text-primary">cobro</b> por sus productos
+                    o servicios, facilitando la <b class="text-primary">gestión financiera</b> y las <b
+                        class="text-primary">relaciones comerciales</b>. </p>
+            </field>
+        </record>
+
+        <record id="action_view_res_currency" model="ir.actions.act_window">
+            <field name="name">Monedas</field>
+            <field name="res_model">res.currency</field>
+            <field name="view_mode">kanban,list,form</field>
+            <field name="view_ids"
+                eval="[(5, 0, 0),
+                            (0, 0, {'view_mode': 'kanban', 'view_id': ref('accounting.view_kanban_res_currency')}),
+                            (0, 0, {'view_mode': 'list', 'view_id': ref('accounting.view_list_res_currency')}),
+                            (0, 0, {'view_mode': 'form', 'view_id': ref('accounting.view_form_res_currency')})]"/>
+            <field name="domain">[]</field>
+            <field name="context">{'search_default_active': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No se encontró ninguna moneda.
+                </p>
+                <p> La <b class="text-primary">moneda</b> es una forma de dinero, generalmente
+                    emitida por un gobierno y aceptada como medio de pago en la economía de un país.
+                    En <b
+                        class="text-primary">contabilidad</b>, las monedas permiten registrar <b
+                        class="text-primary">transacciones</b> en diferentes divisas y calcular
+                    correctamente los <b class="text-primary">tipos de cambio</b>. En <b
+                        class="text-primary">órdenes de compra</b>, la selección de la moneda define
+                    el valor de los <b class="text-primary">productos</b> y <b class="text-primary">
+                    servicios</b> adquiridos, así como el <b class="text-primary">monto total</b> a
+                    pagar. Para la prestación de <b class="text-primary">servicios</b>, la moneda
+                    determina el <b class="text-primary">precio</b> y las <b class="text-primary">condiciones
+                    de pago</b> acordadas con el cliente o proveedor. La correcta gestión de las <b
+                        class="text-primary">monedas</b> facilita la <b class="text-primary">consolidación
+                    financiera</b>, el <b class="text-primary">análisis de resultados</b> y el
+                    cumplimiento de <b class="text-primary">normativas internacionales</b>. </p>
+            </field>
+        </record>
+
+        <record id="action_view_cost_center" model="ir.actions.act_window">
+            <field name="name">Centros de Costo</field>
+            <field name="res_model">cost.center</field>
+            <field name="view_mode">kanban,list,form</field>
+            <field name="view_ids"
+                eval="[(5, 0, 0),
+                            (0, 0, {'view_mode': 'kanban', 'view_id': ref('accounting.view_kanban_cost_center')}),
+                            (0, 0, {'view_mode': 'list', 'view_id': ref('accounting.view_list_cost_center')}),
+                            (0, 0, {'view_mode': 'form', 'view_id': ref('accounting.view_form_cost_center')})]"/>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No se encontró ningun centro de costo.
+                </p>
+                <p> Los <b class="text-primary">centros de costo</b> son clasificaciones que agrupan
+                    los costos y gastos asociados a un proyecto o actividad específica. Facilitan el
+                    análisis y control financiero al permitir identificar y comparar diferentes
+                    tipos de costos dentro de un mismo proyecto. </p>
+            </field>
+        </record>
+
+        <record id="action_view_team" model="ir.actions.act_window">
+            <field name="name">Equipos</field>
+            <field name="res_model">purchase.team</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No se encontró ningún equipo.
+                </p>
+                <p> Los <b class="text-primary">equipos</b> son grupos de trabajo que se encargan de
+                    gestionar las compras dentro de la organización. Es importante tener un registro
+                    claro de los equipos para facilitar la colaboración y el seguimiento de las
+                    actividades relacionadas con las compras. </p>
+            </field>
+        </record>
+
+        <record id="action_view_member" model="ir.actions.act_window">
+            <field name="name">Integrantes</field>
+            <field name="res_model">purchase.member</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No se encontró ningún integrante.
+                </p>
+                <p> Los <b class="text-primary">integrantes</b> son las personas que componen los
+                    equipos dentro de la organización. Mantener un registro actualizado de los
+                    integrantes permite optimizar la coordinación, asegurar la continuidad operativa
+                    y facilitar la comunicación efectiva entre las diferentes áreas. </p>
+            </field>
+        </record>
+
+        <record id="action_view_enterprise" model="ir.actions.act_window">
+            <field name="name">Empresas</field>
+            <field name="res_model">purchase.enterprise</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No se encontró ninguna empresa.
+                </p>
+                <p> Las <b class="text-primary">empresas</b> son las entidades comerciales con las
+                    que la organización tiene relaciones comerciales. Mantener un registro claro de
+                    las empresas permite gestionar de manera eficiente las compras, optimizar los
+                    procesos de negociación y fortalecer las relaciones comerciales. </p>
+            </field>
+        </record>
+
+        <record id="action_view_request_type" model="ir.actions.act_window">
+            <field name="name">Tipos de solicitud</field>
+            <field name="res_model">request.type</field>
+            <field name="view_mode">list</field>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No se encontró ningún tipo de solicitud.
+                </p>
+                <p> Los <b class="text-primary">tipos de solicitud</b> son categorías que permiten
+                    clasificar las solicitudes de cotización según sus características o necesidades
+                    específicas. Definir claramente los tipos de solicitud facilita la gestión,
+                    optimiza los procesos de aprobación y asegura que cada solicitud sea atendida de
+                    manera adecuada según su naturaleza. </p>
+            </field>
+        </record>
+
+
+        <menuitem
+            id="purchase_management.menu_purchase_management_root"
+            name="Compras"
+            sequence="135"
+            web_icon="purchase_management,static/description/icon.png"
+            groups="purchase_management.group_consult_purchase_management"
+        />
+
+        <menuitem
+            id="menu_purchase_management_dashboard"
+            name="Dashboard"
+            sequence="1"
+            parent="purchase_management.menu_purchase_management_root"
+            action="purchase_management.action_view_dashboard"
+            groups="purchase_management.group_purchase_user_management"
+        />
+
+        <menuitem
+            id="menu_purchase_management_orders"
+            name="Órdenes"
+            sequence="2"
+            parent="purchase_management.menu_purchase_management_root"
+        />
+
+        <menuitem
+            id="menu_purchase_management_quotation"
+            name="Solicitudes de Cotización"
+            sequence="1"
+            parent="purchase_management.menu_purchase_management_orders"
+            action="purchase_management.action_view_request_quotation"
+            groups="purchase_management.group_consult_purchase_management"
+        />
+
+        <menuitem
+            id="menu_purchase_management_administrative_expenses"
+            name="Gastos Administrativos"
+            sequence="2"
+            parent="purchase_management.menu_purchase_management_orders"
+            action="purchase_management.action_view_administrative_expenses"
+        />
+
+        <menuitem
+            id="menu_purchase_management_order"
+            name="Órdenes de Compra"
+            sequence="3"
+            parent="purchase_management.menu_purchase_management_orders"
+            action="purchase_management.action_view_purchase_order"
+        />
+
+        <menuitem
+            id="menu_purchase_management_suppliers"
+            name="Proveedores"
+            sequence="2"
+            parent="purchase_management.menu_purchase_management_root"
+            action="purchase_management.action_view_supplier"
+        />
+
+        <!--<menuitem
+            id="menu_purchase_management_report"
+            name="Informes"
+            sequence="3"
+            parent="purchase_management.menu_purchase_management_root"
+            action="purchase_management.action_view_request_quotation_report"
+        />-->
+
+        <menuitem
+            id="menu_purchase_management_configuration"
+            name="Configuración"
+            sequence="10"
+            parent="purchase_management.menu_purchase_management_root"
+        />
+
+        <menuitem
+            id="menu_purchase_management_request_type"
+            name="Tipos de solicitud"
+            sequence="1"
+            parent="purchase_management.menu_purchase_management_configuration"
+            action="purchase_management.action_view_request_type"
+        />
+
+        <menuitem
+            id="menu_purchase_management_team"
+            name="Equipos"
+            sequence="2"
+            parent="purchase_management.menu_purchase_management_configuration"
+            action="purchase_management.action_view_team"
+        />
+
+        <menuitem
+            id="menu_purchase_management_member"
+            name="Integrantes"
+            sequence="3"
+            parent="purchase_management.menu_purchase_management_configuration"
+            action="purchase_management.action_view_member"
+        />
+
+        <menuitem
+            id="menu_purchase_management_enterprise"
+            name="Empresas"
+            sequence="4"
+            parent="purchase_management.menu_purchase_management_configuration"
+            action="purchase_management.action_view_enterprise"
+        />
+
+        <!--<menuitem
+            id="menu_purchase_management_accounting"
+            name="Contabilidad"
+            sequence="5"
+            parent="purchase_management.menu_purchase_management_configuration"
+            groups="purchase_management.group_accounting_purchase_management"
+        />
+
+        <menuitem
+            id="menu_purchase_management_cost_center"
+            name="Centro de costos"
+            sequence="1"
+            parent="purchase_management.menu_purchase_management_accounting"
+            action="purchase_management.action_view_cost_center"
+        />
+
+        <menuitem
+            id="menu_purchase_management_accounting_payment_term"
+            name="Plazos de pago"
+            sequence="2"
+            parent="purchase_management.menu_purchase_management_accounting"
+            action="purchase_management.action_purchase_management_payment_term"
+        />
+
+        <menuitem
+            id="menu_purchase_management_res_currency"
+            name="Monedas"
+            sequence="3"
+            parent="purchase_management.menu_purchase_management_accounting"
+            action="purchase_management.action_view_res_currency"
+        />-->
+
+    </data>
+</odoo>

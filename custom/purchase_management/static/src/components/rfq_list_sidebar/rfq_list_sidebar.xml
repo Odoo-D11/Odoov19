@@ -1,0 +1,419 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+
+    <!-- Ocultar el botón "New" default de Odoo para request.quotation.
+         Mantiene las condiciones originales de Odoo 19 + excluye request.quotation. -->
+    <t t-inherit="web.ListView" t-inherit-mode="extension"
+        t-name="purchase_management.HideDefaultNewButton">
+        <xpath expr="//button[contains(@class,'o_list_button_add')]" position="attributes">
+            <attribute name="t-if">props.resModel !== 'request.quotation' and !editedRecord and activeActions.create and props.showButtons</attribute>
+        </xpath>
+    </t>
+
+    <!-- Dropdown button personalizado — standalone (web.ListView.Buttons está vacío en Odoo 19) -->
+    <t t-name="purchase_management.PurchaseManagementDropdownButton">
+        <div class="o_list_buttons d-flex gap-1 d-empty-none align-items-baseline"
+            t-if="!editedRecord and activeActions.create and props.showButtons">
+            <button type="button" class="btn btn-primary o_list_button_add"
+                data-hotkey="c" t-on-click="onClickCreate" data-bounce-button="">
+                Nuevo
+            </button>
+        </div>
+    </t>
+
+    <!-- Barra lateral -->
+    <t t-name="purchase_management.PurchaseStatusSidebar">
+        <aside class="o_purchase_status_sidebar">
+
+            <div t-if="state.loading" class="pss-loading-overlay">
+                <div class="pss-spinner"/>
+                <span class="pss-loading-text">Cargando datos...</span>
+            </div>
+
+            <div t-if="!state.loading">
+
+                <!-- Header del sidebar (cambia cuando Vencidas está activo) -->
+                <div class="pss-sidebar-header"
+                    t-att-class="isOverdueActive ? 'pss-sidebar-header--overdue' : ''">
+                    <i t-att-class="isOverdueActive
+                        ? 'fa fa-exclamation-triangle pss-sidebar-header-icon'
+                        : 'fa fa-filter pss-sidebar-header-icon'"/>
+                    <span class="pss-sidebar-header-text">
+                        <t t-if="isOverdueActive">Informe Vencidas</t>
+                        <t t-else="">Filtrar por</t>
+                    </span>
+                    <button t-if="isOverdueActive" class="pss-overdue-close"
+                        title="Cerrar informe"
+                        t-on-click="() => this.filterByState(stateConfig.find(c => c.key === 'overdue'))">
+                        <i class="fa fa-times"/>
+                    </button>
+                </div>
+
+                <!-- PANEL: Informe Vencidas -->
+                <div t-if="isOverdueActive" class="pss-overdue-panel">
+
+                    <div class="pss-overdue-hero">
+                        <span class="pss-overdue-count" t-esc="state.stateData['overdue'] || 0"/>
+                        <span class="pss-overdue-label">
+                            <t t-if="(state.stateData['overdue'] || 0) === 1">vencida</t>
+                            <t t-else="">vencidas</t>
+                        </span>
+                        <span class="pss-overdue-total">
+                            de <t t-esc="state.overdueData.total_active"/> en proceso
+                        </span>
+                    </div>
+
+                    <div class="pss-overdue-divider"/>
+
+                    <div class="pss-overdue-section-title">Por estado</div>
+                    <div class="pss-overdue-stats">
+                        <div t-if="state.overdueData.by_shopping"
+                             class="pss-overdue-stat"
+                             t-att-class="isOverdueSubActive('state', 'in_shopping') ? 'pss-overdue-stat--active' : ''"
+                             t-on-click="() => this.filterOverdueSub('state', 'in_shopping')">
+                            <div class="pss-icon-square" style="background-color:#2c7be5;">
+                                <i class="fa fa-shopping-cart"/>
+                            </div>
+                            <div class="pss-info">
+                                <span class="pss-name">En Compras</span>
+                                <span class="pss-details">
+                                    <t t-esc="state.overdueData.by_shopping"/>
+                                    <t t-if="state.overdueData.by_shopping === 1"> vencida</t>
+                                    <t t-else=""> vencidas</t>
+                                </span>
+                            </div>
+                        </div>
+                        <div t-if="state.overdueData.by_sent"
+                             class="pss-overdue-stat"
+                             t-att-class="isOverdueSubActive('state', 'sent') ? 'pss-overdue-stat--active' : ''"
+                             t-on-click="() => this.filterOverdueSub('state', 'sent')">
+                            <div class="pss-icon-square" style="background-color:#5bc0de;">
+                                <i class="fa fa-paper-plane-o"/>
+                            </div>
+                            <div class="pss-info">
+                                <span class="pss-name">Enviadas</span>
+                                <span class="pss-details">
+                                    <t t-esc="state.overdueData.by_sent"/>
+                                    <t t-if="state.overdueData.by_sent === 1"> vencida</t>
+                                    <t t-else=""> vencidas</t>
+                                </span>
+                            </div>
+                        </div>
+                        <div t-if="state.overdueData.by_approval"
+                             class="pss-overdue-stat"
+                             t-att-class="isOverdueSubActive('state', 'approval') ? 'pss-overdue-stat--active' : ''"
+                             t-on-click="() => this.filterOverdueSub('state', 'approval')">
+                            <div class="pss-icon-square" style="background-color:#f39c12;">
+                                <i class="fa fa-clock-o"/>
+                            </div>
+                            <div class="pss-info">
+                                <span class="pss-name">En Aprobación</span>
+                                <span class="pss-details">
+                                    <t t-esc="state.overdueData.by_approval"/>
+                                    <t t-if="state.overdueData.by_approval === 1"> vencida</t>
+                                    <t t-else=""> vencidas</t>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pss-overdue-divider"/>
+
+                    <div class="pss-overdue-section-title">Por categoría</div>
+                    <div class="pss-overdue-stats">
+                        <div t-if="state.overdueData.by_project"
+                             class="pss-overdue-stat"
+                             t-att-class="isOverdueSubActive('category', 'project') ? 'pss-overdue-stat--active' : ''"
+                             t-on-click="() => this.filterOverdueSub('category', 'project')">
+                            <div class="pss-icon-square" style="background-color:#2980b9;">
+                                <i class="fa fa-briefcase"/>
+                            </div>
+                            <div class="pss-info">
+                                <span class="pss-name">Proyectos</span>
+                                <span class="pss-details">
+                                    <t t-esc="state.overdueData.by_project"/>
+                                    <t t-if="state.overdueData.by_project === 1"> vencida</t>
+                                    <t t-else=""> vencidas</t>
+                                </span>
+                            </div>
+                        </div>
+                        <div t-if="state.overdueData.by_admin"
+                             class="pss-overdue-stat"
+                             t-att-class="isOverdueSubActive('category', 'admin') ? 'pss-overdue-stat--active' : ''"
+                             t-on-click="() => this.filterOverdueSub('category', 'admin')">
+                            <div class="pss-icon-square" style="background-color:#8e44ad;">
+                                <i class="fa fa-building"/>
+                            </div>
+                            <div class="pss-info">
+                                <span class="pss-name">Administrativo</span>
+                                <span class="pss-details">
+                                    <t t-esc="state.overdueData.by_admin"/>
+                                    <t t-if="state.overdueData.by_admin === 1"> vencida</t>
+                                    <t t-else=""> vencidas</t>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pss-overdue-divider"/>
+
+                    <div class="pss-overdue-section-title">Fuera de plazo</div>
+                    <div class="pss-overdue-metrics">
+                        <div class="pss-overdue-metric">
+                            <div class="pss-overdue-metric-left">
+                                <span class="pss-overdue-metric-num"
+                                    t-esc="state.overdueData.avg_days"/>
+                                <span class="pss-overdue-metric-unit">días</span>
+                            </div>
+                            <div class="pss-overdue-metric-right">
+                                <span class="pss-overdue-metric-title">Promedio de atraso</span>
+                                <span class="pss-overdue-metric-sub">entre todas las vencidas</span>
+                            </div>
+                        </div>
+                        <div class="pss-overdue-metric pss-overdue-metric--clickable"
+                             t-att-class="isOverdueSubActive('max', 'max') ? 'pss-overdue-metric--active' : ''"
+                             t-on-click="() => this.filterOverdueSub('max', 'max')">
+                            <div class="pss-overdue-metric-left">
+                                <span class="pss-overdue-metric-num"
+                                    t-esc="state.overdueData.max_days"/>
+                                <span class="pss-overdue-metric-unit">días</span>
+                            </div>
+                            <div class="pss-overdue-metric-right">
+                                <span class="pss-overdue-metric-title">Mayor atraso</span>
+                                <span class="pss-overdue-metric-sub">caso más crítico activo</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div t-if="!isOverdueActive" class="pss-section"
+                    t-att-class="isPersonnelCollapsed ? 'pss-section--collapsed' : ''"
+                    t-att-aria-hidden="isPersonnelCollapsed ? 'true' : 'false'">
+                    <div class="pss-section-inner">
+
+                        <!-- El SCSS maneja la transición -->
+                        <div class="pss-section-header"
+                            t-att-class="state.personnelSearchActive ? 'pss-section-header--searching' : ''">
+                            <div class="pss-title-row">
+                                <span class="pss-section-title">PERSONAL ASIGNADO</span>
+                                <button class="pss-search-toggle" title="Buscar"
+                                    t-on-click="togglePersonnelSearch">
+                                    <i class="fa fa-search"/>
+                                </button>
+                            </div>
+                            <div class="pss-search-row">
+                                <i class="fa fa-search pss-search-icon-inline"/>
+                                <input class="pss-search-input"
+                                    type="text"
+                                    placeholder="Buscar por nombre..."
+                                    t-att-value="state.personnelSearch"
+                                    t-on-input="onPersonnelSearchInput"
+                                    t-ref="personnelSearchInput"/>
+                                <button class="pss-search-close" title="Cerrar"
+                                    t-on-click="togglePersonnelSearch">
+                                    <i class="fa fa-times"/>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="pss-section-content">
+                            <t t-if="filteredPersonnel.length">
+                                <t t-foreach="filteredPersonnel" t-as="person" t-key="person.id">
+                                    <div class="pss-item cursor-pointer"
+                                        t-att-class="isItemActive('personnel', person.id) ? 'is-selected' : ''"
+                                        t-on-click="() => this.filterByPersonnel(person)">
+                                        <div class="pss-avatar"
+                                            t-att-style="'background-color:' + person.color">
+                                            <t t-esc="person.name[0].toUpperCase()"/>
+                                        </div>
+                                        <div class="pss-info">
+                                            <span class="pss-name" t-att-title="person.name"
+                                                t-esc="person.name"/>
+                                            <span class="pss-details">
+                                                <t t-esc="person.count"/>
+                                                <t t-if="person.count === 1"> Solicitud asignada</t>
+                                                <t t-else=""> Solicitudes asignadas</t>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </t>
+                            </t>
+                            <t t-else="">
+                                <div class="pss-no-data">
+                                    <t t-if="state.personnelSearch">Sin resultados</t>
+                                    <t t-else="">No hay datos disponibles</t>
+                                </div>
+                            </t>
+                        </div>
+
+                        <t
+                            t-if="!state.personnelSearch and state.personnel.length > PERSONNEL_LIMIT">
+                            <div class="pss-show-more"
+                                t-att-class="state.personnelExpanded ? 'pss-show-more--expanded' : ''"
+                                t-on-click="togglePersonnelExpanded">
+                                <i class="fa fa-chevron-down"/>
+                                <t t-if="!state.personnelExpanded"> Ver más (<t
+                                        t-esc="state.personnel.length - PERSONNEL_LIMIT"/>) </t>
+                                <t t-else="">Ver menos</t>
+                            </div>
+                        </t>
+
+                    </div>
+                </div>
+
+                <!-- SECCIÓN: TIPO DE SOLICITUD -->
+                <div class="pss-section"
+                    t-if="!isOverdueActive and visibleTypes.length"
+                    t-att-class="isPersonnelCollapsed ? 'pss-section--first' : ''">
+                    <div class="pss-section-header">
+                        <span class="pss-section-title">TIPO DE SOLICITUD</span>
+                    </div>
+                    <div class="pss-section-content">
+                        <t t-foreach="visibleTypes" t-as="tp" t-key="tp.id">
+                            <div class="pss-item cursor-pointer"
+                                t-att-class="isItemActive('type', tp.id) ? 'is-selected' : ''"
+                                t-on-click="() => this.filterByType(tp)">
+                                <div class="pss-icon-square"
+                                    t-att-style="'background-color:' + tp.color">
+                                    <i class="fa fa-tag"/>
+                                </div>
+                                <div class="pss-info">
+                                    <span class="pss-name" t-att-title="tp.name" t-esc="tp.name"/>
+                                    <span class="pss-details">
+                                        <t t-esc="tp.count"/>
+                                        <t t-if="tp.count === 1"> solicitud</t>
+                                        <t t-else=""> solicitudes</t>
+                                    </span>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN: CATEGORÍA -->
+                <div class="pss-section"
+                    t-if="!isOverdueActive and visibleCategoryConfig.length"
+                    t-att-class="isPersonnelCollapsed and !visibleTypes.length ? 'pss-section--first' : ''">
+                    <div class="pss-section-header">
+                        <span class="pss-section-title">CATEGORÍA</span>
+                    </div>
+                    <div class="pss-section-content">
+                        <t t-foreach="visibleCategoryConfig" t-as="cfg" t-key="cfg.key">
+                            <div class="pss-item cursor-pointer"
+                                t-att-class="isItemActive('category', cfg.key) ? 'is-selected' : ''"
+                                t-on-click="() => this.filterByCategory(cfg)">
+                                <div class="pss-icon-square"
+                                    t-att-style="'background-color:' + cfg.color">
+                                    <i t-att-class="'fa ' + cfg.icon"/>
+                                </div>
+                                <div class="pss-info">
+                                    <span class="pss-name" t-esc="cfg.label"/>
+                                    <span class="pss-details">
+                                        <t t-esc="state.categoryData[cfg.key] || 0"/>
+                                        <t t-if="(state.categoryData[cfg.key] || 0) === 1">
+                                            solicitud</t>
+                                        <t t-else=""> solicitudes</t>
+                                    </span>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN: ESTADOS -->
+                <div class="pss-section"
+                    t-if="!isOverdueActive and visibleStateConfig.length"
+                    t-att-class="isPersonnelCollapsed and !visibleTypes.length and !visibleCategoryConfig.length ? 'pss-section--first' : ''">
+                    <div class="pss-section-header">
+                        <span class="pss-section-title">ESTADOS</span>
+                    </div>
+                    <div class="pss-section-content">
+                        <t t-foreach="visibleStateConfig" t-as="cfg" t-key="cfg.key">
+                            <div class="pss-item cursor-pointer"
+                                t-att-class="isItemActive('state', cfg.key) ? 'is-selected' : ''"
+                                t-on-click="() => this.filterByState(cfg)">
+                                <div class="pss-icon-square"
+                                    t-att-style="'background-color:' + cfg.color">
+                                    <i t-att-class="'fa ' + cfg.icon"/>
+                                </div>
+                                <div class="pss-info">
+                                    <span class="pss-name" t-esc="cfg.label"/>
+                                    <span class="pss-details">
+                                        <t t-esc="state.stateData[cfg.key] || 0"/>
+                                        <t t-if="(state.stateData[cfg.key] || 0) === 1"> solicitud</t>
+                                        <t t-else=""> solicitudes</t>
+                                    </span>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+
+                <!-- PLACEHOLDER: my_assigned activo sin resultados -->
+                <div t-if="!isOverdueActive and hasNoData" class="pss-empty-state">
+                    <span class="pss-empty-intro">
+                        No tienes solicitudes creadas. Crea una nueva
+                        o quita el filtro para ver todas las solicitudes del sistema.
+                    </span>
+                    <div class="pss-skeleton">
+                        <!-- Sección ghost 1 -->
+                        <div class="pss-skeleton-section">
+                            <div class="pss-skeleton-title"/>
+                            <div class="pss-skeleton-item">
+                                <div class="pss-skeleton-icon"/>
+                                <div class="pss-skeleton-lines">
+                                    <div class="pss-skeleton-name"/>
+                                    <div class="pss-skeleton-count"/>
+                                </div>
+                            </div>
+                            <div class="pss-skeleton-item">
+                                <div class="pss-skeleton-icon"/>
+                                <div class="pss-skeleton-lines">
+                                    <div class="pss-skeleton-name pss-skeleton-name--short"/>
+                                    <div class="pss-skeleton-count pss-skeleton-count--short"/>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Sección ghost 2 -->
+                        <div class="pss-skeleton-section">
+                            <div class="pss-skeleton-title pss-skeleton-title--narrow"/>
+                            <div class="pss-skeleton-item">
+                                <div class="pss-skeleton-icon"/>
+                                <div class="pss-skeleton-lines">
+                                    <div class="pss-skeleton-name pss-skeleton-name--wide"/>
+                                    <div class="pss-skeleton-count"/>
+                                </div>
+                            </div>
+                            <div class="pss-skeleton-item">
+                                <div class="pss-skeleton-icon"/>
+                                <div class="pss-skeleton-lines">
+                                    <div class="pss-skeleton-name"/>
+                                    <div class="pss-skeleton-count pss-skeleton-count--short"/>
+                                </div>
+                            </div>
+                            <div class="pss-skeleton-item">
+                                <div class="pss-skeleton-icon"/>
+                                <div class="pss-skeleton-lines">
+                                    <div class="pss-skeleton-name pss-skeleton-name--short"/>
+                                    <div class="pss-skeleton-count"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </aside>
+    </t>
+
+    <t t-name="purchase_management.PurchaseManagementListView" t-inherit="web.ListView">
+        <xpath expr="//t[contains(@t-component,'props.Renderer')]" position="before">
+            <PurchaseStatusSidebar/>
+        </xpath>
+        <xpath expr="//Layout" position="attributes">
+            <attribute name="className">"o_content o_component_with_search_panel"</attribute>
+        </xpath>
+    </t>
+
+</templates>

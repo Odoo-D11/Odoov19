@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_form_purchase_management_view_observations_wizard" model="ir.ui.view">
+            <field name="name">purchase.management.view.observations.wizard.form</field>
+            <field name="model">purchase.management.view.observations.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Ver Observaciones">
+                    <field name="team" invisible="1"/>
+                    <field name="available_teams" invisible="1"/>
+                    <field name="quotation_id" invisible="1"/>
+                    <field name="category" invisible="1"/>
+                    <sheet>
+                        <separator string="Instrucciones" invisible="team"/>
+
+                        <!-- Instrucciones para categoría PROYECTO -->
+                        <div class="mb-3" invisible="team or category != 'project'">
+                            <p>Consulte las observaciones de los equipos evaluadores sobre las
+                                cotizaciones de cada proveedor:</p>
+                            <ul>
+                                <li><b class="text-primary">Líder de Proyecto:</b> Evaluación
+                                    técnica (fichas técnicas, especificaciones, estándares).</li>
+                                <li><b class="text-primary">Compras:</b> Análisis comercial y
+                                    recomendación final (precios, plazos, condiciones de pago).</li>
+                                <li><b class="text-primary">Comité de Compras:</b> Decisión final
+                                    de adjudicación (políticas, viabilidad financiera).</li>
+                            </ul>
+                            <p>Use los <b class="text-primary">botones inferiores</b> para cambiar
+                                entre equipos.</p>
+                        </div>
+
+                        <!-- Instrucciones para categoría ADMIN -->
+                        <div class="mb-3" invisible="team or category != 'admin'">
+                            <p>Consulte las observaciones sobre las cotizaciones de cada
+                                proveedor:</p>
+                            <ul>
+                                <li><b class="text-primary">Responsable:</b> Análisis comercial
+                                    y recomendación final (precios, plazos, condiciones).</li>
+                                <li><b class="text-primary">Comité de Compras:</b> Decisión final
+                                    de adjudicación (políticas, viabilidad financiera).</li>
+                            </ul>
+                            <p>Use los <b class="text-primary">botones inferiores</b> para cambiar
+                                entre equipos.</p>
+                        </div>
+
+                        <separator string="Observaciones" invisible="not team"/>
+
+                        <!-- Párrafo de contexto por equipo -->
+                        <p class="text-muted" invisible="team != 'applicant'">Observaciones
+                            del <b class="text-primary">Líder de Proyecto</b>: validación técnica
+                            de fichas y cumplimiento de requerimientos.</p>
+
+                        <!-- final_recommendation: "Compras" para proyecto -->
+                        <p class="text-muted"
+                            invisible="team != 'final_recommendation' or category != 'project'">Observaciones
+                            de <b class="text-primary">Compras</b>: evaluación comercial
+                            (precios, plazos, condiciones) y recomendación final.</p>
+
+                        <!-- final_recommendation: "Responsable" para admin -->
+                        <p class="text-muted"
+                            invisible="team != 'final_recommendation' or category != 'admin'">Observaciones
+                            del <b class="text-primary">Responsable</b>: evaluación comercial
+                            (precios, plazos, condiciones) y recomendación final.</p>
+
+                        <p class="text-muted" invisible="team != 'purchase_committee'">Observaciones
+                            del <b class="text-primary">Comité de Compras</b>: decisión final
+                            sobre adjudicación, políticas y viabilidad financiera.</p>
+
+                        <field name="observation_line_ids" invisible="not team">
+                            <list editable="bottom" create="false" delete="false">
+                                <field name="team" string="Equipo" readonly="1"
+                                    column_invisible="1"/>
+                                <field name="observation" string="Nota" readonly="1"/>
+                            </list>
+                        </field>
+                    </sheet>
+
+                    <footer>
+                        <button string="Volver" type="object"
+                            name="action_show_team_observations" class="btn btn-primary"
+                            context="{'team': ''}"
+                            invisible="not team"/>
+
+                        <!-- Botones iniciales (sin equipo seleccionado) -->
+
+                        <!-- Lid. Proyecto: solo en proyecto -->
+                        <button string="Lid. de Proyecto" type="object"
+                            name="action_show_team_observations" class="btn btn-primary"
+                            context="{'team': 'applicant'}"
+                            invisible="team or category != 'project' or not available_teams or 'Lid. de Proyecto' not in available_teams"/>
+
+                        <!-- Compras: solo en proyecto -->
+                        <button string="Compras" type="object"
+                            name="action_show_team_observations" class="btn btn-primary"
+                            context="{'team': 'final_recommendation'}"
+                            invisible="team or category != 'project' or not available_teams or 'Compras' not in available_teams"/>
+
+                        <!-- Responsable: solo en admin -->
+                        <button string="Responsable" type="object"
+                            name="action_show_team_observations" class="btn btn-primary"
+                            context="{'team': 'final_recommendation'}"
+                            invisible="team or category != 'admin' or not available_teams or 'Responsable' not in available_teams"/>
+
+                        <!-- Comité: en ambas categorías -->
+                        <button string="Comité" type="object"
+                            name="action_show_team_observations" class="btn btn-primary"
+                            context="{'team': 'purchase_committee'}"
+                            invisible="team or not available_teams or 'Comite de Compras' not in available_teams"/>
+
+                        <!-- Botones de navegación (con equipo seleccionado) -->
+
+                        <!-- Lid. Proyecto: solo en proyecto -->
+                        <button string="Lid. de Proyecto" type="object"
+                            name="action_show_team_observations" class="btn btn-primary"
+                            context="{'team': 'applicant'}"
+                            invisible="not team or team == 'applicant' or category != 'project' or not available_teams or 'Lid. de Proyecto' not in available_teams"/>
+
+                        <!-- Compras: solo en proyecto -->
+                        <button string="Compras" type="object"
+                            name="action_show_team_observations" class="btn btn-primary"
+                            context="{'team': 'final_recommendation'}"
+                            invisible="not team or team == 'final_recommendation' or category != 'project' or not available_teams or 'Compras' not in available_teams"/>
+
+                        <!-- Responsable: solo en admin -->
+                        <button string="Responsable" type="object"
+                            name="action_show_team_observations" class="btn btn-primary"
+                            context="{'team': 'final_recommendation'}"
+                            invisible="not team or team == 'final_recommendation' or category != 'admin' or not available_teams or 'Responsable' not in available_teams"/>
+
+                        <!-- Comité: en ambas categorías -->
+                        <button string="Comité" type="object"
+                            name="action_show_team_observations" class="btn btn-primary"
+                            context="{'team': 'purchase_committee'}"
+                            invisible="not team or team == 'purchase_committee' or not available_teams or 'Comite de Compras' not in available_teams"/>
+
+                        <button string="Cerrar" class="btn btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

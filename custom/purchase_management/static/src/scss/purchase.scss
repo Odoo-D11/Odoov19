@@ -1,0 +1,93 @@
+// Lista de productos (Solicitud)
+
+.product_request_line_ids table thead > tr > th[data-name="name"] {
+    width: 80% !important;
+}
+
+.product_request_line_ids table thead > tr > th[data-name="qty"] {
+    width: 10% !important;
+}
+
+.product_request_line_ids table thead > tr > th[data-name="uom_id"] {
+    width: 10% !important;
+}
+
+// Lista de produtos (Cotizaciones)
+
+.o_list_product_line_ids table thead > tr > th[data-name="name"] {
+    width: 70% !important;
+}
+
+.o_list_product_line_ids table thead > tr > th[data-name="qty"] {
+    width: 10% !important;
+}
+
+.o_list_product_line_ids table thead > tr > th[data-name="price_unit"] {
+    width: 10% !important;
+}
+
+.o_list_product_line_ids table thead > tr > th[data-name="subtotal"] {
+    width: 10% !important;
+}
+
+// Lista de proveedores sugeridos (Info. adicional)
+
+.o_list_suggested_supplier_ids table thead > tr > th[data-name="name"] {
+    width: 60% !important;
+}
+
+.o_list_suggested_supplier_ids table thead > tr > th[data-name="email"] {
+    width: 25% !important;
+}
+
+.o_list_suggested_supplier_ids table thead > tr > th[data-name="phone"] {
+    width: 15% !important;
+}
+
+// Lista de proveedores (Aprobación - Lid. Proyecto, Compras, Comite de compras)
+
+.approval_supplier_ids table thead > tr > th[data-name="supplier_display"] {
+    width: 90% !important;
+}
+
+.approval_supplier_ids .btn {
+    width: 100% !important;
+}
+
+.approval_supplier_ids tbody > tr > td:last-child {
+    div {
+        flex-wrap: nowrap !important;
+    }
+}
+
+// Boton sin bordes para simular la apariencia de un texto (Aprobación - SAGRILAFT)
+
+.button_badge {
+    background: transparent;
+    border: none;
+    color: #02143f !important;
+    font-size: 14px;
+    font-weight: 500;
+    align-items: center;
+    cursor: pointer;
+    padding: 0;
+    margin-top: -4px;
+}
+
+// Vista list de request.quotation
+
+.request_quotation_list_view table thead > tr > th[data-name="reference"] {
+    width: 20% !important;
+}
+
+.request_quotation_list_view table thead > tr > th[data-name="subject"] {
+    width: 25% !important;
+}
+
+.request_quotation_list_view table thead > tr > th[data-name="project_id"] {
+    width: 35% !important;
+}
+
+.request_quotation_list_view table thead > tr > th[data-name="deadline"] {
+    width: 20% !important;
+}

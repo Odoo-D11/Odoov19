@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="purchase_management.ProductNameWidget">
+        <div class="d-flex align-items-center gap-1 w-100">
+            <span t-if="props.readonly" class="flex-grow-1" style="white-space: pre-wrap;">
+                <t t-esc="value"/>
+            </span>
+            <t t-else="">
+                <!-- Si es nota, usar textarea con autoresize -->
+                <textarea
+                    t-if="props.record.data.display_type"
+                    class="o_input flex-grow-1 fst-italic"
+                    placeholder="Marca | Modelo | Especificaciones..."
+                    rows="1"
+                    t-ref="textarea"
+                />
+                <!-- Si es producto, usar input con límite de 25 caracteres -->
+                <input
+                    t-else=""
+                    type="text"
+                    class="o_input flex-grow-1"
+                    t-att-placeholder="props.placeholder || 'Ej. Cable UTP, Abrazadera...'"
+                    maxlength="25"
+                    t-ref="input"
+                    t-on-input="onInput"
+                />
+            </t>
+            <button
+                t-if="showButton"
+                type="button"
+                class="btn btn-link p-0 m-0"
+                t-att-title="buttonTitle"
+                t-on-click="onButtonClick"
+                style="min-width: 24px; color: #000000 !important; opacity: 1 !important;"
+            >
+                <i class="fa fa-navicon" style="font-size: 14px; color: #000000;"/>
+            </button>
+        </div>
+    </t>
+</templates>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="res_config_settings_purchase_management" model="ir.ui.view">
+            <field name="name">res.config.settings.purchase.management</field>
+            <field name="model">res.config.settings</field>
+            <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form" position="inside">
+                    <app name="purchase_management"
+                        string="Compras"
+                        data-string="Compras">
+                        <block name="purchase_min_providers_block"
+                            title="Proveedores">
+                            <setting id="min_providers_required_setting"
+                                string="Mínimo de proveedores"
+                                help="Número mínimo de proveedores con los que se debe trabajar en una solicitud de cotización.">
+                                <p class="mb-2"> Defina el <b class="text-primary">mínimo de
+                                    proveedores</b> que el área de Compras debe considerar al
+                                    gestionar una solicitud de cotización. </p>
+                                <field name="min_providers_qty"/>
+                            </setting>
+                        </block>
+                        <block name="purchase_approval_min_providers_qty"
+                            title="Aprobación de excepción de proveedores">
+                            <setting id="approval_min_providers_qty_setting"
+                                string="Responsable de aprobación"
+                                help="Usuario responsable de revisar y aprobar solicitudes de excepción para trabajar con menos proveedores de los establecidos como mínimo.">
+                                <div class="row mt16">
+                                    <div class="w-100">
+                                        <label string="Nombre" for="approval_min_providers_user_id"
+                                            class="col-2 col-lg-3"/>
+                                        <field name="approval_min_providers_user_id"
+                                            options="{'no_create': True, 'no_open': True}"/>
+                                    </div>
+                                </div>
+                            </setting>
+                        </block>
+                    </app>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="purchase_management_config_settings" model="ir.actions.act_window">
+            <field name="name">Compras</field>
+            <field name="res_model">res.config.settings</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="res_config_settings_purchase_management"/>
+            <field name="context">{'bin_size': False, 'module': 'purchase_management'}</field>
+        </record>
+
+
+    </data>
+</odoo>

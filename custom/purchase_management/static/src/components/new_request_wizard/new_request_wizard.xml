@@ -1,0 +1,519 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="purchase_management.NewRequestWizardDialog">
+    <Dialog t-props="{ title: 'Odoo', size: 'xl' }">
+
+            <!-- ── BODY ── -->
+        <div class="o_new_request_wizard pm-font-inter">
+            <div class="nrw-wizard-body" t-att-class="{ 'nrw-fading': state.transitioning }">
+
+                    <!-- ══ STEP 1: Información ══ -->
+                <t t-if="state.step === 1">
+                    <div class="nrw-step-content">
+
+                        <div class="nrw-step-header">
+                            <p class="nrw-step-heading">Información de la solicitud</p>
+                            <p class="nrw-step-desc mb-1">
+                                Registre los datos principales de la SDC. El <b>asunto</b> debe describir brevemente qué se necesita adquirir;
+                                el <b>tipo</b> clasifica la solicitud según la naturaleza del bien o servicio;
+                                el <b>proyecto</b> determina el centro de costo asociado;
+                                y el <b>motivo</b> justifica la necesidad ante el área de compras y el comité.
+                            </p>
+                        </div>
+
+                            <!-- Asunto | Tipo -->
+                        <div class="row g-3 mb-0">
+                            <div class="col-7">
+                                <div class="nrw-field" t-att-class="{ 'nrw-field-error': state.errors.subject }">
+                                    <label class="nrw-field-label">Asunto <span class="text-danger">*</span></label>
+                                    <input type="text" class="nrw-ghost-input"
+                                        placeholder="Ej. Suministro de material de oficina"
+                                        t-att-value="state.subject"
+                                        t-on-input="onSubjectInput"
+                                        autocomplete="off"/>
+                                    <span t-if="state.errors.subject" class="nrw-field-error-msg" t-esc="state.errors.subject"/>
+                                </div>
+                            </div>
+                            <div class="col-5">
+                                <div class="nrw-field" t-att-class="{ 'nrw-field-error': state.errors.typeId }">
+                                    <label class="nrw-field-label">Tipo de SDC <span class="text-danger">*</span></label>
+                                    <div class="nrw-m2o-wrap">
+                                        <input type="text" class="nrw-ghost-input"
+                                            placeholder="Ej. Producto, Servicio, etc."
+                                            t-att-value="state.typeSearch"
+                                            t-on-focus="onTypeFocus"
+                                            t-on-input="onTypeInput"
+                                            t-on-blur="onTypeBlur"
+                                            autocomplete="off"/>
+                                        <div class="nrw-m2o-dropdown" t-if="state.typeDropdownOpen and state.typeItems.length" t-att-style="state.typeDropdownStyle">
+                                            <t t-foreach="state.typeItems" t-as="typeOpt" t-key="typeOpt.id">
+                                                <div class="nrw-dd-item" t-on-mousedown="() => this.selectType(typeOpt.id, typeOpt.name)">
+                                                    <span class="nrw-dd-label" t-esc="typeOpt.name"/>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+                                    <span t-if="state.errors.typeId" class="nrw-field-error-msg" t-esc="state.errors.typeId"/>
+                                </div>
+                            </div>
+                        </div>
+
+                            <!-- Proyecto -->
+                        <div class="nrw-field mt-2" t-att-class="{ 'nrw-field-error': state.errors.projectId }">
+                            <label class="nrw-field-label">Proyecto <span class="text-danger">*</span></label>
+                            <div class="nrw-m2o-wrap">
+                                <input type="text" class="nrw-ghost-input"
+                                    placeholder="Ej. Administrativo - 30, Ut Tecnologías Integradas: Minvivienda - 20000, etc."
+                                    t-att-value="state.projectSearch"
+                                    t-on-focus="onProjectFocus"
+                                    t-on-input="onProjectInput"
+                                    t-on-blur="onProjectBlur"
+                                    autocomplete="off"/>
+                                <div class="nrw-m2o-dropdown" t-if="state.projectDropdownOpen and state.projectItems.length" t-att-style="state.projectDropdownStyle">
+                                    <t t-foreach="state.projectItems" t-as="projOpt" t-key="projOpt.id">
+                                        <div class="nrw-dd-item" t-on-mousedown="() => this.selectProject(projOpt.id, projOpt.name)">
+                                            <span class="nrw-dd-label" t-esc="projOpt.name"/>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                            <span t-if="state.errors.projectId" class="nrw-field-error-msg" t-esc="state.errors.projectId"/>
+                        </div>
+
+                            <!-- Motivo -->
+                        <div class="nrw-field mt-2" t-att-class="{ 'nrw-field-error': state.errors.reason }">
+                            <label class="nrw-field-label">Motivo <span class="text-danger">*</span></label>
+                            <textarea class="nrw-ghost-textarea"
+                                placeholder="Ej. Se requieren materiales de oficina para el equipo administrativo, teniendo en cuenta el aumento del personal y la necesidad de reabastecer los suministros básicos."
+                                t-att-value="state.reason"
+                                t-on-input="onReasonInput"/>
+                            <span t-if="state.errors.reason" class="nrw-field-error-msg" t-esc="state.errors.reason"/>
+                        </div>
+
+                    </div>
+                </t>
+
+                    <!-- ══ STEP 2 ══ -->
+                <t t-if="state.step === 2">
+
+                        <!-- ── Modo MANUAL ── -->
+                    <t t-if="state.wizardMode === 'manual'">
+                        <div class="nrw-step-content">
+                            <div class="nrw-step-header">
+                                <p class="nrw-step-heading">Productos solicitados</p>
+                                <p class="nrw-step-desc">
+                                    Liste cada elemento que necesita adquirir. En la <b>descripción</b> incluya el nombre del producto
+                                    junto con su especificación técnica completa — marca, modelo, capacidad o cualquier detalle relevante —
+                                    para que el área de compras pueda solicitar cotizaciones precisas a los proveedores.
+                                </p>
+                            </div>
+
+                            <table class="table table-sm nrw-product-table">
+                                <thead>
+                                    <tr>
+                                        <th class="nrw-th-name">Producto / Descripción técnica</th>
+                                        <th class="nrw-th-qty">Cantidad</th>
+                                        <th class="nrw-th-uom">UdM</th>
+                                        <th class="nrw-th-del"/>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="state.products" t-as="prod" t-key="prod.id">
+                                        <tr>
+                                            <td t-att-class="{ 'nrw-cell-error': state.errors['pn_' + prod.id] }">
+                                                <textarea class="nrw-ghost-input nrw-prod-name" rows="2"
+                                                    placeholder="Nombre y especificación técnica..."
+                                                    t-att-value="prod.name"
+                                                    t-on-input="(ev) => this.onProductNameChange(prod.id, ev)"/>
+                                            </td>
+                                            <td t-att-class="{ 'nrw-cell-error': state.errors['pq_' + prod.id] }">
+                                                <input type="number" class="nrw-ghost-input nrw-prod-qty"
+                                                    min="0.01" step="1"
+                                                    t-att-value="prod.qty"
+                                                    t-on-change="(ev) => this.onProductQtyChange(prod.id, ev)"/>
+                                            </td>
+                                            <td t-att-class="{ 'nrw-cell-error': state.errors['pu_' + prod.id] }">
+                                                <div class="nrw-m2o-wrap">
+                                                    <input type="text" class="nrw-ghost-input"
+                                                        placeholder="Unidad..."
+                                                        t-att-value="prod.uomSearch"
+                                                        t-on-focus="(ev) => this.onUomFocus(prod.id, ev)"
+                                                        t-on-input="(ev) => this.onUomInput(prod.id, ev)"
+                                                        t-on-blur="() => this.onUomBlur(prod.id)"
+                                                        autocomplete="off"/>
+                                                    <div class="nrw-m2o-dropdown" t-if="prod.uomDropdownOpen and prod.uomItems.length" t-att-style="prod.uomDropdownStyle">
+                                                        <t t-foreach="prod.uomItems" t-as="uomOpt" t-key="uomOpt.id">
+                                                            <div class="nrw-dd-item" t-on-mousedown="() => this.selectUom(prod.id, uomOpt.id, uomOpt.name)">
+                                                                <span class="nrw-dd-label" t-esc="uomOpt.name"/>
+                                                            </div>
+                                                        </t>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="nrw-td-del">
+                                                <button t-if="state.products.length > 1"
+                                                    class="nrw-del-btn"
+                                                    t-on-click="() => this.removeProduct(prod.id)"
+                                                    title="Eliminar">
+                                                    <i class="fa fa-times"/>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+
+                            <button class="nrw-add-prod-btn" t-on-click="addProduct">
+                                <i class="fa fa-plus me-1"/> Agregar producto
+                            </button>
+                        </div>
+                    </t>
+
+                        <!-- ── Modo EXCEL ── -->
+                    <t t-if="state.wizardMode === 'excel'">
+                        <div class="nrw-step-content o_order_mapping">
+
+                                <!-- ══ INSTRUCCIONES ══ -->
+                            <t t-if="state.importStep === 'instructions'">
+                                <div class="om-import-instructions">
+                                    <div class="om-import-instr-label">Instrucciones de importación</div>
+                                    <p class="om-import-instr-text">
+                                        La plantilla tiene <b class="text-primary">dos hojas</b>. Complete ambas para crear la solicitud completa desde Excel:
+                                    </p>
+                                    <ul class="om-import-instr-list">
+                                        <li>
+                                            <b class="text-primary">Hoja "Solicitud" — datos de cabecera:</b>
+                                            Complete la fila 2 con el <i>Tipo de Solicitud</i>, <i>Proyecto</i>, <i>Asunto</i>, <i>Fecha Límite</i> y <i>Motivo</i>.
+                                            Tipo y Proyecto tienen menús desplegables con los valores registrados en el sistema.
+                                            La fecha debe tener el formato <i>YYYY-MM-DD</i>.
+                                        </li>
+                                        <li>
+                                            <b class="text-primary">Hoja "Productos" — lista de elementos:</b>
+                                            Agregue una fila por cada producto. En <i>Nombre</i> escriba el nombre genérico;
+                                            en <i>Especificación</i> incluya la descripción técnica completa — marca, modelo, capacidad u otros detalles.
+                                            La columna <i>Unidad de Medida</i> tiene menú desplegable con las unidades disponibles.
+                                        </li>
+                                        <li><b class="text-primary">No modifique los encabezados</b> de ninguna hoja. El sistema los valida al procesar el archivo.</li>
+                                        <li><b class="text-primary">Elimine las filas de ejemplo</b> antes de cargar su archivo.</li>
+                                        <li>Al aplicar, todos los datos se cargarán en el formulario para que pueda revisarlos antes de confirmar.</li>
+                                    </ul>
+                                </div>
+                            </t>
+
+                                <!-- ══ CARGA + RESULTADOS ══ -->
+                            <t t-if="state.importStep === 'main'">
+
+                                    <!-- Step tracker: Plantilla | Carga | Resultados -->
+                                <div class="om-excel-track mb-3">
+                                    <div t-att-class="'om-track-step ' + (state.importTemplateDownloaded ? 'om-track-done' : 'om-track-active')">
+                                        <div class="om-track-dot">
+                                            <i t-if="state.importTemplateDownloaded" class="fa fa-check"/>
+                                            <t t-else="">1</t>
+                                        </div>
+                                        <span class="om-track-label">Plantilla</span>
+                                    </div>
+                                    <div class="om-track-line"/>
+                                    <div t-att-class="'om-track-step ' + (!state.importTemplateDownloaded ? 'om-track-pending' : (state.importResults and importErrorCount === 0 ? 'om-track-done' : 'om-track-active'))">
+                                        <div class="om-track-dot">
+                                            <i t-if="state.importResults and importErrorCount === 0" class="fa fa-check"/>
+                                            <t t-else="">2</t>
+                                        </div>
+                                        <span class="om-track-label">Carga</span>
+                                    </div>
+                                    <div class="om-track-line"/>
+                                    <div t-att-class="'om-track-step ' + (state.importResults ? (importErrorCount === 0 ? 'om-track-active' : 'om-track-error') : 'om-track-pending')">
+                                        <div class="om-track-dot">
+                                            <i t-if="state.importResults and importErrorCount === 0" class="fa fa-check"/>
+                                            <i t-elif="state.importResults and importErrorCount > 0" class="fa fa-exclamation"/>
+                                            <t t-else="">3</t>
+                                        </div>
+                                        <span class="om-track-label">Resultados</span>
+                                    </div>
+                                </div>
+
+                                    <!-- Tarjetas (solo cuando no hay resultados) -->
+                                <t t-if="!state.importResults">
+                                    <div class="om-excel-cards">
+
+                                            <!-- Tarjeta Descargar -->
+                                        <div class="om-excel-card">
+                                            <span t-if="state.importTemplateDownloaded" class="om-card-done-check">
+                                                <i class="fa fa-check"/>
+                                            </span>
+                                            <div class="om-excel-card-icon om-card-icon-download">
+                                                <i class="fa fa-file-excel-o"/>
+                                            </div>
+                                            <div class="om-excel-card-body">
+                                                <span class="om-excel-card-title">Descarga la plantilla</span>
+                                                <p class="om-excel-card-desc">
+                                                    Completa los productos en el Excel siguiendo el formato indicado para asegurar su correcta importación.
+                                                </p>
+                                                <div class="om-upload-zone om-download-zone" t-on-click="onDownloadTemplate">
+                                                    <i class="fa fa-download om-upload-zone-icon"/>
+                                                    <div class="om-upload-zone-text">
+                                                        <b>Descargar plantilla <span class="text-primary">.xlsx</span></b>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                            <!-- Separador -->
+                                        <div class="om-excel-cards-sep">
+                                            <div class="om-excel-cards-sep-line"/>
+                                            <i class="fa fa-arrow-right text-muted" style="font-size:0.75rem"/>
+                                            <div class="om-excel-cards-sep-line"/>
+                                        </div>
+
+                                            <!-- Tarjeta Cargar -->
+                                        <div t-att-class="'om-excel-card ' + (!state.importTemplateDownloaded ? 'om-excel-card-disabled' : '')">
+                                            <div class="om-excel-card-icon om-card-icon-upload">
+                                                <i t-if="state.importUploading" class="fa fa-spinner fa-spin"/>
+                                                <i t-else="" class="fa fa-upload"/>
+                                            </div>
+                                            <div class="om-excel-card-body">
+                                                <span class="om-excel-card-title">2. Carga tu archivo</span>
+                                                <p class="om-excel-card-desc">
+                                                    Complete la plantilla con los productos y cárguela aquí. Solo se aceptan archivos <b>.xlsx</b>.
+                                                </p>
+                                                <label t-att-class="'om-upload-zone ' + (state.importUploading ? 'om-upload-zone-loading' : '') + (!state.importTemplateDownloaded ? ' om-upload-zone-locked' : '')">
+                                                    <input type="file" accept=".xlsx" style="display:none"
+                                                        t-on-change="onImportExcel"/>
+                                                    <i class="fa fa-file-excel-o om-upload-zone-icon"/>
+                                                    <div class="om-upload-zone-text">
+                                                        <t t-if="state.importUploading">Procesando archivo...</t>
+                                                        <t t-else="">Haga clic para seleccionar el archivo Excel</t>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </t>
+
+                                    <!-- Resultados -->
+                                <t t-if="state.importResults">
+
+                                        <!-- Errores -->
+                                    <t t-if="importErrorCount > 0">
+                                        <div class="nrw-import-result nrw-result-error">
+                                            <div class="nrw-result-icon">
+                                                <i class="fa fa-exclamation-triangle"/>
+                                            </div>
+                                            <div class="nrw-result-body">
+                                                <div class="nrw-result-title">Se encontraron <b t-esc="importErrorCount"/> errores</div>
+                                                <div class="nrw-result-list">
+                                                    <t t-foreach="state.importResults.errors" t-as="errMsg" t-key="errMsg_index">
+                                                        <div class="nrw-result-row">
+                                                            <i class="fa fa-times-circle me-2 text-danger"/>
+                                                            <span t-esc="errMsg"/>
+                                                        </div>
+                                                    </t>
+                                                </div>
+                                                <p class="nrw-result-hint">Corrija el archivo y vuelva a cargarlo.</p>
+                                            </div>
+                                        </div>
+                                    </t>
+
+                                        <!-- Éxito -->
+                                    <t t-if="importErrorCount === 0">
+                                        <div class="nrw-import-result nrw-result-success">
+                                            <div class="nrw-result-icon">
+                                                <i class="fa fa-check-circle"/>
+                                            </div>
+                                            <div class="nrw-result-body">
+                                                <div class="nrw-result-title">Solicitud lista para importar</div>
+
+                                                <!-- Resumen cabecera -->
+                                                <div class="nrw-result-list">
+                                                    <div class="nrw-result-row">
+                                                        <i class="fa fa-tag me-2 text-success"/>
+                                                        <span><b>Tipo:</b> <span t-esc="state.importResults.header.typeName or '—'"/></span>
+                                                    </div>
+                                                    <div class="nrw-result-row">
+                                                        <i class="fa fa-briefcase me-2 text-success"/>
+                                                        <span><b>Proyecto:</b> <span t-esc="state.importResults.header.projectName or '—'"/></span>
+                                                    </div>
+                                                    <div class="nrw-result-row">
+                                                        <i class="fa fa-file-text-o me-2 text-success"/>
+                                                        <span><b>Asunto:</b> <span t-esc="state.importResults.header.subject or '—'"/></span>
+                                                    </div>
+                                                    <div class="nrw-result-row">
+                                                        <i class="fa fa-calendar me-2 text-success"/>
+                                                        <span><b>Fecha límite:</b> <span t-esc="state.importResults.header.deadline or '—'"/></span>
+                                                    </div>
+                                                    <div class="nrw-result-row">
+                                                        <i class="fa fa-cubes me-2 text-success"/>
+                                                        <span><b>Productos:</b> <span t-esc="importSuccessCount"/> elemento(s)</span>
+                                                    </div>
+                                                </div>
+
+                                                <p class="nrw-result-hint">
+                                                    Haga clic en <b>Aplicar</b> para cargar todos los datos. Podrá revisarlos antes de confirmar.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </t>
+
+                                </t>
+
+                            </t>
+                        </div>
+                    </t>
+
+                </t>
+
+                    <!-- ══ STEP 3: Fecha + Resumen ══ -->
+                <t t-if="state.step === 3">
+                    <div class="nrw-step-content">
+
+                        <div class="nrw-step-header">
+                            <p class="nrw-step-heading">Fecha límite y confirmación</p>
+                            <p class="nrw-step-desc">
+                                Establezca la <b>fecha límite</b> en que el área de compras debe tener lista la gestión de esta solicitud.
+                                Revise el resumen para confirmar que toda la información es correcta antes de crear la SDC.
+                            </p>
+                        </div>
+
+                        <div class="nrw-field" t-att-class="{ 'nrw-field-error': state.errors.deadline }">
+                            <label class="nrw-field-label">Fecha límite <span class="text-danger">*</span></label>
+                            <input type="date" class="nrw-ghost-input"
+                                t-att-value="state.deadline"
+                                t-on-change="onDeadlineChange"/>
+                            <span t-if="state.errors.deadline" class="nrw-field-error-msg" t-esc="state.errors.deadline"/>
+                        </div>
+
+                        <div class="nrw-summary mt-4">
+                            <div class="nrw-summary-sep">Resumen</div>
+                            <div class="row g-0">
+                                <div class="col-6">
+                                    <div class="nrw-summary-item">
+                                        <span class="nrw-summary-key">Tipo</span>
+                                        <span class="nrw-summary-val" t-esc="state.typeName or '—'"/>
+                                    </div>
+                                    <div class="nrw-summary-item">
+                                        <span class="nrw-summary-key">Asunto</span>
+                                        <span class="nrw-summary-val" t-esc="state.subject or '—'"/>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="nrw-summary-item">
+                                        <span class="nrw-summary-key">Proyecto</span>
+                                        <span class="nrw-summary-val" t-esc="state.projectName or '—'"/>
+                                    </div>
+                                    <div class="nrw-summary-item">
+                                        <span class="nrw-summary-key">Productos</span>
+                                        <span class="nrw-summary-val" t-esc="totalProducts + ' elemento(s)'"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </t>
+
+            </div>
+        </div>
+
+            <!-- ── FOOTER ── -->
+        <t t-set-slot="footer">
+            <div class="om-dialog-footer">
+
+                    <!-- Selector Manual | Importar -->
+                <div class="om-footer-mode-group">
+                    <button t-att-class="'om-footer-mode-btn' + (state.wizardMode === 'manual' ? ' active' : '')"
+                        t-on-click="onSetManualMode">Manual</button>
+                    <span class="om-footer-mode-sep"/>
+                    <button t-att-class="'om-footer-mode-btn' + (state.wizardMode === 'excel' ? ' active' : '')"
+                        t-on-click="onSetExcelMode">Importar</button>
+                </div>
+
+                    <!-- Botones de navegación -->
+                <div class="om-footer-actions">
+
+                        <!-- Modo manual (o paso distinto de 2) -->
+                    <t t-if="!inExcelFlow">
+                        <button t-if="!isFirstStep"
+                            class="btn btn-secondary px-3"
+                            t-on-click="goBack"
+                            t-att-disabled="state.submitting or state.transitioning">
+                            Atrás
+                        </button>
+                        <button t-if="!isLastStep"
+                            class="btn btn-primary px-4"
+                            t-on-click="goNext"
+                            t-att-disabled="state.transitioning">
+                            Siguiente
+                        </button>
+                        <button t-if="isLastStep"
+                            class="btn btn-primary px-4"
+                            t-on-click="onConfirm"
+                            t-att-disabled="state.submitting">
+                            <i t-if="state.submitting" class="fa fa-spinner fa-spin me-1"/>
+                            Confirmar
+                        </button>
+                        <button class="btn btn-secondary px-3"
+                            t-on-click="onCancel"
+                            t-att-disabled="state.submitting">
+                            Cancelar
+                        </button>
+                    </t>
+
+                        <!-- Modo Excel, step 2 -->
+                    <t t-if="inExcelFlow">
+
+                            <!-- Sub-paso Instrucciones -->
+                        <t t-if="state.importStep === 'instructions'">
+                            <button class="btn btn-primary px-4"
+                                t-on-click="onGoToExcelMain">
+                                Siguiente
+                            </button>
+                            <button class="btn btn-secondary px-3"
+                                t-on-click="onCancel">
+                                Cancelar
+                            </button>
+                        </t>
+
+                            <!-- Sub-paso Carga/Resultados -->
+                        <t t-if="state.importStep === 'main'">
+                                <!-- Sin resultados aún -->
+                            <t t-if="!state.importResults">
+                                <button class="btn btn-primary px-3"
+                                    t-on-click="onGoToExcelInstructions">
+                                    Instrucciones
+                                </button>
+                            </t>
+                                <!-- Con errores -->
+                            <t t-if="state.importResults and importErrorCount > 0">
+                                <button class="btn btn-primary px-3"
+                                    t-on-click="onResetImport">
+                                    Volver
+                                </button>
+                            </t>
+                                <!-- Éxito -->
+                            <t t-if="state.importResults and importErrorCount === 0">
+                                <button class="btn btn-primary px-3"
+                                    t-on-click="onResetImport">
+                                    Volver
+                                </button>
+                                <button class="btn btn-primary px-4"
+                                    t-on-click="onApplyImport">
+                                    <i class="fa fa-check me-1"/> Aplicar
+                                </button>
+                            </t>
+                            <button class="btn btn-secondary px-3"
+                                t-on-click="onCancel">
+                                Cancelar
+                            </button>
+                        </t>
+
+                    </t>
+
+                </div>
+            </div>
+        </t>
+
+    </Dialog>
+</t>
+
+</templates>

@@ -16,11 +16,8 @@
                 <!-- Cargo • Empresa -->
                 <div class="exp-popup-subtitle">
                     <t t-if="props.employee.job_title">
-                        <span class="exp-popup-role">
-                            <span t-att-title="props.employee.job_title">
-                                <t
-                                    t-esc="props.employee.job_title.length > 30 ? props.employee.job_title.slice(0, 30) + '…' : props.employee.job_title"/>
-                            </span>
+                        <span class="exp-popup-role" t-att-title="props.employee.job_title">
+                            <t t-esc="props.employee.job_title"/>
                         </span>
                     </t>
                     <t t-if="props.employee.job_title and props.employee.enterprise_id">

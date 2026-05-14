@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_bulk_upload_quotations_wizard_form" model="ir.ui.view">
+            <field name="name">purchase.bulk.upload.quotations.wizard.form</field>
+            <field name="model">purchase.bulk.upload.quotations.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Importar Cotización desde Excel">
+                    <field name="request_quotation_id" invisible="1"/>
+                    <field name="show_instructions" invisible="1"/>
+                    <field name="show_supplier" invisible="1"/>
+                    <field name="show_upload" invisible="1"/>
+                    <field name="show_validation" invisible="1"/>
+                    <field name="supplier_similarity_warning" invisible="1"/>
+                    <sheet>
+                        <div invisible="not show_instructions">
+                            <separator string="Instrucciones"/>
+                            <p>Indicaciones para la <b class="text-primary">importación de la
+                                cotización del proveedor</b>:</p>
+                            <ul>
+                                <li><b class="text-primary">Archivo Excel:</b> Debe ser el mismo
+                                    formato enviado al proveedor, con <b class="text-primary">precios
+                                    unitarios</b>, fechas, moneda y demás campos completos.</li>
+                                <li><b class="text-primary">Lectura automática:</b> El sistema
+                                    extraerá fecha de vigencia, moneda (COP/USD), TRM, lugar y
+                                    fecha de entrega, e información de flete.</li>
+                                <li><b class="text-primary">Precios:</b> Se importan <b
+                                        class="text-primary">sin IVA</b>. Subtotales y totales se
+                                    calculan automáticamente. Los productos deben coincidir con la
+                                    solicitud original.</li>
+                                <li><b class="text-primary">Proveedor único:</b> No puede haber
+                                    dos cotizaciones del mismo proveedor para la misma solicitud.</li>
+                                <li><b class="text-primary">Validación:</b> El sistema verificará
+                                    campos, precios y consistencia antes de importar.</li>
+                            </ul>
+                            <p><b class="text-primary">Nota:</b> Después de importar, actualice el
+                                campo <b class="text-primary">Evidencia</b> con el enlace del correo
+                                o documentación de soporte del proveedor.</p>
+                        </div>
+                        <div invisible="not show_supplier">
+                            <separator string="Proveedor"/>
+                            <p>Ingrese el nombre del proveedor que envía esta cotización.</p>
+                            <group>
+                                <field name="supplier_name" string="Nombre"
+                                    placeholder="Ej. ACME Corp, Globex, Initech, etc."/>
+                            </group>
+                        </div>
+                        <div invisible="not show_upload">
+                            <div class="alert alert-warning d-flex align-items-center gap-2 mb-3"
+                                invisible="not supplier_similarity_warning" role="alert">
+                                <i class="fa fa-exclamation-triangle fa-lg" title="Advertencia"/>
+                                <field name="supplier_similarity_warning" nolabel="1" readonly="1" class="mb-0"/>
+                            </div>
+                            <separator string="Cotización"/>
+                            <p>Cargue el archivo Excel de <b class="text-primary">
+                                    <field name="supplier_name" readonly="1" nolabel="1"
+                                        class="d-inline"/></b>.
+                                El sistema verificará la información antes de crear el registro.</p>
+                            <group>
+                                <group>
+                                    <field name="file_data" filename="file_name"
+                                        string="Archivo"/>
+                                    <field name="file_name" invisible="1"/>
+                                </group>
+                            </group>
+                        </div>
+                        <div invisible="not show_validation">
+                            <separator string="Resultado"/>
+                            <field name="validation_html" widget="html" nolabel="1"/>
+                        </div>
+                    </sheet>
+                    <footer>
+                        <button string="Siguiente" type="object" name="action_next_to_supplier"
+                            class="btn-primary"
+                            invisible="not show_instructions"/>
+                        <button string="Instrucciones" type="object"
+                            name="action_back_to_instructions" class="btn-primary"
+                            invisible="not show_supplier"/>
+                        <button string="Siguiente" type="object" name="action_next_to_upload"
+                            class="btn-primary"
+                            invisible="not show_supplier"/>
+                        <button string="Volver" type="object" name="action_back_to_supplier"
+                            class="btn-primary"
+                            invisible="not show_upload"/>
+                        <button string="Confirmar" type="object" name="action_validate_file"
+                            class="btn-primary"
+                            invisible="not show_upload or not file_data"/>
+                        <button string="Volver" type="object" name="action_back_to_upload"
+                            class="btn-primary"
+                            invisible="not show_validation"/>
+                        <button string="Guardar" type="object" name="action_process_file"
+                            class="btn-primary"
+                            invisible="not show_validation"/>
+
+                        <button string="Cancelar" special="cancel" class="btn-secondary"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

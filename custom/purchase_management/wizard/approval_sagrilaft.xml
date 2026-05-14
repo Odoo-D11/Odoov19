@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_form_purchase_management_approval_sagrilaft_wizard" model="ir.ui.view">
+            <field name="name">purchase.management.pproval.sagrilaft.wizard.form</field>
+            <field name="model">purchase.management.approval.sagrilaft.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Aprobación SAGRILAFT">
+                    <field name="state" readonly="1" invisible="1"/>
+                    <sheet>
+                        <div invisible="state != 'approve'">
+                            <separator string="Aprobación"/>
+                            <p class="text-muted"> Establezca la <b class="text-primary">fecha
+                                    de vencimiento</b> para la próxima revisión SAGRILAFT. El
+                                sistema notificará <b class="text-primary">5 días antes</b> y
+                                cambiará el estado a <b class="text-primary">"Pendiente"</b> al
+                                llegar la fecha. </p>
+                            <group>
+                                <group>
+                                    <field name="sagrilaft_expiration_date" string="Fecha"
+                                        required="state == 'approve'" placeholder="Ej. 31/12/2026.."/>
+                                </group>
+                            </group>
+                        </div>
+                        <div invisible="state != 'reject'">
+                            <separator string="Rechazar"/>
+                            <p class="text-muted"> Proporcione el <b class="text-primary">motivo
+                                del rechazo</b>. Quedará registrado en el historial. </p>
+                            <field name="rejection_reason" required="state == 'reject'"
+                                placeholder="Ej. El proveedor se encuentra en listas restrictivas, la documentación es inconsistente, etc."/>
+                        </div>
+                    </sheet>
+                    <footer>
+                        <button string="Confirmar" type="object" name="action_confirm"
+                            class="btn btn-primary"/>
+                        <button string="Cancelar" class="btn btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

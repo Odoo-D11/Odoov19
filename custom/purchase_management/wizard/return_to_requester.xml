@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_return_to_requester_wizard_form" model="ir.ui.view">
+            <field name="name">return.to.requester.wizard.form</field>
+            <field name="model">return.to.requester.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Devolver SDC al Solicitante">
+                    <field name="request_quotation_id" invisible="1"/>
+                    <sheet>
+                        <separator string="Motivo"/>
+                        <p class="text-muted">
+                            Indique el motivo por el cual está rechazando esta solicitud al
+                            solicitante. Se enviará un correo notificándole para que realice
+                            los ajustes necesarios y la reenvíe al área de Compras.
+                        </p>
+                        <field name="reason" string="Motivo"
+                            placeholder="Ej. Falta especificación técnica en el producto X, la fecha límite no es viable, etc."
+                            nolabel="1"/>
+                    </sheet>
+                    <footer>
+                        <button string="Confirmar" type="object" name="action_confirm"
+                            class="btn btn-primary"/>
+                        <button string="Cancelar" class="btn btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

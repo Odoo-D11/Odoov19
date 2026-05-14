@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_request_type_list" model="ir.ui.view">
+            <field name="name">request.type.list</field>
+            <field name="model">request.type</field>
+            <field name="arch" type="xml">
+                <list string="Tipos de Solicitud" duplicate="false" editable="bottom">
+                    <field name="name" placeholder="Ej. Producto, Servicio, etc."/>
+                    <field name="active" widget="boolean_toggle"/>
+                </list>
+            </field>
+        </record>
+
+    </data>
+</odoo>

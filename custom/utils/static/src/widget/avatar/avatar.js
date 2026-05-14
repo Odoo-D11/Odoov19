@@ -245,9 +245,14 @@ export class ExpAvatarPopup extends Many2OneField {
         }
     }
 
+    /** En Odoo 19, record.data[name] es objeto { id, display_name }; en Odoo 18 era [id, name]. */
+    get value() {
+        return this.props.record.data[this.props.name];
+    }
+
     _getRelationIdFromProps(props) {
         const value = props.record.data[props.name];
-        return value ? value[0] : null;
+        return value?.id ?? (Array.isArray(value) ? value[0] : null);
     }
 
     async _resolveEmployeeId(relationId) {

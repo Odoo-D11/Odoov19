@@ -1,0 +1,51 @@
+// order_board.scss
+// Solo estilos adicionales — todo lo base (container, header, card, empty,
+// loading, section-number, section-label…) viene de product_board.scss
+// porque comparte la clase .o_field_Product dentro de .o_timeline_sidebar.
+
+// ── Conteo inline en el header ────────────────────────────────────────────
+.ob-items-inline {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    white-space: nowrap;
+
+    .ob-inline-count {
+        font-size: 16px;
+        font-weight: 800;
+        color: #02143f;
+    }
+
+    .ob-inline-label {
+        font-size: 10px;
+        font-weight: 600;
+        color: #6c7b8a;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+}
+
+// ── Precio como protagonista ──────────────────────────────────────────────
+.ob-price-hero {
+    flex-direction: column !important;
+    align-items: center;
+    justify-content: center;
+
+    .section-number {
+        font-size: 32px !important;
+        font-weight: 800 !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+    }
+
+    .section-label {
+        font-size: 11px !important;
+        font-weight: 500 !important;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #6c7b8a;
+        margin-top: 3px;
+    }
+}

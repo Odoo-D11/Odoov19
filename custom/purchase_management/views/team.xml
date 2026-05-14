@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_list_purchase_team" model="ir.ui.view">
+            <field name="name">purchase.team.list</field>
+            <field name="model">purchase.team</field>
+            <field name="arch" type="xml">
+                <list duplicate="false" string="Equipos de Compra">
+                    <field name="name"
+                        placeholder="Ej. Lideres, etc."/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_form_purchase_team" model="ir.ui.view">
+            <field name="name">purchase.team.form</field>
+            <field name="model">purchase.team</field>
+            <field name="arch" type="xml">
+                <form string="Equipo de Compra">
+                    <sheet>
+                        <b style="font-weight: 500;">Nombre</b>
+                        <div class="form-title-responsive">
+                            <h1>
+                                <field name="name" class="text-primary"
+                                    placeholder="Ej. Lideres, etc."/>
+                            </h1>
+                        </div>
+                        <separator string="Descripción" invisible="not name"/>
+                        <p invisible="not name"> Un <b class="text-primary">Equipo de Compra</b> es
+                            el grupo responsable de gestionar y coordinar el proceso de adquisición
+                            de bienes y servicios dentro de la organización. Su función principal es
+                            asegurar que las compras se realicen de manera eficiente, cumpliendo con
+                            los requisitos de calidad, precio y tiempo. El equipo colabora en la
+                            selección de proveedores, negociación de condiciones y seguimiento de
+                            pedidos, contribuyendo a optimizar los recursos y apoyar los objetivos
+                            estratégicos de la empresa. </p>
+                        <separator string="Integrantes" invisible="not name"/>
+                        <field name="member_ids">
+                            <list string="Integrantes" editable="bottom">
+                                <field name="employee_id" string="Nombre"
+                                    options="{'no_open': True, 'no_create': True}"
+                                    placeholder="Ej. Dwigth Schrute, Pam Beesly, Jim Halpert, etc."/>
+                            </list>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="mail_template_send_rfq" model="mail.template">
+            <field name="name">Enviar solicitud de cotización</field>
+            <field name="model_id" ref="purchase_management.model_request_quotation"/>
+            <field name="subject">Solicitud de Cotización - {{ object.subject }}</field>
+            <field name="email_from">odoo@tsg.net.co</field>
+            <field name="body_html" type="html">
+                <div style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;color:#222;">
+                    <p style="font-size:13px;margin:0 0 10px 0;line-height:1.45;">
+                        Estimado proveedor. </p>
+                    <p
+                        style="font-size:13px;margin:0 0 14px 0;line-height:1.5;"> Por medio del
+                    presente nos permitimos solicitar su cotización para la solicitud <strong>
+                            <t
+                                t-out="object.reference"/>
+                        </strong>
+                    correspondiente a: <strong>
+                            <t t-out="object.subject"/>. </strong> Agradecemos nos haga llegar su
+                    mejor oferta comercial considerando los productos detallados a continuación,
+                    antes de la fecha límite: <strong>
+                            <t
+                                t-out="(datetime.datetime.now() + datetime.timedelta(days=3)).strftime('%d/%m/%Y')"/>
+                    . </strong>
+                    </p>
+                    <table
+                        style="width:100%;border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.35;border-style:solid;border-color:#4d4d4d;border-width:1px 1px 0 1px;color:#000;">
+                        <thead>
+                            <tr>
+                                <td colspan="3"
+                                    style="padding:5px 8px;text-align:center;text-transform:uppercase;letter-spacing:.06em;font-weight:700;border-bottom:1px solid #4d4d4d;">
+                                    <t t-if="object.type_id.name == 'Productos'">Productos</t>
+                                    <t
+                                        t-if="object.type_id.name == 'Servicios'">Servicios</t>
+                                    <t
+                                        t-if="object.type_id.name == 'Mixtos'">Elementos</t>
+                    solicitados </td>
+                            </tr>
+                            <tr>
+                                <th
+                                    style="border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d;border-right:1px solid #4d4d4d;padding:5px 8px;text-align:left;font-weight:700;width:60%;">
+                    Nombre
+                                </th>
+                                <th
+                                    style="border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d;border-right:1px solid #4d4d4d;padding:5px 8px;text-align:center;font-weight:700;width:20%;">
+                    Cantidad
+                                </th>
+                                <th
+                                    style="border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d;padding:5px 8px;text-align:center;font-weight:700;width:20%;">
+                    Unidad de Medida
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-set="all_lines"
+                                t-value="object.product_line_ids.sorted('sequence')"/>
+                            <t t-foreach="all_lines" t-as="line">
+                                <t t-if="not line.display_type">
+                                    <!-- Fila del producto -->
+                                    <tr>
+                                        <td
+                                            style="border-bottom:1px solid #4d4d4d;border-right:1px solid #4d4d4d;padding:4px 8px;">
+                                            <t t-out="line.name or '—'"/>
+                                        </td>
+                                        <td
+                                            style="border-bottom:1px solid #4d4d4d;border-right:1px solid #4d4d4d;padding:4px 8px;text-align:center;">
+                                            <t t-out="'{:,.0f}'.format(line.qty).replace(',','.')"/>
+                                        </td>
+                                        <td
+                                            style="border-bottom:1px solid #4d4d4d;padding:4px 8px;text-align:center;">
+                                            <t t-out="line.uom_id and line.uom_id.name or '—'"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                                <t t-elif="line.display_type == 'line_note'">
+                                    <!-- Fila de especificaciones (nota) -->
+                                    <tr>
+                                        <td colspan="3"
+                                            style="border-bottom:1px solid #4d4d4d;padding:4px 8px;background-color:#f5f5f5;font-style:italic;">
+                                            <t t-out="line.name or ''"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </t>
+                        </tbody>
+                    </table>
+                    <p
+                        style="font-size:13px;margin:18px 0 0 0;line-height:1.45;"> Agradecemos
+                    confirmar la recepción de esta solicitud. Para cualquier duda, aclaración o
+                    requerimiento de información adicional sobre las especificaciones técnicas
+                        de los productos, por favor no dude en contactarnos. Quedamos atentos a su
+                    pronta respuesta y esperamos contar con su mejor propuesta comercial.
+                    </p>
+                    <p
+                        style="font-size:13px;margin:18px 0 0 0;line-height:1.45;color:#000000;">
+                        <strong>Nota:</strong> Junto con este correo se adjunta un <strong>formato
+                    de cotización</strong> que deberá ser <strong>diligenciado y remitido como
+                            parte de su respuesta</strong>. Este documento es de <strong>carácter
+                    obligatorio</strong> para la evaluación de su oferta, por lo que agradecemos
+                    completarlo con toda la información solicitada y adjuntarlo al momento de
+                    remitir su cotización. </p> <br/><br/> Cordialmente,<br/>
+                        <strong><t
+                            t-out="user.name"/> | <t t-out="user.email"/>
+                    </strong>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_purchase_management_order_list" model="ir.ui.view">
+            <field name="name">purchase.management.order.list</field>
+            <field name="model">purchase.management.order</field>
+            <field name="arch" type="xml">
+                <list string="Órdenes de Compra" duplicate="false" create="false" js_class="purchase_order_list_view">
+                    <field name="reference"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_purchase_management_order_form" model="ir.ui.view">
+            <field name="name">purchase.management.order.form</field>
+            <field name="model">purchase.management.order</field>
+            <field name="arch" type="xml">
+                <form string="Orden de Compra" duplicate="false" create="false">
+                    <field name="request_quotation_id" invisible="1"/>
+                    <field name="locked" invisible="1"/>
+                    <header invisible="not id">
+                        <button name="action_send" string="Enviar correo" type="object"
+                            class="btn-primary"/>
+                        <button name="action_print_order" string="Imprimir" type="object"
+                            class="btn-primary"/>
+                        <button name="action_cause" string="Causar" type="object"
+                            class="btn-primary" invisible="state in ['caused', 'paid']"/>
+                        <button name="action_pay" string="Pagar" type="object"
+                            class="btn-primary" invisible="state != 'caused'"/>
+                        <button
+                            name="action_unlock" string="Desbloquear" type="object"
+                            class="btn-primary" invisible="not locked"
+                            groups="purchase_management.group_manager_purchase_management"/>
+                        <button name="action_lock" string="Bloquear" type="object"
+                            class="btn-secondary" invisible="locked"
+                            groups="purchase_management.group_manager_purchase_management"/>
+                        <button name="action_view_traceability" string="Trazabilidad" type="object"
+                            class="btn-secondary"/>
+                    </header>
+                    <div class="alert alert-info" role="alert">
+                        <i class="fa fa-info-circle me-1" title="Información"/>
+                        <span>La orden de compra <strong class="text-primary">
+                                <field name="reference"/>
+                            </strong> se
+                            encuentra actualmente en el estado <strong class="text-primary">
+                                <field name="state"/>
+                            </strong>. </span>
+                    </div>
+                    <sheet>
+                        <field name="currency_id" invisible="1"/>
+                        <field name="trm" invisible="1"/>
+                        <div class="row">
+                            <div class="col-lg-7">
+                                <span style="font-weight: 500; color: #212529;">
+                                    Asunto
+                                </span>
+                                <div class="form-title-responsive mb-4 text-truncate">
+                                    <h1>
+                                        <field name="subject"
+                                            placeholder="Ej. Suministro de material de oficina"
+                                            nolabel="1" class="o_field_char o_field_title"/>
+                                    </h1>
+                                    <div>
+                                        <field name="type_id" class="w-100 text-primary"
+                                            options="{'no_create': True, 'no_open': True}"
+                                            placeholder="¿A qué tipo de solicitud pertenece esta solicitud de cotización? Ej. Productos (Bienes físicos, Ej. Tecnología, Portátiles, Firewall, UPS), Servicios (Consultoría, mantenimiento, etc.), etc."/>
+                                    </div>
+                                </div>
+                                <group>
+                                    <field name="partner_id" class="text-primary"
+                                        options="{'no_open': True, 'no_create': True}"
+                                        placeholder="Ej. Dwight Schrute, Pam Beesly, etc..."/>
+                                    <field name="project_id"
+                                        options="{'no_open': True, 'no_create': True}"
+                                        placeholder="Ej. Administrativo - 30, Jep Mesa De Ayuda - 13333, etc..."/>
+                                    <field name="enterprise_id"
+                                        options="{'no_open': True, 'no_create': True}"
+                                        placeholder="Ej. Dunder Mifflin S.A., etc..."/>
+                                    <!--<label
+                                    for="currency_id"
+                                        invisible="currency_id == 8 or not currency_id"/>
+                                    <div class="o_row"
+                                        invisible="currency_id == 8 or not currency_id">
+                                        <span style="font-weight: 400;"
+                                            invisible="currency_id == 8 or not currency_id"
+                                            class="me-1">1</span>
+                                        <field name="currency_id"
+                                            placeholder="Ej. COP, USD, etc..."
+                                            options="{'no_create': True, 'no_open': True}"/>
+                                        <span style="font-weight: 400;" class="mx-1"
+                                            invisible="currency_id == 8 or not currency_id">=</span>
+                                        <field name="trm"
+                                            invisible="currency_id == 8 or not currency_id"
+                                            placeholder="Ej. 4,500.00"/>
+                                    </div>-->
+                                </group>
+                                <div class="mt-3">
+                                    <field name="reason" nolabel="1"
+                                        placeholder="Motivo detallado de la orden de compra, incluyendo cualquier información relevante que los proveedores deban conocer para ofrecer cotizaciones precisas y completas."/>
+                                </div>
+                            </div>
+                            <div class="col-lg-5 d-flex">
+                                <div class="o_timeline_sidebar flex-grow-1">
+                                    <field name="product_line_ids" widget="OrderBoard" nolabel="1"/>
+                                </div>
+                            </div>
+                        </div>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_purchase_management_order_form_add_product" model="ir.ui.view">
+            <field name="name">purchase.management.order.form.add.product</field>
+            <field name="model">purchase.management.order</field>
+            <field name="arch" type="xml">
+                <form string="Agregar Producto a la Orden de Compra" duplicate="false"
+                    create="false">
+                    <sheet>
+                        <field name="currency_id" invisible="1" readonly="1"
+                            options="{'no_open': True, 'no_create': True}"/>
+                        <field name="trm" readonly="1" invisible="1"/>
+                        <field name="trm_date" readonly="1" invisible="1"/>
+                        <field name="type_id" invisible="1" readonly="1"/>
+                        <separator string="Productos" invisible="type_id != 1"/>
+                        <separator string="Servicios" invisible="type_id != 2"/>
+                        <separator string="Elementos solicitados" invisible="type_id != 3"/>
+                        <p class="text-muted">En una orden de compra, <span
+                                invisible="type_id != 1">los “productos” hacen referencia a
+                                bienes tangibles o materiales que el comprador necesita adquirir.
+                            Pueden ser artículos físicos como equipos, suministros, herramientas,
+                            componentes o cualquier otro tipo de mercancía que se pueda tocar y
+                            transportar. Estos productos deben ser descritos con detalle, incluyendo
+                            especificaciones técnicas, cantidades y características relevantes para
+                            que los proveedores puedan ofrecer cotizaciones precisas.
+                            </span><span
+                                invisible="type_id != 2"> los “servicios” se refieren a actividades
+                            intangibles que el comprador requiere de un proveedor externo. Estos
+                            servicios pueden incluir consultoría, mantenimiento, desarrollo de
+                            software, capacitación, soporte técnico, entre otros. Al solicitar una
+                            cotización para servicios, es importante detallar claramente las
+                            expectativas, entregables y cualquier requisito específico que se tenga.
+                            </span><span
+                                invisible="type_id != 3"> los “elementos solicitados” pueden incluir
+                            una combinación de productos y servicios que el comprador necesita
+                            adquirir. Esto puede abarcar tanto bienes tangibles como actividades
+                            intangibles, permitiendo al comprador obtener una solución integral para
+                            sus necesidades. Al describir los elementos solicitados, es fundamental
+                            proporcionar detalles claros sobre cada componente, ya sea un producto o
+                            un servicio, para que los proveedores puedan ofrecer cotizaciones
+                            completas y precisas.
+                            </span></p>
+                        <field name="product_line_ids" nolabel="1">
+                            <list string="Líneas de Orden de Compra" limit="300" editable="bottom">
+                                <field name="currency_id" string="Moneda"
+                                    column_invisible="1" force_save="1"
+                                    options="{'no_create': True, 'no_open': True}"/>
+                                <field name="product_id" string="Nombre"
+                                    placeholder="Ej. Impresora Láser HP Model XYZ"
+                                    options="{'no_create': True, 'no_open': True}"/>
+                                <field name="cost_center_id"
+                                    domain="[('project_id', '=', parent.project_id)]"
+                                    string="Centro de costo"
+                                    placeholder="Ej. Suministro de materiales, Gastos administrativos, etc..."
+                                    options="{'no_create': True, 'no_open': True}"/>
+                                <field name="qty" placeholder="Ej. 10, 20, 30..."/>
+                                <field name="price_unit" widget="monetary"/>
+                                <field name="subtotal" readonly="1" widget="monetary"/>
+                            </list>
+                        </field>
+                        <div class="o_line_totals_container">
+                            <div class="o_line_totals_wrapper">
+                                <field name="total" widget="line-totals-field" nolabel="1"
+                                    readonly="1"
+                                    options="{'currency_field': 'currency_id'}"/>
+                            </div>
+                        </div>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_purchase_management_order_search" model="ir.ui.view">
+            <field name="name">purchase.management.order.search</field>
+            <field name="model">purchase.management.order</field>
+            <field name="arch" type="xml">
+                <search string="Buscar Órdenes de Compra">
+                    <field name="reference"/>
+                    <field name="subject"/>
+                    <field name="partner_id"/>
+                </search>
+            </field>
+        </record>
+
+    </data>
+</odoo>

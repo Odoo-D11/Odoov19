@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="mail_template_rfq_to_purchase" model="mail.template">
+            <field name="name">Enviar Solicitud de Cotización a Compras</field>
+            <field name="model_id" ref="purchase_management.model_request_quotation"/>
+            <field name="email_from">odoo@tsg.net.co</field>
+            <field name="subject">Solicitud de Cotización - {{ object.subject }}</field>
+            <field name="body_html" type="html">
+                <div style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;color:#222;">
+                    <p style="font-size:13px;margin:0 0 10px 0;line-height:1.45;">
+                        Estimado equipo de compras,
+                    </p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;"> Se ha generado una
+                        nueva Solicitud de Cotización correspondiente a: <strong>
+                            <t t-out="object.subject"/>. </strong> Por favor, procedan a gestionar
+                        la Solicitud de Cotización y contactar a los proveedores correspondientes
+                        para obtener las cotizaciones necesarias antes de la fecha límite: <strong>
+                            <t
+                                t-out="object.deadline and object.deadline.strftime('%d/%m/%Y') or '—'"/>
+                        . </strong> Puede revisar la Solicitud de Cotización completa <t
+                            t-set="website_url" t-value="object.get_base_url()"/> <a
+                            t-att-href="website_url" target="_blank"
+                            style="color:#1155cc;text-decoration:underline;">aquí</a>. A
+                        continuación, se detallan las especificaciones de la Solicitud de
+                        Cotización: </p>
+                    <p style="font-size:13px;margin:18px 0 0 0;line-height:1.45;">
+                        <ul>
+                            <li>
+                                <strong>Proyecto:</strong>
+                                <t t-out="object.project_id.name"/>
+                            </li>
+                            <li>
+                                <strong>Tipo:</strong>
+                                <t t-if="object.type_id.name == 'Productos'">[PROD] Productos
+                                    (Bienes
+                                    físicos, Ej. Tecnología, Portátiles, Firewall, UPS)</t>
+                                <t t-if="object.type_id.name == 'Servicios'">[SERV] Servicios
+                                    (Consultoría, mantenimiento, etc.)</t>
+                                <t t-if="object.type_id.name == 'Mixtos'">[MIXT] Mixtos (Incluye
+                                    productos y servicios)</t>
+                            </li>
+                            <li>
+                                <strong>Motivo:</strong>
+                                <t t-out="object.reason"/>
+                            </li>
+                        </ul>
+                    </p>
+                    <table
+                        style="width:100%;border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.35;border-style:solid;border-color:#4d4d4d;border-width:1px 1px 0 1px;color:#000;">
+                        <thead>
+                            <tr>
+                                <td colspan="3"
+                                    style="padding:5px 8px;text-align:center;text-transform:uppercase;letter-spacing:.06em;font-weight:700;border-bottom:1px solid #4d4d4d;">
+                                    Productos solicitados
+                                </td>
+                            </tr>
+                            <tr>
+                                <th
+                                    style="border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d;border-right:1px solid #4d4d4d;padding:5px 8px;text-align:left;font-weight:700;width:65%;">
+                                    Nombre
+                                </th>
+                                <th
+                                    style="border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d;border-right:1px solid #4d4d4d;padding:5px 8px;text-align:center;font-weight:700;width:15%;">
+                                    Cantidad
+                                </th>
+                                <th
+                                    style="border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d;border-right:1px solid #4d4d4d;padding:5px 8px;text-align:center;font-weight:700;width:20%;">
+                                    Unidad de Medida
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-set="all_lines"
+                                t-value="object.product_line_ids.sorted('sequence')"/>
+                            <t t-foreach="all_lines" t-as="line">
+                                <t t-if="not line.display_type">
+                                    <!-- Fila del producto -->
+                                    <tr>
+                                        <td
+                                            style="border-bottom:1px solid #4d4d4d;border-right:1px solid #4d4d4d;padding:4px 8px;">
+                                            <t t-out="line.name or '—'"/>
+                                        </td>
+                                        <td
+                                            style="border-bottom:1px solid #4d4d4d;border-right:1px solid #4d4d4d;padding:4px 8px;text-align:center;">
+                                            <t t-out="'{:,.0f}'.format(line.qty).replace(',','.')"/>
+                                        </td>
+                                        <td
+                                            style="border-bottom:1px solid #4d4d4d;border-right:1px solid #4d4d4d;padding:4px 8px;text-align:center;">
+                                            <t t-out="line.uom_id and line.uom_id.name or '—'"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                                <t t-elif="line.display_type == 'line_note'">
+                                    <!-- Fila de especificaciones (nota) -->
+                                    <tr>
+                                        <td colspan="3"
+                                            style="border-bottom:1px solid #4d4d4d;padding:4px 8px;background-color:#f5f5f5;font-style:italic;">
+                                            <t t-out="line.name or ''"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </t>
+                        </tbody>
+                    </table>
+                    <p style="font-size:13px;margin:18px 0 0 0;line-height:1.45;"> Agradecemos
+                        proceder con la gestión de esta solicitud a la mayor brevedad posible. Para
+                        cualquier duda, aclaración o requerimiento de información adicional sobre
+                        las especificaciones técnicas de los productos, por favor no dude en
+                        contactarnos. <br/> <br/> Cordialmente,<br/>
+                        <t
+                            t-out="object.responsible_id.name or ''"/> | <t
+                            t-out="object.responsible_id.work_email or ''"/>
+                    </p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+        <record id="mail_template_rfq_purchase_approval" model="mail.template">
+            <field name="name">Revisión Final Area de Compras</field>
+            <field name="model_id" ref="purchase_management.model_request_quotation"/>
+            <field name="email_from">odoo@tsg.net.co</field>
+            <field name="subject">Solicitud de Cotización - {{ object.subject }}</field>
+            <field name="body_html" type="html">
+                <div style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;color:#222;">
+                    <p style="font-size:13px;margin:0 0 10px 0;line-height:1.45;">
+                        Estimado equipo de compras,
+                    </p>
+                    <p
+                        style="font-size:13px;margin:0 0 14px 0;line-height:1.5;"> La solicitud de
+                        cotización con referencia <strong>
+                            <t t-out="object.reference"/>
+                        </strong> creada el <strong>
+                            <t t-out="object.create_date.strftime('%d/%m/%Y')"/>
+                        </strong>
+                        con el asunto <strong>
+                            <t t-out="object.subject"/>
+                        </strong>, ha sido
+                        revisada por el Líder de Proyecto, y está pendiente de su revisión final
+                        antes de presentarla al <span style='color: #017e84;'>comité de compras</span>.
+                        Los proveedores asignados están disponibles para su revisión <t
+                            t-set="website_url" t-value="object.get_base_url()"/> <a
+                            t-att-href="website_url" target="_blank"
+                            style="color:#1155cc;text-decoration:underline;">aquí</a>. A
+                        continuación, se detallan las especificaciones de la <strong>Solicitud de
+                        Cotización:</strong></p>
+                    <p
+                        style="font-size:13px;margin:18px 0 0 0;line-height:1.45;">
+                        <ul>
+                            <li>
+                                <strong>Proyecto:</strong>
+                                <t t-out="object.project_id.name"/>
+                            </li>
+                            <li>
+                                <strong>Tipo:</strong>
+                                <t t-if="object.type_id.name == 'Productos'">[PROD] Productos
+                                    (Bienes
+                                    físicos, Ej. Tecnología, Portátiles, Firewall, UPS)</t>
+                                <t t-if="object.type_id.name == 'Servicios'">[SERV] Servicios
+                                    (Consultoría, mantenimiento, etc.)</t>
+                                <t t-if="object.type_id.name == 'Mixtos'">[MIXT] Mixtos (Incluye
+                                    productos y servicios)</t>
+                            </li>
+                            <li>
+                                <strong>Motivo:</strong>
+                                <t t-out="object.reason"/>
+                            </li>
+                        </ul>
+                    </p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+        <record id="mail_template_notify_min_providers_qty" model="mail.template">
+            <field name="name">Notificar excepción en número de proveedores</field>
+            <field name="model_id" ref="purchase_management.model_request_quotation"/>
+            <field name="email_from">odoo@tsg.net.co</field>
+            <field name="subject">Solicitud de Cotización - {{ object.subject }}</field>
+            <field name="body_html" type="html">
+                <div style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;color:#222;">
+                    <p style="font-size:13px;margin:0 0 10px 0;line-height:1.45;">
+                        Buen día,
+                    </p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;"> La solicitud de
+                        cotización con referencia <strong>
+                            <t t-out="object.reference"/>, </strong>creada el <strong>
+                            <t t-out="object.create_date.strftime('%d/%m/%Y')"/>
+                        </strong>
+                        y con el asunto <strong>
+                            <t t-out="object.subject"/>, </strong>requiere su <strong>aprobación</strong>
+                        para ser gestionada con un número de proveedores menor al mínimo establecido
+                        por la política corporativa (actualmente <t
+                            t-out="ctx.get('min_providers_qty')"/> proveedores). </p>
+
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;"
+                        t-if="object.category == 'project'"> Desde el área de Compras, la persona
+                        responsable de la solicitud, <strong>
+                            <t t-out="ctx.get('responsible_purchase_id')"/>, </strong> ha indicado
+                        que, para esta solicitud, se contará con <strong>
+                            <t t-out="ctx.get('exception_providers_qty')"/>
+                        </strong>
+                        proveedor(es) y ha registrado la siguiente justificación para esta
+                        excepción: <br/> "<t t-out="ctx.get('exception_reason')"/>". Hasta que no se
+                        obtenga una respuesta por parte de su área, la solicitud no continuará con
+                        el envío de correos a los proveedores. Pueden acceder al detalle de la
+                        solicitud haciendo clic <t t-set="website_url"
+                            t-value="object.get_base_url()"/> <a
+                            t-att-href="website_url" target="_blank">aquí.</a> A continuación, se
+                        resumen los datos principales de la <strong>solicitud de
+                            cotización</strong>: </p>
+
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;"
+                        t-if="object.category == 'admin'"> La persona responsable de la solicitud, <strong>
+                            <t t-out="object.responsible_id.name"/>, </strong> ha indicado que, para
+                        esta solicitud, se contará con <strong>
+                            <t t-out="ctx.get('exception_providers_qty')"/>
+                        </strong>
+                        proveedor(es) y ha registrado la siguiente justificación para esta
+                        excepción: <br/> "<t t-out="ctx.get('exception_reason')"/>". Hasta que no se
+                        obtenga una respuesta por parte de su área, la solicitud no continuará con
+                        el envío de correos a los proveedores. Pueden acceder al detalle de la
+                        solicitud haciendo clic <t t-set="website_url" t-value="object.get_base_url()"/> <a
+                            t-att-href="website_url" target="_blank">aquí.</a> A continuación, se
+                        resumen los datos principales de la <strong>solicitud de
+                            cotización</strong> : </p>
+
+                    <ul style="font-size:13px;margin:0 0 10px 18px;line-height:1.5;padding:0;">
+                        <li>
+                            <strong>Proyecto:</strong>
+                            <t t-out="object.project_id.name"/>
+                        </li>
+                        <li>
+                            <strong>Tipo:</strong>
+                            <t t-if="object.type_id.name == 'Productos'">
+                                [PROD] Productos (Bienes físicos, Ej. Tecnología, Portátiles,
+                                Firewall, UPS)
+                            </t>
+                            <t t-if="object.type_id.name == 'Servicios'">
+                                [SERV] Servicios (Consultoría, mantenimiento, etc.)
+                            </t>
+                            <t t-if="object.type_id.name == 'Mixtos'">
+                                [MIXT] Mixtos (Incluye productos y servicios)
+                            </t>
+                        </li>
+                        <li>
+                            <strong>Motivo de la solicitud:</strong>
+                            <t t-out="object.reason"/>
+                        </li>
+                    </ul>
+                </div>
+
+            </field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+        <record id="mail_template_approve_project_leader_rejection" model="mail.template">
+            <field name="name">Aprobar rechazo del líder de proyecto</field>
+            <field name="model_id" ref="purchase_management.model_request_quotation"/>
+            <field name="email_from">odoo@tsg.net.co</field>
+            <field name="subject">Solicitud de Cotización - {{ object.subject }}</field>
+            <field name="body_html" type="html">
+                <div style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;color:#222;">
+                    <p style="font-size:13px;margin:0 0 10px 0;line-height:1.45;">
+                        Estimado equipo de compras,
+                    </p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;"> Con respecto a la
+                        solicitud de cotización con referencia <strong>
+                            <t t-out="object.reference"/>
+                        </strong>, el <strong>líder
+                        de proyecto rechazó</strong> las cotizaciones recibidas y el área
+                        responsable ha <strong>validado esta decisión</strong>. El motivo indicado
+                        es: <strong>
+                            <t t-out="ctx.get('reason')"/>
+                        </strong>.</p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;"> Por lo tanto, la
+                        solicitud será revertida al estado inicial para reiniciar el proceso desde
+                        cero y permitir el trabajo con nuevos proveedores.
+                    </p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;"> Agradecemos
+                        proceder con la gestión de esta solicitud a la mayor brevedad posible. Para
+                        cualquier duda, aclaración o requerimiento de información adicional, por
+                        favor, no dude en contactarnos. <br/> <br/> Saludos cordiales,<br/>
+                        <t
+                            t-out="object.env.user.name or ''"/> | <t
+                            t-out="object.env.user.work_email or ''"/>
+                    </p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+        <record id="mail_template_notify_project_leader_rejection" model="mail.template">
+            <field name="name">Notificación de rechazo de cotizaciones por líder de proyecto</field>
+            <field name="model_id" ref="purchase_management.model_request_quotation"/>
+            <field name="email_from">odoo@tsg.net.co</field>
+            <field name="subject">Solicitud de Cotización - {{ object.reference }}</field>
+            <field name="body_html" type="html">
+                <div style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;color:#222;">
+                    <p style="font-size:13px;margin:0 0 10px 0;line-height:1.45;">
+                        Estimado usuario,
+                    </p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;"> Le informamos que
+                        el <strong>líder de proyecto</strong> ha rechazado una o más cotizaciones
+                        vinculadas a la solicitud con referencia <strong>
+                            <t t-out="object.reference"/>
+                        </strong>, creada
+                        el <strong>
+                            <t t-out="object.create_date.strftime('%d/%m/%Y')"/>
+                        </strong>
+                        y con el asunto <strong>
+                            <t t-out="object.subject"/>
+                        </strong>. Los
+                        proveedores rechazados son: <strong>
+                            <t t-out="ctx.get('supplier_names')"/>
+                        </strong>.</p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;"> Se requiere su
+                        intervención para evaluar las observaciones registradas por el líder de
+                        proyecto y definir las acciones a seguir: <strong>validar la decisión del
+                        líder</strong> o <strong>rechazarla</strong> para que la solicitud continúe
+                        su proceso de aprobación de manera normal. </p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;"> Por favor, ingrese
+                        a la plataforma <t t-set="website_url" t-value="object.get_base_url()"/> <a
+                            t-att-href="website_url" target="_blank"
+                            style="color:#1155cc;text-decoration:underline;">aquí</a> para revisar
+                        el detalle de la solicitud y registrar su decisión. </p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;">
+                        Saludos cordiales.
+                    </p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+    </data>
+</odoo>
