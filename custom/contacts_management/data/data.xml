@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+
+        <!--RES_PARTNER_IDENTIFICATION_TYPE-->
+
+        <record id="identification_type_cc" model="identification.type">
+            <field name="name">Cédula de ciudadanía</field>
+            <field name="code">CC</field>
+        </record>
+
+        <record id="res_partner_identification_type_2" model="identification.type">
+            <field name="name">NIT</field>
+            <field name="code">NIT</field>
+        </record>
+
+        <record id="res_partner_identification_type_3" model="identification.type">
+            <field name="name">Cédula de extranjería</field>
+            <field name="code">CE</field>
+        </record>
+
+        <record id="res_partner_identification_type_4" model="identification.type">
+            <field name="name">Pasaporte</field>
+            <field name="code">PAS</field>
+        </record>
+
+        <record id="res_partner_identification_type_5" model="identification.type">
+            <field name="name">Tarjeta de identidad</field>
+            <field name="code">TI</field>
+        </record>
+
+        <record id="res_partner_identification_type_6" model="identification.type">
+            <field name="name">VAT</field>
+            <field name="code">VAT</field>
+        </record>
+
+    </data>
+</odoo>

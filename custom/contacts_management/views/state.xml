@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+       
+        <record id="view_search_res_country_state" model="ir.ui.view">
+            <field name="name">view.search.res.country.state</field>
+            <field name="model">res.country.state</field>
+            <field name="arch" type="xml">
+                <search string="Buscar Departamento">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="country_id"/>
+                    <filter name="country_49" string="Colombia" domain="[('country_id', '=', 49)]"/>
+                </search>
+            </field>
+        </record>
+        
+         <record id="view_list_res_country_state" model="ir.ui.view">
+            <field name="name">view.list.res.country.state</field>
+            <field name="model">res.country.state</field>
+            <field name="arch" type="xml">
+                <list duplicate="0" editable="bottom" sample="1">
+                    <field name="name"
+                        placeholder="Ej. Cundinamarca, Antioquia, Valle del Cauca, etc."/>
+                    <field name="code" placeholder="Ej. CUN, ANT, VAC, etc."/>
+                    <field name="country_id" options="{'no_open': True, 'no_create': True}"
+                        placeholder="Ej. Colombia, Argentina, Brasil, etc."/>
+                </list>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

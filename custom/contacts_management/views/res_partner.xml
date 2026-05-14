@@ -1,0 +1,323 @@
+<odoo>
+    <data>
+
+        <!--FORM-->
+
+        <record id="new_view_form_res_partner" model="ir.ui.view">
+            <field name="name">new.view.form.res.partner</field>
+            <field name="model">res.partner</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <form duplicate="0">
+                    <div class="alert alert-danger" role="alert"
+                        invisible="is_business == False or is_employee == False">
+                        <i class="fa fa-exclamation-triangle me-1" title="Advertencia"/>
+                        <strong>
+                        Advertencia!</strong> No se puede crear un contacto que sea empresa y
+                        empleado al mismo tiempo, por favor verifique la información. </div>
+                    <sheet>
+                        <div name="options">
+                            <span class="d-inline-block">
+                                <field name="is_business"/>
+                                <label for="is_business"/>
+                            </span>
+                            <span class="d-inline-block">
+                                <field name="is_employee"/>
+                                <label for="is_employee"/>
+                            </span>
+                        </div>
+                        <div class="form-title-responsive text-truncate">
+                            <h1>
+                                <field name="name" class="text-primary" required="1"
+                                    placeholder="Nombre del contacto o empresa"/>
+                            </h1>
+                            <div>
+                                <field name="parent_id"
+                                    placeholder="Ej. (Tsg the it experts, It talent, Novacom, etc.)"
+                                    required="is_business == True"
+                                    invisible="is_business == True or is_employee == False"
+                                    options="{'no_open': True, 'no_create': True}"
+                                    domain="[('is_business', '=', True), ('id', '!=', id)]"/>
+                            </div>
+                        </div>
+                        <group>
+                            <group>
+                                <label for="street" string="Dirección"/>
+                                <div>
+                                    <field name="street" placeholder="Ej. Calle 123 # 45-67.."
+                                        string="Dirección" required="1"/>
+                                    <div class="o_row">
+                                        <field name="city_id" placeholder="Ciudad..."
+                                            required="1"
+                                            options="{'no_open': True, 'no_create': True}"/>
+                                        <field name="state_id" placeholder="Departamento.."
+                                            required="1"
+                                            options="{'no_open': True, 'no_create': True}"/>
+                                    </div>
+                                    <div>
+                                        <field name="country_id" placeholder="Pais.." required="1"
+                                            options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"/>
+                                    </div>
+                                </div>
+                                <label for="identification_type_id" string="Nro. identificación"/>
+                                <div class="o_row">
+                                    <field name="identification_type_id"
+                                        placeholder="Ej. (Ced. Ciudadanía, C.E, etc.)"
+                                        options="{'no_open': True, 'no_create': True}"/>
+                                    <field name="vat" placeholder="Ej.  1477472701"
+                                        required="1"/>
+                                </div>
+                            </group>
+                            <group>
+                                <field name="email" placeholder="Ej. ejemplo123@tsg.net.co..."
+                                    class="text-primary" widget="email"
+                                    required="is_employee == True"/>
+                                <field name="phone" placeholder="Ej. 310 123 4567.."
+                                    widget="CodeCountryPhone"/>
+                                <field name="title"
+                                    placeholder="Ej. ''Sr.'', ''Sra.'', ''Srita.''..."
+                                    required="is_employee == True" invisible="is_employee != True"
+                                    options="{'no_open': True, 'no_create': True}"
+                                    class="text-primary"/>
+                            </group>
+                        </group>
+                        <notebook invisible="is_business != True">
+                            <page string="Empleados" name="employees">
+                                <field name="child_ids" mode="kanban"
+                                    context="{'default_parent_id': id, 'default_street': street, 'default_city_id': city_id, 'default_state_id': state_id, 'default_country_id': country_id, 'default_type': 'contacts_management','default_is_company': False, 'default_is_employee': True, 'default_is_business': False, 'default_company_type': 'person', 'default_identification_type_id': identification_type_id, 'default_vat': vat}">
+                                    <kanban class="o_kanban_dashboard res_partner_kanban" sample="1">
+                                        <field name="name"/>
+                                        <field name="title"/>
+                                        <field name="parent_id"/>
+                                        <field name="is_company"/>
+                                        <field name="is_employee"/>
+                                        <field name="is_business"/>
+                                        <field name="email"/>
+                                        <field name="city_id"/>
+                                        <field name="state_id"/>
+                                        <field name="country_id"/>
+                                        <field name="vat"/>
+                                        <field name="identification_type_id"/>
+                                        <templates>
+                                            <t t-name="card">
+                                                <t t-set="company"
+                                                    t-value="'/contacts_management/static/src/img/company.png'"/>
+                                                <t t-set="people"
+                                                    t-value="'/contacts_management/static/src/img/people.jpg'"/>
+                                                <t t-set="supplier"
+                                                    t-value="'/contacts_management/static/src/img/supplier.jpg'"/>
+                                                <div
+                                                    class="oe_kanban_global_click o_res_partner_kanban_main">
+                                                    <img t-att-src="people" alt="Empleado"
+                                                        invisible="title not in [ 1, 2, 3] or is_employee != True"/>
+                                                    <img t-att-src="company" alt="Empresa"
+                                                        invisible="is_business != True"/>
+                                                    <div class="o_content_center col-12 p-1">
+                                                        <div class="oe_title_kanban">
+                                                            <strong t-esc="record.name.raw_value"/>
+                                                        </div>
+                                                        <div>
+                                                            <em>
+                                                                <t t-esc="record.parent_id.value"/>
+                                                                - <t t-esc="record.email.raw_value"/>
+                                                            </em>
+                                                            <br/>
+                                                            <t t-if="record.is_company.raw_value">
+                                                                <em>
+                                                                    <t
+                                                                        t-esc="record.identification_type_id.value"/>
+                                                                    - <t
+                                                                        t-esc="record.vat.raw_value"/>
+                                                                </em>
+                                                            </t>
+                                                            <t t-else="">
+                                                                <em>
+                                                                    <t
+                                                                        t-esc="record.identification_type_id.value"/>
+                                                                    - <t
+                                                                        t-esc="record.vat.raw_value"/>
+                                                                </em>
+                                                            </t>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </t>
+                                        </templates>
+                                    </kanban>
+                                    <form string="Empleados">
+                                        <field name="parent_id" invisible="1" readonly="1"/>
+                                        <field name="is_company" invisible="1" readonly="1"/>
+                                        <field name="is_business" invisible="1" readonly="1"/>
+                                        <field name="company_type" invisible="1" readonly="1"/>
+                                        <field name="type" invisible="1" readonly="1"/>
+                                        <field name="name" invisible="1" readonly="1"/>
+                                        <sheet>
+                                            <div name="options">
+                                                <span class="d-inline-block">
+                                                    <field name="is_employee"/>
+                                                    <label for="is_employee"/>
+                                                </span>
+                                            </div>
+                                            <div class="form-title-responsive">
+                                                <h1>
+                                                    <field name="name" class="text-primary"
+                                                        required="1"
+                                                        placeholder="Ej. Pedro Pérez, Juan Gómez, etc."/>
+                                                </h1>
+                                            </div>
+                                            <group>
+                                                <group>
+                                                    <label for="street" string="Dirección"/>
+                                                    <div>
+                                                        <field name="street"
+                                                            placeholder="Ej. Calle 123 # 45-67.."
+                                                            required="1"/>
+                                                        <div class="o_row">
+                                                            <field name="city_id"
+                                                                placeholder="Ciudad..."
+                                                                required="1"
+                                                                options="{'no_open': True, 'no_create': True}"/>
+                                                            <field name="state_id"
+                                                                placeholder="Departamento.."
+                                                                required="1"
+                                                                options="{'no_open': True, 'no_create': True}"/>
+                                                        </div>
+                                                        <div name="partner_address_country">
+                                                            <field name="country_id"
+                                                                placeholder="Pais.." required="1"
+                                                                options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"/>
+                                                        </div>
+                                                    </div>
+                                                    <label for="identification_type_id"
+                                                        string="Nro. identificación"/>
+                                                    <div class="o_row">
+                                                        <field name="identification_type_id"
+                                                            placeholder="Ej. (Ced. Ciudadanía, C.E, etc.)"
+                                                            options="{'no_open': True, 'no_create': True}"
+                                                            required="1"/>
+                                                        <field name="vat"
+                                                            placeholder="Ej.  1477472701"
+                                                            required="1"/>
+                                                    </div>
+                                                </group>
+                                                <group>
+                                                    <field name="email"
+                                                        required="is_employee == True"
+                                                        placeholder="Ej. ejemplo@tsg.net.co.."
+                                                        class="text-primary"/>
+                                                    <field name="phone"
+                                                        placeholder="Ej. 310 123 4567.."
+                                                        widget="CodeCountryPhone"/>
+                                                    <field name="title"
+                                                        placeholder="Ej. ''Sr.'', ''Sra.'', ''Srita.''..."
+                                                        required="is_employee == True"
+                                                        options="{'no_open': True, 'no_create': True}"
+                                                        class="text-primary"/>
+                                                </group>
+                                            </group>
+                                        </sheet>
+                                    </form>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+
+        <!--KANBAN-->
+
+        <record id="new_view_kanban_res_partner" model="ir.ui.view">
+            <field name="name">new.view.kanban.res.partner</field>
+            <field name="model">res.partner</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_dashboard res_partner_kanban" sample="1"
+                    js_class="contacts_banner_kanban_view"
+                    records_draggable="0" group_delete="0"
+                    group_create="0" group_edit="0" quick_create="0" groups_draggable="0">
+                    <field name="name"/>
+                    <field name="email"/>
+                    <field name="vat"/>
+                    <field name="city_id"/>
+                    <field name="country_id"/>
+                    <field name="identification_type_id"/>
+                    <field name="parent_id"/>
+                    <field name="is_business"/>
+                    <field name="is_employee"/>
+                    <field name="title"/>
+                    <templates>
+                        <t t-name="card">
+                            <t t-set="company"
+                                t-value="'/contacts_management/static/src/img/company.png'"/>
+                            <t t-set="people"
+                                t-value="'/contacts_management/static/src/img/people.jpg'"/>
+                            <div class="oe_kanban_global_click o_res_partner_kanban_main">
+                                <img t-att-src="people" alt="Empleado"
+                                    invisible="title not in [ 1, 2, 3] or is_employee != True"/>
+                                <img t-att-src="company" alt="Empresa"
+                                    invisible="is_business != True"/>
+                                <div class="o_content_center col-12 p-1">
+                                    <div class="oe_title_kanban">
+                                        <strong t-esc="record.name.raw_value"/>
+                                    </div>
+                                    <div>
+                                        <em>
+                                            <t t-if="record.parent_id.raw_value">
+                                                <t t-esc="record.parent_id.value"/> - <t
+                                                    t-esc="record.email.raw_value"/>
+                                            </t>
+                                            <t t-else="">
+                                                <t t-esc="record.city_id.value"/> - <t
+                                                    t-if="record.email.raw_value">
+                                                    <t t-esc="record.email.raw_value"/>
+                                                </t>
+                                                <t
+                                                    t-else="">
+                                                    <t t-esc="record.country_id.value"/>
+                                                </t>
+                                            </t>
+                                            <br/>
+                                            <t name="company_info"
+                                                t-if="record.is_business.raw_value">
+                                                <t t-esc="record.identification_type_id.value"/> - <t
+                                                    t-esc="record.vat.raw_value"/>
+                                            </t>
+                                            <t t-else="">
+                                                <t t-esc="record.city_id.value"/> - <t
+                                                    t-esc="record.country_id.value"/>
+                                            </t>
+                                        </em>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!--LIST-->
+
+        <record id="new_view_list_res_partner" model="ir.ui.view">
+            <field name="name">new.view.list.res.partner</field>
+            <field name="model">res.partner</field>
+            <field name="priority">1</field>
+            <field name="arch" type="xml">
+                <list duplicate="0" js_class="contacts_banner_list_view">
+                    <field name="complete_name" string="Nombre"/>
+                    <field name="street" string="Dirección"/>
+                    <field name="city_id" string="Ciudad"/>
+                    <field name="country_id" string="País"/>
+                </list>
+            </field>
+        </record>
+
+        <!--SEARCH-->
+
+      
+
+    </data>
+</odoo>

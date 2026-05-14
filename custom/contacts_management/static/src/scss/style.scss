@@ -1,0 +1,55 @@
+.form-title-responsive {
+    margin-bottom: clamp(10px, 2vw, 20px); /* Ajuste adaptable del margen inferior */
+    overflow: hidden;
+
+    h1 {
+        font-size: clamp(20px, 4vw, 36px); /* Rango ajustado para mayor control */
+        line-height: 1;
+        margin-bottom: 0; /* Elimina espacio entre elementos */
+        display: grid;
+    }
+    div {
+        margin-bottom: 0px !important; /* Quita espacio entre el título y el contenido */
+        display: grid;
+    }
+}
+
+// Kanban res.partner (Contactos)
+
+.o_kanban_dashboard.res_partner_kanban .o_kanban_renderer {
+    .o_res_partner_kanban_main {
+        padding: 1px !important;
+        overflow: hidden;
+        height: 100px;
+        position: relative;
+
+        // Sobrepone la imagen con texto centrado
+        .o_content_center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            line-height: 1.2; /* Ajusta el espacio entre líneas */
+            z-index: 2; /* Asegura que el texto esté sobre la imagen */
+        }
+    }
+
+    .o_res_partner_kanban_main img {
+        opacity: 0.1;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        position: relative;
+    }
+
+    .oe_title_kanban {
+        font-size: 16px !important; /* Tamaño de fuente predeterminado */
+        color: #000; /* Color del texto para mayor legibilidad */
+        @media screen and (max-width: 767px) {
+            font-size: 14px !important; /* Tamaño de fuente ajustado para pantallas pequeñas */
+        }
+    }
+}
+
+

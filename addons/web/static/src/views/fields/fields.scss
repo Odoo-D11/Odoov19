@@ -64,7 +64,7 @@
     }
 }
 
-// Invalid
+/***
 .o_field_invalid:not(:focus-within) {
     &.o_input, > .o_input, &.o_form_label {
         color: o-text-color('danger');
@@ -73,7 +73,7 @@
     &:not(.o_form_label) {
         --o-input-background-color: #{$o-input-invalid-bg};
     }
-}
+}***/
 
 // Empty
 .o_field_empty {

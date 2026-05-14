@@ -185,7 +185,7 @@
     }
 
     &:not(.o_field_highlight) .o_field_widget:not(.o_field_invalid):not(.o_field_highlight) .o_input:not(:hover):not(:focus) {
-        --o-input-border-color: transparent;
+        --o-input-border-color: #f3f2f2;
     }
 
     .o_datepicker {
@@ -495,6 +495,7 @@
     // Separators
     .o_horizontal_separator {
         &:not(:empty) {
+            margin-top: 0px !important;
             box-shadow: 0 $border-width 0 $o-form-separator-color;
         }
 

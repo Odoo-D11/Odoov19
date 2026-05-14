@@ -1,0 +1,21 @@
+
+.o_contact_phone_widget {
+    display: flex;
+    align-items: center;
+    gap: 5px; 
+
+    .country-flag {
+        width: 20px;
+        height: 14px;
+    }
+
+    .country-calling-code {
+        white-space: nowrap;
+        margin-right: 5px; 
+    }
+
+    input {
+        flex: 1; 
+        min-width: 0;
+    }
+}

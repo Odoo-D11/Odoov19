@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <t t-name="ExpEmployeeCard">
+        <div class="exp-popup-card">
+            <div class="exp-popup-header">
+                <div class="exp-popup-bg"/>
+                <div class="exp-popup-avatar-wrap exp-popup-avatar-left">
+                    <img t-att-src="avatarSrc" class="exp-popup-avatar" alt="Avatar de empleado"/>
+                </div>
+            </div>
+            <!-- Cuerpo -->
+            <div class="exp-popup-info">
+                <div class="exp-popup-name">
+                    <t t-esc="props.employee.name"/>
+                </div>
+                <!-- Cargo • Empresa -->
+                <div class="exp-popup-subtitle">
+                    <t t-if="props.employee.job_title">
+                        <span class="exp-popup-role">
+                            <span t-att-title="props.employee.job_title">
+                                <t
+                                    t-esc="props.employee.job_title.length > 30 ? props.employee.job_title.slice(0, 30) + '…' : props.employee.job_title"/>
+                            </span>
+                        </span>
+                    </t>
+                    <t t-if="props.employee.job_title and props.employee.enterprise_id">
+                        <span class="exp-popup-dot">•</span>
+                    </t>
+                    <t t-if="props.employee.enterprise_id">
+                        <span class="exp-popup-company">
+                            <t t-esc="props.employee.enterprise_id[1]"/>
+                        </span>
+                    </t>
+                </div>
+                <div class="exp-popup-divider"/>
+                <div class="exp-popup-contact">
+                    <t t-if="props.employee.mobile_phone or props.employee.private_phone">
+                        <div class="exp-popup-item">
+                            <svg class="exp-icon" xmlns="http://www.w3.org/2000/svg" width="15"
+                                height="15"
+                                viewBox="0 0 640 640" aria-hidden="true">
+                                <path
+                                    d="M144 128C144 92.7 172.7 64 208 64L432 64C467.3 64 496 92.7 496 128L496 512C496 547.3 467.3 576 432 576L208 576C172.7 576 144 547.3 144 512L144 128zM256 504C256 517.3 266.7 528 280 528L360 528C373.3 528 384 517.3 384 504C384 490.7 373.3 480 360 480L280 480C266.7 480 256 490.7 256 504zM432 128L208 128L208 432L432 432L432 128z"/>
+                            </svg>
+                            <span>
+                                <t t-esc="props.employee.mobile_phone || props.employee.private_phone"/>
+                            </span>
+                        </div>
+                    </t>
+                    <t t-if="props.employee.work_email">
+                        <div class="exp-popup-vsep" aria-hidden="true"/>
+                    </t>
+                    <t t-if="props.employee.work_email">
+                        <div class="exp-popup-item">
+                            <i class="fa fa-envelope" aria-hidden="true"/>
+                            <span>
+                                <t t-esc="props.employee.work_email || props.employee.private_email"/>
+                            </span>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="ExpAvatarPopupTemplate">
+        <div class="d-flex align-items-center" t-att-class="value ? 'gap-1' : ''">
+            <span class="o_avatar o_m2o_avatar">
+                <img t-if="value and avatarSrc"
+                    t-att-src="avatarSrc"
+                    class="exp-avatar-icon"
+                    title="Haz clic para ver el perfil del empleado"
+                    t-on-click="openCard"/>
+            </span>
+            <div style="flex: 1;">
+                <t t-call="web.Many2OneField"/>
+            </div>
+        </div>
+    </t>
+
+</templates>

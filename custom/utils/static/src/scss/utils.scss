@@ -1,0 +1,26 @@
+// Ocultar botones de adjuntar archivos en el chatter
+
+button.o-mail-Chatter-attachFiles,
+button[class*="o-mail-Chatter-attachFiles"] {
+  display: none !important;
+}
+
+.o-mail-Composer-mainActions .o_upload_attachments_button,
+.o-mail-Composer-mainActions .fa-paperclip,
+.o-mail-Composer-mainActions button[title*="Attach"],
+.o-mail-Composer-mainActions .o_mail_composer_attach,
+.o-mail-Composer-mainActions .o_attach_wrapper {
+  display: none !important;
+}
+
+/* Oculta todos los ítems del menú de usuario excepto el de cerrar sesión */
+.dropdown-menu span.dropdown-item[data-menu="shortcuts"],
+.dropdown-menu span.dropdown-item[data-menu="web_tour.tour_enabled"],
+.dropdown-menu span.dropdown-item[data-menu="settings"],
+.dropdown-menu span.dropdown-item[data-menu="account"],
+.dropdown-menu span.dropdown-item[data-menu="install_pwa"],
+.dropdown-menu a.dropdown-item[data-menu="documentation"],
+.dropdown-menu a.dropdown-item[data-menu="support"],
+.o-dropdown--menu.dropdown-menu > .dropdown-divider {
+  display: none !important;
+}

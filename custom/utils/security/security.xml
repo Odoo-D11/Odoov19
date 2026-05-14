@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!--SE AÑADE PERMISO DE ACCESO A EL
+    MENU DE APLICACIONES Y SITIO WEB YA QUE TODOS LOS USUARIOS TIENEN ACCESO A VERLOS-->
+
+    <record id="base.menu_management" model="ir.ui.menu">
+        <field name="group_ids" eval="[(6,0,[ref('base.group_system')])]"/>
+    </record>
+
+    <record id="website.menu_website_configuration" model="ir.ui.menu">
+        <field name="group_ids" eval="[(6,0,[ref('base.group_system')])]"/>
+    </record>
+
+    <record id="invisible_menu_link_tracker" model="res.groups">
+        <field name="name">Muestra el módulo de Rastreo de enlaces (Odoo)</field>
+        <field name="comment">El usuario podrá ver el módulo de Rastreo de enlaces que tiene odoo
+            por defecto</field>
+    </record>
+
+    <record id="utm.menu_link_tracker_root" model="ir.ui.menu">
+        <field name="group_ids" eval="[(6,0,[ref('utils.invisible_menu_link_tracker')])]"/>
+    </record>
+
+
+</odoo>

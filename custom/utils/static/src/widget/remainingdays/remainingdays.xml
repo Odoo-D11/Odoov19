@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <t t-name="WidgetRemainingDaysTemplate" t-inherit="web.DateTimeField" owl="1">
+        <xpath expr="//input[@type='text']" position="after">
+            <t t-if="props.record.data &amp;&amp; shouldDisplayWidget()">
+                <span t-att-style="'color:' + getRemainingDaysColor() + ';'"
+                    class="remaining-days-message">
+                    <t t-esc="getRemainingDays()"/>
+                </span>
+            </t>
+        </xpath>
+        <xpath expr="//t[@t-if='props.readonly']/span" position="after">
+            <t t-if="props.record.data &amp;&amp; shouldDisplayWidget()">
+                <span t-att-style="'color:' + getRemainingDaysColor() + ';'"
+                    class="remaining-days-message">
+                    <t t-esc="getRemainingDays()"/>
+                </span>
+            </t>
+        </xpath>
+    </t>
+</templates>

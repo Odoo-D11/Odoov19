@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <!--Herencia de
+        lenguaje es_419-->
+        <record id="base.lang_es_419" model="res.lang">
+            <field name="time_format">%I:%M:%S %p</field>
+        </record>
+
+        <!-- Herencia de la vista para confirmar si realmente desea desinstalar el módulo -->
+
+        <record id="view_wizard_form_inherited_base_module_uninstall" model="ir.ui.view">
+            <field name="name">wizard.form.inherited.base.module.uninstall</field>
+            <field name="model">base.module.uninstall</field>
+            <field name="inherit_id" ref="base.view_base_module_uninstall" />
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_uninstall']" position="replace">
+                    <button string="Desinstalar" class="btn-primary" type="object"
+                        confirm="¿Estás seguro de que deseas desinstalar este módulo?"
+                        name="action_uninstall" data-hotkey="q" />
+                </xpath>
+            </field>
+        </record>
+
+        <!--Chatter
+        - Ventana Emergente-->
+
+
+        <record id="view_wizard_form_inherited_mail_email_compose_message_wizard_form"
+            model="ir.ui.view">
+            <field name="name">wizard.form.inherited.mail.email.compose.message.wizard</field>
+            <field name="model">mail.compose.message</field>
+            <field name="inherit_id" ref="mail.email_compose_message_wizard_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//footer/field[@name='attachment_ids']" position="replace">
+                    <field name="attachment_ids" widget="mail_composer_attachment_selector"
+                        invisible="1" />
+                </xpath>
+                
+                <xpath expr="//footer/field[@name='template_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='partner_ids']" position="replace">
+                    <field name="partner_ids" widget="many2many_tags_email"
+                        placeholder="Agregar contactos para notificar..."
+                        options="{'no_quick_create': True, 'no_create': True}"
+                        context="{'show_email':True, 'form_view_ref': 'base.view_partner_simple_form'}" />
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_wizard_form_inherited_hr_mail_activity_schedule_view_form"
+            model="ir.ui.view">
+            <field name="name">wizard.form.inherited.hr.mail.activity.schedule.view</field>
+            <field name="model">mail.activity.schedule</field>
+            <field name="inherit_id" ref="hr.mail_activity_schedule_view_form" />
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='activity_type_id']" position="replace">
+                    <field name="activity_type_id" 
+                        options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"
+                        invisible="1" />
+                </xpath>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

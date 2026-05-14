@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="utils.LineTotalsField" owl="1">
+        <div t-if="showTotals" class="o_line_totals_field">
+            <table class="o_line_totals_table float-end">
+                <tbody>
+                    <tr>
+                        <td class="o_td_label">
+                            <label class="o_form_label o_tax_total_label o_line_totals_title">Total</label>
+                        </td>
+                        <td class="o_list_monetary">
+                            <span class="o_list_monetary o_line_totals_amount o_line_totals_total"
+                                t-att-class="{'o_line_totals_divider': showTotalDivider}"
+                                t-out="formatMonetary(state.total)"/>
+                        </td>
+                    </tr>
+                    <tr t-if="state.showTrm and state.localCurrencyId"
+                        title="Total en moneda local" style="cursor: help;">
+                        <td class="o_td_label o_td_label_trm">
+                            <label class="o_form_label">&#160;</label>
+                        </td>
+                        <td class="o_list_monetary">
+                            <span class="o_line_totals_trm_value"> (<span
+                                    t-out="formatMonetary(state.localTotal, state.localCurrencyId)"/>)
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </t>
+</templates>

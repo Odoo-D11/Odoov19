@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="action_res_city" model="ir.actions.act_window">
+        <field name="name">Ciudades</field>
+        <field name="res_model">res.city</field>
+        <field name="view_mode">list</field>
+        <field name="view_ids"
+            eval="[(5, 0, 0), (0, 0, {'view_mode': 'list', 'view_id': ref('contacts_management.view_list_res_city')})]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No se han encontrado ciudades.
+            </p>
+            <p>Las <b class="text-primary">Ciudades</b> representan la ubicación geográfica de un
+                contacto, como una empresa o persona. Este campo permite almacenar el nombre de la <b
+                    class="text-primary">ciudad</b> del contacto, facilitando la organización y
+                segmentación de datos según su ubicación. Además, es clave para estrategias
+                comerciales y logísticas, como el envío de productos o la planificación de visitas,
+                mejorando la toma de decisiones con base en la localización de los contactos. </p>
+        </field>
+    </record>
+
+
+    <record id="action_res_country_state" model="ir.actions.act_window">
+        <field name="name">Departamentos</field>
+        <field name="res_model">res.country.state</field>
+        <field name="view_mode">list</field>
+        <field name="context">{'search_default_country_49': 1}</field>
+        <field name="domain">[]</field>
+        <field name="search_view_id" ref="contacts_management.view_search_res_country_state"/>
+        <field name="view_ids"
+            eval="[(5, 0, 0), (0, 0, {'view_mode': 'list', 'view_id': ref('contacts_management.view_list_res_country_state')})]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No se han encontrado departamentos.
+            </p>
+            <p>Los <b class="text-primary">Departamentos</b> representan una división geográfica más
+                amplia que la ciudad, como una provincia o estado, dentro de un país. Este campo
+                permite clasificar y agrupar contactos según su <b class="text-primary">departamento</b>,
+                lo que facilita la segmentación y el análisis de datos a nivel regional. Los <b
+                    class="text-primary">departamentos</b> son útiles para la planificación de
+                estrategias comerciales y logísticas en zonas geográficas más extensas, mejorando la
+                eficiencia en la gestión de contactos y su localización. </p>
+        </field>
+    </record>
+
+    <record id="action_identification_type" model="ir.actions.act_window">
+        <field name="name">Tipos de identificación</field>
+        <field name="res_model">identification.type</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids"
+            eval="[(5, 0, 0), (0, 0, {'view_mode': 'list', 'view_id': ref('contacts_management.view_list_identification_type')}),
+                    (0, 0, {'view_mode': 'form', 'view_id': ref('contacts_management.view_form_identification_type')})]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No se han encontrado tipos de identificación.
+            </p>
+            <p>Los <b class="text-primary">Tipos de identificación</b> permiten clasificar y
+                organizar los documentos de identidad de los contactos, como cédulas, pasaportes,
+                NIT, entre otros. Este campo facilita la identificación y verificación de la
+                información de los contactos, mejorando la precisión y confiabilidad de los datos
+                almacenados. Los <b class="text-primary">tipos de identificación</b> son útiles para
+                la validación de información y la generación de reportes, garantizando la integridad
+                de los datos y la seguridad en la gestión de contactos. </p>
+        </field>
+    </record>
+
+    <!--HEREDA
+    EL MENUITEM QUE TIENE RES_PARTNER (CONTACTOS) POR DEFECTO-->
+
+    <record id="new_action_res_partner" model="ir.actions.act_window">
+        <field name="name">Contactos</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="view_ids"
+            eval="[(5, 0, 0), (0, 0, {'view_mode': 'kanban', 'view_id': ref('contacts_management.new_view_kanban_res_partner')}),
+                    (0, 0, {'view_mode': 'list', 'view_id': ref('contacts_management.new_view_list_res_partner')}),
+                    (0, 0, {'view_mode': 'form', 'view_id': ref('contacts_management.new_view_form_res_partner')})]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No se han encontrado contactos.
+            </p>
+            <p>Los <b class="text-primary">Contactos</b> nos permiten almacenar la información de <b
+                    class="text-primary">clientes</b>, <b class="text-primary">proveedores</b>, y
+                otros contactos importantes. Permite almacenar detalles como <b class="text-primary">
+                direcciones</b>, <b
+                    class="text-primary">teléfonos</b>, y <b class="text-primary">correos
+                electrónicos</b>, así como categorizar a los contactos en diferentes tipos como <b
+                    class="text-primary">clientes</b>, <b
+                    class="text-primary">proveedores
+                </b> o <b class="text-primary">empleados</b>. Se
+                integra con módulos de <b class="text-primary">
+                    Ventas</b>, <b class="text-primary">Compras</b>, y <b class="text-primary">CRM</b>,
+                facilitando el seguimiento de interacciones y transacciones, asignación de
+                responsables y sincronización con aplicaciones externas. </p>
+        </field>
+    </record>
+
+    <record id="contacts.menu_contacts" model="ir.ui.menu">
+        <field name="action" ref="contacts_management.new_action_res_partner"/>
+        <field name="group_ids"
+            eval="[(6,0,[ref('contacts_management.group_res_partner_consult')])]"/>
+    </record>
+
+    <menuitem
+        id="new_menu_contacts"
+        name="Contactos"
+        parent="contacts.menu_contacts"
+        sequence="1"
+        action="contacts_management.new_action_res_partner"
+    />
+
+    <menuitem
+        id="contacts.menu_config_res_country_city"
+        name="Ciudades"
+        parent="contacts.menu_localisation"
+        sequence="2"
+        action="action_res_city"
+    />
+
+    <menuitem
+        id="contacts.menu_config_res_country_state"
+        name="Departamentos"
+        parent="contacts.menu_localisation"
+        sequence="3"
+        action="action_res_country_state"
+    />
+
+    <menuitem
+        id="menu_identification_type"
+        name="Tipos de identificación"
+        parent="contacts.res_partner_menu_config"
+        sequence="100"
+        action="action_identification_type"
+    />
+
+</odoo>

@@ -1,0 +1,11 @@
+<templates>
+    <t t-name="PhoneWithCountryWidgetTemplate" owl="1">
+        <div class="o_contact_phone_widget">
+            <t t-if="state.countryFlagUrl">
+                <img t-att-src="state.countryFlagUrl" alt="Country Flag" class="country-flag"/>
+                <span t-esc="state.countryCallingCode" class="country-calling-code"/>
+            </t>
+            <PhoneField t-props="Object.assign({}, props, { placeholder: 'Ej. 300 1234567' })"/>
+        </div>
+    </t>
+</templates>

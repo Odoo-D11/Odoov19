@@ -1,0 +1,200 @@
+.o_field_widget.o_field_ExpAvatarPopup {
+    display: block;
+}
+
+.exp-avatar-icon,
+.exp-avatar-icon.btn {
+    display: block;
+    height: 32px;
+    border-radius: 4px;
+    object-fit: cover;
+    cursor: pointer;
+    padding: 0;
+    border: none;
+    background: transparent;
+}
+
+.popover.exp-employee-popover,
+.exp-employee-popover.o_popover {
+    border: 0;
+    border-radius: 14px;
+    background: transparent;
+    box-shadow: 0 6px 18px rgba(3, 20, 64, 0.1);
+    max-width: none;
+}
+.popover.exp-employee-popover .popover-body,
+.exp-employee-popover.o_popover .o_popover_content {
+    padding: 0;
+}
+
+.exp-popup-card {
+    --exp-avatar-size: 76px;
+    --exp-avatar-ring: 5px;
+    --exp-avatar-left: 16px;
+    --exp-gap: 14px;
+
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgba(3, 20, 64, 0.08);
+    min-width: 360px;
+    max-width: 440px;
+    overflow: hidden;
+}
+
+.exp-popup-header {
+    position: relative;
+    width: 100%;
+    height: 72px;
+    display: flex;
+    align-items: flex-end;
+}
+.exp-popup-bg {
+    position: absolute;
+    inset: 0;
+    height: 72px;
+    background: #02143f;
+    border-top-left-radius: 14px;
+    border-top-right-radius: 14px;
+    z-index: 1;
+}
+
+.exp-popup-avatar-wrap.exp-popup-avatar-left {
+    position: absolute;
+    left: var(--exp-avatar-left);
+    bottom: calc(-1 * (var(--exp-avatar-size) / 2));
+    z-index: 2;
+
+    width: calc(var(--exp-avatar-size) + var(--exp-avatar-ring) * 2);
+    height: calc(var(--exp-avatar-size) + var(--exp-avatar-ring) * 2);
+    padding: var(--exp-avatar-ring);
+
+    background: #fff;
+    border-radius: 9999px;
+    box-shadow: 0 8px 22px rgba(3, 20, 64, 0.16);
+    display: grid;
+    place-items: center;
+}
+.exp-popup-avatar {
+    width: var(--exp-avatar-size);
+    height: var(--exp-avatar-size);
+    border-radius: 50%;
+    object-fit: cover;
+    background: #e6e6e6;
+    border: 0 !important;
+    box-shadow: none;
+}
+
+.exp-popup-info {
+    display: flex;
+    flex-direction: column;
+    padding-top: 8px;
+    padding-left: calc(var(--exp-avatar-left) + var(--exp-avatar-size) + var(--exp-gap));
+    padding-right: 14px;
+    padding-bottom: 12px;
+    text-align: left;
+    align-items: flex-start;
+}
+
+.exp-popup-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: #171a21;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.exp-popup-subtitle {
+    margin-top: 2px;
+    font-size: 12px;
+    color: #4b5563;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.exp-popup-role {
+    font-weight: 600;
+    color: #253046;
+}
+.exp-popup-dot {
+    opacity: 0.7;
+}
+.exp-popup-company {
+    color: #4b5563;
+}
+
+.exp-popup-divider {
+    display: block;
+    width: 100%;
+    margin-top: 6px;
+    height: 1px;
+    background: #e7edf3;
+    border: 0;
+}
+
+.exp-popup-contact {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-top: 6px;
+    flex-wrap: nowrap;
+    min-width: 0;
+    justify-content: flex-start;
+}
+.exp-popup-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    color: #0f172a;
+    min-width: 0;
+}
+.exp-popup-item i {
+    font-size: 13px;
+    color: #334155;
+}
+
+.exp-icon {
+    display: inline-block;
+    flex-shrink: 0;
+    fill: currentColor;
+    color: #334155;
+}
+.exp-popup-item span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+}
+
+.exp-popup-vsep {
+    width: 1px;
+    height: 14px;
+    background: #e7edf3;
+    align-self: center;
+}
+
+.popover.exp-employee-popover[data-popper-placement^="right"] .popover-arrow,
+.exp-employee-popover.o_popover[data-popper-placement^="right"] .o_popover_arrow {
+    display: none;
+}
+
+@media (max-width: 400px) {
+    .exp-popup-card {
+        min-width: 320px;
+        max-width: 360px;
+    }
+    .exp-popup-info {
+        padding: 32px 12px 10px 12px;
+        align-items: center;
+        text-align: center;
+    }
+    .exp-popup-contact {
+        justify-content: center;
+    }
+}

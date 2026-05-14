@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_list_identification_type" model="ir.ui.view">
+            <field name="name">view.list.identification.type</field>
+            <field name="model">identification.type</field>
+            <field name="arch" type="xml">
+                <list duplicate="0" editable="bottom" sample="1">
+                    <field name="sequence" widget="handle"/>
+                    <field name="display_name" placeholder="Ej. Cédula de ciudadanía, NIT, etc."
+                        string="Nombre"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_form_identification_type" model="ir.ui.view">
+            <field name="name">view.form.identification.type</field>
+            <field name="model">identification.type</field>
+            <field name="arch" type="xml">
+                <form duplicate="0">
+                    <sheet>
+                        <b style="font-weight: 500">
+                            Nombre
+                        </b>
+                        <div class="form-title-responsive">
+                            <h1>
+                                <field name="name" class="text-primary"
+                                    placeholder="Ej. Cédula de ciudadanía, NIT, etc."/>
+                            </h1>
+                            <div>
+                                <field name="code" class="text-primary"
+                                    placeholder="Código.. (Ej. CC, NIT, CE, etc.)"/>
+                            </div>
+                        </div>
+                        <separator string="Descripción"/>
+                        <p invisible="name != 'Cédula de ciudadanía'">
+                            La Cédula de ciudadanía es el documento de identidad principal para
+                            ciudadanos nacionales.
+                            Es indispensable para realizar trámites notariales, bancarios, y para
+                            votar en las
+                            elecciones del país. Además, es requerida para obtener otros documentos
+                            importantes como
+                            pasaportes o licencias de conducción. Tiene validez únicamente en el
+                            territorio nacional,
+                            pero en algunos casos puede ser aceptada en ciertos trámites
+                            internacionales, como la
+                            verificación de identidad para remesas.
+                        </p>
+                        <p invisible="name != 'NIT'">
+                            El NIT es un número asignado a personas jurídicas y naturales que
+                            realizan actividades
+                            comerciales, y es esencial para la declaración de impuestos. En algunos
+                            países, el NIT es
+                            requerido para registrar empresas ante cámaras de comercio y organismos
+                            de regulación. Es
+                            obligatorio en cualquier transacción financiera o contractual que
+                            implique el pago de
+                            impuestos. Este número también se utiliza en transacciones
+                            internacionales, y algunas
+                            empresas extranjeras deben obtener un NIT local para operar legalmente.
+                        </p>
+                        <p invisible="name != 'Cédula de extranjería'">
+                            La Cédula de extranjería es un documento que identifica a los
+                            extranjeros residentes en el
+                            país. Es necesaria para acceder a derechos como la apertura de cuentas
+                            bancarias, la compra
+                            de propiedades, y la obtención de permisos laborales o de estudio. Tiene
+                            validez únicamente
+                            dentro del territorio nacional y debe ser renovada periódicamente de
+                            acuerdo a las leyes
+                            locales de migración. En algunos casos, puede ser utilizada en trámites
+                            internacionales si
+                            está acompañada de otros documentos como un pasaporte.
+                        </p>
+                        <p invisible="name != 'Pasaporte'">
+                            El Pasaporte es un documento de viaje internacional que acredita la
+                            identidad y nacionalidad
+                            de una persona fuera de su país de origen. Además de permitir viajes
+                            internacionales, puede
+                            servir como una prueba de identidad en procesos como la solicitud de
+                            visados, la apertura de
+                            cuentas bancarias en el extranjero, y otros trámites en países
+                            extranjeros. El pasaporte
+                            tiene un periodo de validez limitado, generalmente de 5 a 10 años, y
+                            debe ser renovado para
+                            poder seguir utilizando sus beneficios internacionales.
+                        </p>
+                        <p invisible="name != 'Tarjeta de identidad'">
+                            La Tarjeta de identidad es un documento temporal que se expide a menores
+                            de edad. Su uso es
+                            obligatorio en trámites escolares, médicos, y actividades relacionadas
+                            con instituciones
+                            públicas o privadas. Aunque no tiene la misma validez que una cédula de
+                            ciudadanía, permite
+                            realizar algunas transacciones bancarias para menores, como la apertura
+                            de cuentas de
+                            ahorro. Debe ser renovada o reemplazada por la cédula de ciudadanía una
+                            vez alcanzada la
+                            mayoría de edad, y su validez es únicamente nacional.
+                        </p>
+                        <p invisible="name != 'VAT'">
+                            El VAT (Número de Identificación Fiscal para el IVA) es un número
+                            utilizado para la
+                            declaración y pago del impuesto al valor agregado en transacciones
+                            comerciales. Es
+                            obligatorio para empresas que venden productos o servicios sujetos a
+                            IVA, tanto a nivel
+                            nacional como en transacciones internacionales, especialmente dentro de
+                            la Unión Europea.
+                            Además, este número es verificado en sistemas de comercio
+                            transfronterizo para garantizar el
+                            cumplimiento de las normativas fiscales. El VAT debe ser actualizado y
+                            validado en cada país
+                            donde se use, dependiendo de las regulaciones locales.
+                        </p>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

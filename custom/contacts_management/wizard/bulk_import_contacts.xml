@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_contacts_bulk_import_wizard_form" model="ir.ui.view">
+            <field name="name">contacts.bulk.import.wizard.form</field>
+            <field name="model">contacts.bulk.import.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Importar Contactos desde Excel">
+                    <field name="show_instructions" invisible="1"/>
+                    <field name="show_upload" invisible="1"/>
+                    <field name="show_validation" invisible="1"/>
+                    <field name="has_errors" invisible="1"/>
+                    <sheet>
+
+                        <!-- PASO 1: INSTRUCCIONES -->
+                        <div invisible="not show_instructions">
+                            <separator string="Instrucciones"/>
+                            <p>Para realizar la <b class="text-primary">importación masiva de
+                                contactos</b> de forma correcta y evitar errores en el proceso,
+                                tenga en cuenta las siguientes indicaciones:</p>
+                            <ul>
+                                <li><b class="text-primary">Descargue la plantilla Excel:</b> Haga
+                                    clic <button name="action_download_template" type="object"
+                                        class="button_badge">aquí</button> para obtener la plantilla
+                                    con el formato requerido. La plantilla contiene dos pestañas:
+                                    <b class="text-primary">"Empresas"</b> y
+                                    <b class="text-primary">"Empleados"</b>. Puede usar una sola
+                                    pestaña o ambas en el mismo archivo; si no tiene contactos de
+                                    un tipo, simplemente deje esa pestaña vacía.</li>
+                                <li><b class="text-primary">Campos obligatorios — Pestaña
+                                    "Empresas":</b> Todos los siguientes campos son requeridos:
+                                    <b class="text-primary">Nombre</b>,
+                                    <b class="text-primary">Tipo de Identificación</b>,
+                                    <b class="text-primary">NIT / Número de Identificación</b>,
+                                    <b class="text-primary">País</b>,
+                                    <b class="text-primary">Departamento</b>,
+                                    <b class="text-primary">Ciudad</b> y
+                                    <b class="text-primary">Dirección</b>.
+                                    El <b class="text-primary">Teléfono</b> y el
+                                    <b class="text-primary">Correo Electrónico</b> son
+                                    opcionales.</li>
+                                <li><b class="text-primary">Campos obligatorios — Pestaña
+                                    "Empleados":</b> Todos los siguientes campos son requeridos:
+                                    <b class="text-primary">Nombre</b>,
+                                    <b class="text-primary">Tipo de Identificación</b>,
+                                    <b class="text-primary">NIT / Número de Identificación</b>,
+                                    <b class="text-primary">Empresa</b>,
+                                    <b class="text-primary">País</b>,
+                                    <b class="text-primary">Departamento</b>,
+                                    <b class="text-primary">Ciudad</b>,
+                                    <b class="text-primary">Dirección</b>,
+                                    <b class="text-primary">Correo Electrónico</b> y
+                                    <b class="text-primary">Título</b>.
+                                    El <b class="text-primary">Teléfono</b> es opcional.</li>
+                                <li><b class="text-primary">Columna "Empresa" (empleados):</b> Ingrese
+                                    el nombre exacto de la empresa a la que pertenece el empleado.
+                                    La empresa debe existir en el sistema <b class="text-primary">o</b>
+                                    estar incluida en la pestaña "Empresas" del mismo archivo que
+                                    está importando. En este último caso, las empresas se crearán
+                                    primero y los empleados quedarán vinculados automáticamente.</li>
+                                <li><b class="text-primary">Tipo de Identificación:</b> Use la
+                                    lista desplegable para seleccionar el tipo correcto (CC, NIT,
+                                    CE, PAS, TI, VAT). Si el tipo es
+                                    <b class="text-primary">NIT</b>, el número debe tener el formato
+                                    <b class="text-primary">XXXX.XXX.XXX-D</b> (ejemplo:
+                                    1234.567.890-1): debe comenzar y terminar con un dígito,
+                                    contener al menos dos puntos no consecutivos y máximo un
+                                    guion que no puede estar al final.</li>
+                                <li><b class="text-primary">Ubicación geográfica:</b> Utilice las
+                                    listas desplegables para seleccionar el
+                                    <b class="text-primary">País</b>,
+                                    <b class="text-primary">Departamento</b> y
+                                    <b class="text-primary">Ciudad</b>. Si ingresa una ciudad, el
+                                    sistema verificará que corresponda al departamento
+                                    indicado.</li>
+                                <li><b class="text-primary">Título (empleados):</b> Seleccione el
+                                    tratamiento del empleado (Sr., Sra., Srita., etc.) usando la
+                                    lista desplegable de la columna
+                                    <b class="text-primary">"Título"</b>.</li>
+                                <li><b class="text-primary">Números de identificación
+                                    únicos:</b> No se permiten dos contactos con el mismo número
+                                    de identificación, ni dentro de la misma pestaña ni entre las
+                                    dos pestañas. El sistema detectará y reportará los duplicados
+                                    antes de importar.</li>
+                                <li><b class="text-primary">Validación previa:</b> Una vez cargado
+                                    el archivo, el sistema validará todos los datos antes de
+                                    crear los contactos. Si encuentra errores, le mostrará un
+                                    reporte detallado indicando la pestaña y la fila exacta de
+                                    cada problema para que pueda corregir el archivo y volver
+                                    a cargarlo.</li>
+                            </ul>
+                            <p><b class="text-primary">Nota:</b> Verifique siempre que toda la
+                                información esté completa y correcta antes de confirmar la
+                                importación. Al guardar, se crearán automáticamente todos los
+                                contactos registrados en el archivo (primero las empresas y
+                                luego los empleados).</p>
+                        </div>
+
+                        <!-- PASO 2: SUBIR ARCHIVO -->
+                        <div invisible="not show_upload">
+                            <separator string="Subir Archivo"/>
+                            <p>Una vez haya completado la plantilla Excel con la información de los
+                                contactos, utilice el campo de abajo para cargar el archivo al
+                                sistema. El sistema verificará automáticamente que la información
+                                cumpla con los requisitos antes de permitir la importación.</p>
+                            <group>
+                                <group>
+                                    <field name="file_data" filename="file_name" string="Archivo"/>
+                                    <field name="file_name" invisible="1"/>
+                                </group>
+                            </group>
+                        </div>
+
+                        <!-- PASO 3: RESULTADO DE VALIDACION -->
+                        <div invisible="not show_validation">
+                            <separator string="Resultado"/>
+                            <field name="validation_html" widget="html" nolabel="1"/>
+                        </div>
+
+                    </sheet>
+                    <footer>
+                        <!-- Instrucciones -->
+                        <button string="Siguiente" type="object" name="action_next_to_upload"
+                            class="btn-primary"
+                            invisible="not show_instructions"/>
+                        <!-- Subir Archivo -->
+                        <button string="Volver" type="object" name="action_back_to_instructions"
+                            class="btn-primary"
+                            invisible="not show_upload"/>
+                        <button string="Confirmar" type="object" name="action_validate_file"
+                            class="btn-primary"
+                            invisible="not show_upload or not file_data"/>
+                        <!-- Validación -->
+                        <button string="Volver" type="object" name="action_back_to_upload"
+                            class="btn-primary"
+                            invisible="not show_validation"/>
+                        <button string="Guardar" type="object" name="action_process_file"
+                            class="btn-primary"
+                            invisible="not show_validation or has_errors"/>
+                        <button string="Cancelar" special="cancel" class="btn-secondary"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

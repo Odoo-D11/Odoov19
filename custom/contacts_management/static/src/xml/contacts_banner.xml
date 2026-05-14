@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+
+    <!-- =====================================================================
+         LISTA: Botones de la barra de acciones
+         ===================================================================== -->
+
+    <!-- Ocultar el botón "Nuevo" nativo de Odoo para res.partner en lista.
+         Nuestro controller ya renderiza su propio botón "Nuevo", por lo que
+         el botón por defecto debe suprimirse para evitar duplicados. -->
+    <t t-inherit="web.ListView" t-inherit-mode="extension"
+        t-name="contacts_management.HideDefaultListNewButton">
+        <!-- Mantener todas las condiciones originales de Odoo 19 + excluir res.partner.
+             Solo reemplazar el t-if del botón nativo, no quitar sus guardas. -->
+        <xpath expr="//button[contains(@class,'o_list_button_add')]" position="attributes">
+            <attribute name="t-if">props.resModel !== 'res.partner' and !editedRecord and activeActions.create and props.showButtons</attribute>
+        </xpath>
+    </t>
+
+    <!-- Template del Controller de lista: copia primary con botón nativo explícitamente oculto.
+         Las extensiones en modo "extension" no se propagan a copias primary de forma garantizada,
+         por eso ocultamos el botón nativo aquí directamente en lugar de depender de
+         HideDefaultListNewButton. -->
+    <t t-name="contacts_management.ContactsBannerListView" t-inherit="web.ListView">
+        <xpath expr="//button[contains(@class,'o_list_button_add')]" position="attributes">
+            <attribute name="t-if">false</attribute>
+        </xpath>
+    </t>
+
+    <!-- Botones personalizados de la vista lista -->
+    <t t-name="contacts_management.ContactsBannerDropdownButton">
+        <!-- Creador o Administrador: Nuevo + Importar -->
+        <div class="o_control_panel_main_buttons d-flex gap-1 d-empty-none d-print-none"
+            t-if="!editedRecord and activeActions.create and props.showButtons and state.isCreatorOrAdmin">
+            <button type="button" class="btn btn-primary o_list_button_add"
+                data-hotkey="c" t-on-click="onClickCreate" data-bounce-button="">
+                Nuevo
+            </button>
+            <button type="button" class="btn btn-secondary" data-hotkey="shift+i"
+                t-on-click="onClickImportContacts">
+                Importar
+            </button>
+        </div>
+        <!-- Consulta: solo Nuevo -->
+        <div
+            t-if="!editedRecord and activeActions.create and props.showButtons and !state.isCreatorOrAdmin"
+            class="o_list_buttons d-flex gap-1 d-empty-none align-items-baseline">
+            <button type="button" class="btn btn-primary o_list_button_add"
+                data-hotkey="c" t-on-click="onClickCreate" data-bounce-button="">
+                Nuevo
+            </button>
+        </div>
+    </t>
+
+    <!-- =====================================================================
+         KANBAN: Botones de la barra de acciones
+         ===================================================================== -->
+
+    <!-- Ocultar el botón "Nuevo" nativo de Odoo en la vista kanban para res.partner.
+         El slot control-panel-create-button renderiza el botón por defecto de Odoo;
+         lo reemplazamos condicionalmente para que solo aparezca en otros modelos. -->
+    <t t-inherit="web.KanbanView" t-inherit-mode="extension"
+        t-name="contacts_management.HideDefaultKanbanNewButton">
+        <xpath expr="//t[@t-set-slot='control-panel-create-button']" position="replace">
+            <!-- En Odoo 19 KanbanController no expone "activeActions" en scope del template;
+                 usa el getter "canCreate" (= props.archInfo.activeActions.create). -->
+            <t t-set-slot="control-panel-create-button"
+                t-if="props.resModel !== 'res.partner' and canCreate and props.showButtons">
+                <button type="button" class="btn btn-primary o-kanban-button-new"
+                    t-att-disabled="isNewButtonDisabled"
+                    accesskey="c" t-on-click="() => this.createRecord()"
+                    data-bounce-button="">
+                    New
+                </button>
+            </t>
+        </xpath>
+    </t>
+
+    <!-- Template de botones personalizados para la vista kanban.
+         Hereda web.KanbanView.Buttons en modo primario para controlar
+         completamente qué botones se muestran. -->
+    <t t-name="contacts_management.ContactsBannerKanbanButtons">
+        <!-- Creador o Administrador: Nuevo + Importar -->
+        <div class="d-empty-none d-flex align-items-baseline gap-1"
+            t-if="props.showButtons and state.isCreatorOrAdmin">
+            <button type="button" class="btn btn-primary o-kanban-button-new"
+                accesskey="c" t-on-click="() => this.createRecord()"
+                data-bounce-button="">
+                Nuevo
+            </button>
+            <button type="button" class="btn btn-secondary"
+                data-hotkey="shift+i"
+                t-on-click="onClickImportContacts">
+                Importar
+            </button>
+        </div>
+        <!-- Consulta: solo Nuevo -->
+        <div class="d-empty-none d-flex align-items-baseline gap-1"
+            t-if="props.showButtons and !state.isCreatorOrAdmin and canCreate">
+            <button type="button" class="btn btn-primary o-kanban-button-new"
+                accesskey="c" t-on-click="() => this.createRecord()"
+                data-bounce-button="">
+                Nuevo
+            </button>
+        </div>
+    </t>
+
+</templates>
