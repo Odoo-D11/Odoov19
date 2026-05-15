@@ -46,6 +46,7 @@ class PurchaseEnterprise(models.Model):
                 "state_id": city.state_id.id,
                 "country_id": city.state_id.country_id.id,
                 "email": 'facturas.proveedores@tsg.net.co',
+                "color": '#02143f'
             },
             {
                 "name": 'Novacom Net Sas',
@@ -56,6 +57,7 @@ class PurchaseEnterprise(models.Model):
                 "state_id": city.state_id.id,
                 "country_id": city.state_id.country_id.id,
                 "email": 'facturas.proveedores@novacom.net.co',
+                "color": '#343f93'
             },
             {
                 "name": 'Knox It Sas',
@@ -66,6 +68,7 @@ class PurchaseEnterprise(models.Model):
                 "state_id": city.state_id.id,
                 "country_id": city.state_id.country_id.id,
                 "email": 'facturas.proveedores@it4u.com.co',
+                "color": '#178e9b'
             },
             {
                 "name": 'UT Movilidad Tecnológica',
@@ -76,6 +79,7 @@ class PurchaseEnterprise(models.Model):
                 "state_id": city.state_id.id,
                 "country_id": city.state_id.country_id.id,
                 "email": 'facturas.proveedores@tsg.net.co',
+                "color": '#4871ec'
             },
             {
                 "name": 'UT Salud',
@@ -86,6 +90,7 @@ class PurchaseEnterprise(models.Model):
                 "state_id": city.state_id.id,
                 "country_id": city.state_id.country_id.id,
                 "email": 'facturas.proveedores@tsg.net.co',
+                "color": '#10adaf'
             },
             {
                 "name": 'It Business Talent Sas',
@@ -96,6 +101,7 @@ class PurchaseEnterprise(models.Model):
                 "state_id": city.state_id.id,
                 "country_id": city.state_id.country_id.id,
                 "email": 'facturas.proveedores@tsg.net.co',
+                "color": '#4d867c'
             },
             {
                 "name": 'UT Tecnologías Integradas 2023',
@@ -106,6 +112,7 @@ class PurchaseEnterprise(models.Model):
                 "state_id": city.state_id.id,
                 "country_id": city.state_id.country_id.id,
                 "email": 'facturas.proveedores@tsg.net.co',
+                "color": '#0d2639'
             },
             {
                 "name": 'Union Temporal H&T 2023',
@@ -126,6 +133,7 @@ class PurchaseEnterprise(models.Model):
                 "state_id": city.state_id.id,
                 "country_id": city.state_id.country_id.id,
                 "email": 'facturas.proveedores@tsg.net.co',
+                "color": '#4613ba'
             },
             {
                 "name": 'UT Alcaldia Bogota 2024',
@@ -136,6 +144,7 @@ class PurchaseEnterprise(models.Model):
                 "state_id": city.state_id.id,
                 "country_id": city.state_id.country_id.id,
                 "email": 'facturas.proveedores@tsg.net.co',
+                "color": '#32618b'
             },
             {
                 "name": 'UT SCB 2024 - Buenaventura',
@@ -146,6 +155,7 @@ class PurchaseEnterprise(models.Model):
                 "state_id": self.env['res.country.state'].search([('name', '=', 'Valle del Cauca')], limit=1).id,
                 "country_id": self.env['res.country'].search([('name', '=', 'Colombia')], limit=1).id,
                 "email": 'facturas.proveedores@tsg.net.co',
+                "color": '#183263'
             },
             {
                 "name": 'UT SCJ 2024 - Jamundi',
@@ -156,6 +166,7 @@ class PurchaseEnterprise(models.Model):
                 "state_id": self.env['res.country.state'].search([('name', '=', 'Valle del Cauca')], limit=1).id,
                 "country_id": self.env['res.country'].search([('name', '=', 'Colombia')], limit=1).id,
                 "email": 'facturas.proveedores@tsg.net.co',
+                "color": '#767cd6'
             },
             {
                 "name": 'Consorcio Llano Seguro 2024',
@@ -166,6 +177,7 @@ class PurchaseEnterprise(models.Model):
                 "state_id": self.env['res.country.state'].search([('name', '=', 'Casanare')], limit=1).id,
                 "country_id": self.env['res.country'].search([('name', '=', 'Colombia')], limit=1).id,
                 "email": 'facturas.proveedores@tsg.net.co',
+                "color": '#ffe57d'
             },
             {
                 "name": 'UT Servicios Global TIC 2024',
@@ -196,6 +208,7 @@ class PurchaseEnterprise(models.Model):
                 "state_id": city.state_id.id,
                 "country_id": city.state_id.country_id.id,
                 "email": 'facturas.proveedores@tsg.net.co',
+                "color": '#1d74da'
             },
             {
                 "name": 'UT Seguridad Electrónica Palacio',
@@ -206,6 +219,7 @@ class PurchaseEnterprise(models.Model):
                 "state_id": city.state_id.id,
                 "country_id": city.state_id.country_id.id,
                 "email": 'facturas.proveedores@tsg.net.co',
+                "color": '#545978'
             },
             {
                 "name": 'UT Seguridad Ibague',
@@ -216,6 +230,7 @@ class PurchaseEnterprise(models.Model):
                 "state_id": city.state_id.id,
                 "country_id": city.state_id.country_id.id,
                 "email": 'facturas.proveedores@tsg.net.co',
+                "color": '#104c99'
             },
             {
                 "name": 'UT Centro de Datos 2025',
@@ -226,6 +241,7 @@ class PurchaseEnterprise(models.Model):
                 "state_id": city.state_id.id,
                 "country_id": city.state_id.country_id.id,
                 "email": 'facturas.proveedores@tsg.net.co',
+                "color": '#1d74da'
             }
         ]
         for enterprise_data in required_enterprise:

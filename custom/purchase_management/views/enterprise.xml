@@ -6,7 +6,7 @@
             <field name="name">purchase.enterprise.list</field>
             <field name="model">purchase.enterprise</field>
             <field name="arch" type="xml">
-                <list string="Empresas">
+                <list string="Empresas" duplicate="false">
                     <field name="name" placeholder="Ej. Dunder Mifflin S.A., ACME Corp., etc..."/>
                 </list>
             </field>
