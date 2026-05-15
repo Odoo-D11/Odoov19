@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <t t-name="expense.DisplacementTimelineWidget" owl="1">
+        <div class="o_field_Timeline">
+            <div class="timeline-container">
+                <div class="timeline-header">
+                    <div class="timeline-header-top">
+                        <h3 class="timeline-title">Desplazamientos</h3>
+                        <div class="timeline-navigation">
+                            <div class="timeline-nav-group">
+                                <t t-if="state.trips.length > 1">
+                                    <span class="timeline-counter" t-esc="getCounterText()"/>
+                                    <button
+                                        class="btn btn-sm btn-outline-secondary timeline-nav-btn"
+                                        t-on-click="previousTrip"
+                                        t-att-disabled="state.currentIndex === 0">
+                                        <i class="fa fa-chevron-left"/>
+                                    </button>
+                                    <button
+                                        class="btn btn-sm btn-outline-secondary timeline-nav-btn"
+                                        t-on-click="nextTrip"
+                                        t-att-disabled="state.currentIndex === state.trips.length - 1">
+                                        <i class="fa fa-chevron-right"/>
+                                    </button>
+                                </t>
+
+                                <!-- Botón de agregar al final -->
+                                <button class="btn btn-sm btn-primary timeline-add-btn"
+                                    t-on-click="onAddTrip" title="Nuevo registro">
+                                    <i class="fa fa-plus"/>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-content">
+                    <t t-if="state.trips.length">
+                        <div class="timeline-horizontal-container">
+                            <t t-set="trip" t-value="getCurrentTrip()"/>
+                            <div class="timeline-business-card"
+                                t-on-click="(ev) => this.onOpenTrip(trip.id)">
+
+                                <!-- Encabezado: título + fecha + eliminar -->
+                                <div class="tbc-header">
+                                    <div class="tbc-meta">
+                                        <span class="tbc-title">Resumen</span>
+                                        <span class="tbc-date">
+                                            <t t-if="trip.initial_date and trip.final_date"
+                                                t-esc="formatDateRange(trip.initial_date, trip.final_date)"/>
+                                            <t t-elif="trip.initial_date"
+                                                t-esc="formatDate(trip.initial_date)"/>
+                                        </span>
+                                    </div>
+                                    <button class="tbc-delete"
+                                        t-on-click.stop="(ev) => this.onDeleteTrip(trip.id)"
+                                        title="Eliminar">
+                                        <i class="fa fa-trash"/>
+                                    </button>
+                                </div>
+
+                                <!-- Ruta: nombre ciudad (grande) con etiqueta debajo -->
+                                <div class="tbc-route">
+                                    <div class="tbc-city">
+                                        <span class="tbc-city-name"
+                                            t-esc="trip.origin_id[1]"
+                                            t-att-title="trip.origin_id[1]"/>
+                                        <span class="tbc-city-label">Origen</span>
+                                    </div>
+                                    <div class="tbc-arrow">
+                                        <i class="fa fa-long-arrow-right"/>
+                                    </div>
+                                    <div class="tbc-city tbc-city--right">
+                                        <span class="tbc-city-name"
+                                            t-esc="trip.destination_id[1]"
+                                            t-att-title="trip.destination_id[1]"/>
+                                        <span class="tbc-city-label">Destino</span>
+                                    </div>
+                                </div>
+
+                                <!-- Información secundaria: stats verticales -->
+                                <div class="tbc-info">
+                                    <div class="tbc-stat" t-if="trip.initial_date and trip.final_date">
+                                        <span class="tbc-stat-value" t-esc="getDuration(trip.initial_date, trip.final_date)"/>
+                                        <span class="tbc-stat-label">Duración</span>
+                                    </div>
+                                    <div class="tbc-stat" t-if="trip.services.length > 0">
+                                        <span class="tbc-stat-value">$<t t-esc="formatCurrency(getTripTotalAmount(trip))"/></span>
+                                        <span class="tbc-stat-label">Total</span>
+                                    </div>
+                                    <div class="tbc-stat" t-if="trip.modality_type">
+                                        <span class="tbc-stat-value" t-esc="trip.modality_type === 'one_way' ? 'Solo ida' : 'Ida y vuelta'"/>
+                                        <span class="tbc-stat-label">Modalidad</span>
+                                    </div>
+                                    <div class="tbc-stat" t-if="trip.category_id and trip.category_id[1] === '[TIQ] Tiquetes y vuelos' and trip.ticket_id">
+                                        <span class="tbc-stat-value" t-esc="trip.ticket_id[1]"/>
+                                        <span class="tbc-stat-label">Tiquete</span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </t>
+                    <t t-elif="state.loading and hasDisplacements()">
+                        <div class="timeline-loading">
+                            <div class="timeline-loading-dots">
+                                <span class="dot"/>
+                                <span class="dot"/>
+                                <span class="dot"/>
+                            </div>
+                            <span>Cargando...</span>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div class="timeline-empty">
+                            <div class="timeline-empty-icon">
+                                <i class="fa fa-suitcase"/>
+                            </div>
+                            <h4 class="timeline-empty-title">¡Crea tu primer desplazamiento!</h4>
+                            <p class="timeline-empty-description"> Aún no hay desplazamientos
+                                registrados para esta solicitud. <br/> Haz clic en el botón <strong>
+                                "+"</strong> para agregar tu primer desplazamiento y comenzar a
+                                gestionar tus viáticos o tiquetes de viaje. </p>
+                        </div>
+                    </t>
+                </div>
+            </div>
+
+        </div>
+    </t>
+</templates>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!--IR_SEQUENCE
+            (CATEGORIA VIATICOS)-->
+
+        <record id="seq_expense_category" model="ir.sequence">
+            <field name="name">Categoría [VIAT] Viáticos (Alimentación, Hospedaje, etc.)</field>
+            <field name="code">expense.category.viatic</field>
+            <field name="prefix">/</field>
+            <field name="padding">4</field>
+        </record>
+
+        <!--IR_SEQUENCE
+            (CATEGORIA TIQUETES)-->
+
+        <record id="seq_expense_category_ticket" model="ir.sequence">
+            <field name="name">Categoría [TIQ] Tiquetes y vuelos</field>
+            <field name="code">expense.category.ticket</field>
+            <field name="prefix">/</field>
+            <field name="padding">4</field>
+        </record>
+
+        <!--IR_SEQUENCE EXPENSE.REFUND
+            (RET)-->
+
+        <record id="seq_expense_refund" model="ir.sequence">
+            <field name="name">Reembolso [RET]</field>
+            <field name="code">expense.refund</field>
+            <field name="prefix">/</field>
+            <field name="padding">4</field>
+        </record>
+
+    </data>
+</odoo>

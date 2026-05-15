@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_expense_service_list" model="ir.ui.view">
+            <field name="name">expense.service.list</field>
+            <field name="model">expense.service</field>
+            <field name="arch" type="xml">
+                <list string="Servicios" editable="bottom">
+                    <field name="name"
+                        placeholder="Ej. Hospedaje, Lavandería, Alimentación, etc."/>
+                </list>
+            </field>
+        </record>
+
+    </data>
+</odoo>

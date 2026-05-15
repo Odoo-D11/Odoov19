@@ -1,0 +1,15 @@
+.table_project_identifier table thead > tr > th[data-name="project_id"] {
+    width: 80% !important;
+}
+
+.table_project_identifier table thead > tr > th[data-name="prefix"] {
+    width: 10% !important;
+}
+
+.table_project_identifier table thead > tr > th[data-name="team_id"] {
+    width: 10% !important;
+}
+
+.o_form_displacement_pay footer button.o_form_button_save_new {
+    display: none;
+}

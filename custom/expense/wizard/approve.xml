@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="expense_approve_wizard" model="ir.ui.view">
+            <field name="name">expense.approve.wizard</field>
+            <field name="model">expense.approve.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Aprobar viático">
+                    <field name="expense_id" invisible="1"/>
+                    <field name="edit_value" invisible="1"/>
+                    <field name="reject" invisible="1"/>
+                    <field name="pending_request" invisible="1"/>
+                    <field name="establish_company" invisible="1"/>
+                    <field name="simple_approve" invisible="1"/>
+                    <field name="show_edit_instructions" invisible="1"/>
+                    <field name="show_displacement_editing" invisible="1"/>
+                    <field name="temp_services_data" invisible="1"/>
+                    <field name="category_id" invisible="1"
+                        options="{'no_create': True, 'no_open': True}"/>
+                    <sheet>
+                        <separator string="Instrucciones para aprobar"
+                            invisible="edit_value or reject or establish_company"/>
+                        <separator string="Instrucciones para editar servicios"
+                            invisible="not show_edit_instructions"/>
+                        <separator string="Desplazamientos"
+                            invisible="not show_displacement_editing"/>
+                        <separator string="Empresa responsable"
+                            invisible="not establish_company or (not simple_approve and not edit_value)"/>
+                        <separator string="Rechazar solicitud"
+                            invisible="not reject"/>
+                        <div class="mb-3"
+                            invisible="edit_value or reject or establish_company"> Lea las
+                            instrucciones y seleccione una de las siguientes opciones disponibles
+                            para gestionar la solicitud correspondiente al empleado <b>
+                                <field name="employee_id" readonly="1" class="text-primary"
+                                    options="{'no_create': True, 'no_open': True}"
+                                    style="margin-bottom: 0 !important; font-weight: bold;"/>
+                            </b>
+                            por un valor de <b class="text-primary"> $ <field
+                                    name="requested_amount" readonly="1"
+                                    style="margin-bottom: 0 !important; font-weight: bold;"/>
+                            </b>
+                        </div>
+                        <p invisible="not show_displacement_editing">
+                            Los desplazamientos representan los viajes programados por el empleado
+                            para los cuales se han solicitado viáticos. Cada desplazamiento puede
+                            incluir múltiples servicios asociados, como transporte, alojamiento,
+                            alimentación, entre otros. Al seleccionar un desplazamiento, podrá ver
+                            y editar los servicios específicos relacionados con ese viaje, ajustando
+                            cantidades, precios y tipos de servicios según sea necesario.
+                        </p>
+                        <div class="mb-3"
+                            invisible="not show_edit_instructions">
+                            <p>
+                                <strong>¿Cómo editar los servicios de la solicitud?</strong> En el
+                                siguiente paso podrá modificar los servicios asociados a cada
+                                desplazamiento de la solicitud. Este proceso le permitirá ajustar
+                                cantidades, precios y tipos de servicios según las necesidades
+                                específicas de cada viaje. Siga estas instrucciones detalladas: </p>
+                            <ul>
+                                <li>Seleccione el <b class="text-primary">desplazamiento</b> que
+                                    desea editar de la lista desplegable. Esta lista muestra todos
+                                    los viajes programados con sus fechas y destinos.</li>
+                                <li>Se mostrarán automáticamente los <b class="text-primary">servicios
+                                    actuales</b> del desplazamiento seleccionado en una tabla
+                                    editable donde podrá ver el detalle completo.</li>
+                                <li>Edite los servicios según sea necesario: modifique la <b
+                                        class="text-primary">
+                                        cantidad</b> de días, ajuste el <b
+                                        class="text-primary">precio unitario</b> por servicio, o
+                                    cambie el tipo de servicio si es requerido.</li>
+                                <li>Una vez completadas las modificaciones, presione el botón <b
+                                        class="text-primary">Confirmar</b> para guardar
+                                    permanentemente los cambios del desplazamiento editado. Esto
+                                    actualizará los valores en el sistema.</li>
+                                <li>Repita el proceso para <b class="text-primary">todos los
+                                    desplazamientos</b> que necesite modificar. Puede cambiar entre
+                                    diferentes viajes y editar sus servicios de forma independiente.</li>
+                                <li><b class="text-primary">Importante:</b> Debe confirmar los
+                                    cambios de cada desplazamiento individualmente antes de
+                                    continuar con el siguiente paso. Los cambios no confirmados se
+                                    perderán.</li>
+                                <li>Puede agregar nuevos servicios usando el botón "Agregar línea" o
+                                    eliminar servicios existentes si no son necesarios para el
+                                    viaje.</li>
+                                <li>Verifique que todos los campos obligatorios estén completos: <b
+                                        class="text-primary">nombre del servicio</b>, <b
+                                        class="text-primary">cantidad</b> y <b class="text-primary">precio
+                                    unitario</b>.</li>
+                            </ul>
+                            <p>
+                                <b class="text-primary">Nota:</b> El valor total de la solicitud se
+                                actualizará automáticamente conforme confirme los cambios en cada
+                                desplazamiento. Esto le permitirá ver el impacto financiero de sus
+                                modificaciones en tiempo real.</p>
+                        </div>
+                        <div class="mb-3" invisible="not reject"> Para rechazar esta solicitud, es
+                            necesario que indique el motivo y la justificación correspondiente. Esta
+                            información será enviada al solicitante junto con la notificación de
+                            rechazo, permitiendo que comprenda las razones de la decisión. Por
+                            favor, asegúrese de ser claro y específico en su explicación para evitar
+                            malentendidos y facilitar futuras gestiones. <span
+                                invisible="category_id != 2">Solicitud correspondiente al empleado <b>
+                                    <field name="employee_id" readonly="1" class="text-primary"
+                                        options="{'no_create': True, 'no_open': True}"
+                                        style="margin-bottom: 0 !important; font-weight: bold;"/>
+                                </b>
+                            por un valor de <b class="text-primary"> $ <field
+                                        name="requested_amount" readonly="1"
+                                        style="margin-bottom: 0 !important; font-weight: bold;"/>
+                                </b></span>
+                        </div>
+                        <div class="mb-3" invisible="not establish_company"> Para completar la
+                            aprobación de la solicitud del empleado <b>
+                                <field name="employee_id" readonly="1" class="text-primary"
+                                    options="{'no_create': True, 'no_open': True}"
+                                    style="margin-bottom: 0 !important; font-weight: bold;"/>
+                            </b>,
+                            es necesario especificar qué <b class="text-primary">empresa será
+                            responsable del pago</b> por un valor de <b
+                                class="text-primary"> $ <field name="requested_amount" readonly="1"
+                                    invisible="not simple_approve"
+                                    style="margin-bottom: 0 !important; font-weight: bold;"/>  <field
+                                    name="approved_amount" readonly="1"
+                                    invisible="not edit_value"
+                                    style="margin-bottom: 0 !important; font-weight: bold;"/>
+                            </b>.
+                            Esta información es fundamental para el registro contable y la gestión
+                            financiera correcta. Por favor, seleccione la empresa correspondiente en
+                            el campo a continuación. </div>
+                        <ul invisible="edit_value or reject or establish_company">
+                            <li> Si desea aprobar la solicitud en <b class="text-primary">su
+                                totalidad</b> debe seleccionar la opción <b class="text-primary">
+                                "Aprobar"</b>, al seleccionar esta opción el sistema enviará un
+                                correo al creador de la solicitud notificando que ha sido aprobada. </li>
+                            <li> Si va a asignar un monto menor al que se requiere para la solicitud
+                                debe seleccionar la opción <b class="text-primary">"Editar"</b>, al
+                                seleccionar esta opción el sistema le mostrará un campo para que
+                                ingrese el monto que va a aprobar, asi mismo pidiéndole que ingrese
+                                una justificación de porque se está aprobando un monto menor. </li>
+                            <li> Si desea rechazar la solicitud debe seleccionar la opción <b
+                                    class="text-primary">
+                                    "Rechazar"</b>, al seleccionar esta opción el sistema le
+                                mostrará un campo para que ingrese un motivo y justificación del
+                                porqué se está rechazando la solicitud. </li>
+                            <li> La solicitud requiere especificar qué <b class="text-primary">
+                                empresa será responsable del pago</b>, tanto en las opciones de <b
+                                    class="text-primary">"Aprobar"</b> como <b class="text-primary">
+                                "Editar"</b>, el sistema mostrará un campo adicional para que
+                                seleccione la empresa correspondiente que asumirá el costo del
+                                gasto. </li>
+                            <li invisible="pending_request == 0"> Actualmente el empleado tiene <b
+                                    class="text-primary">
+                                    <field name="pending_request" readonly="1"
+                                        style="margin-bottom: 0 !important; font-weight: bold;"/>
+                                solicitudes pendientes </b> por legalizar, se recomienda que no se
+                                apruebe la solicitud hasta que el empleado legalice todas las
+                                solicitudes y asi evitar inconvenientes con la empresa. </li>
+                            <li invisible="bag == 0"> Actualmente el empleado tiene una bolsa de <b
+                                    class="text-primary">$ <field name="bag" readonly="1"
+                                        style="margin-bottom: 0 !important; font-weight: bold;"/>
+                                </b>
+                            </li>
+                        </ul>
+                        <group invisible="not establish_company">
+                            <field name="enterprise_id" class="text-primary" string="Nombre"
+                                placeholder="Ej. Tsg The IT Experts Sas, Novacom Net Sas, etc.."
+                                options="{'no_create': True, 'no_open': True}"/>
+                        </group>
+                        <field name="justification"
+                            invisible="not establish_company or not edit_value"
+                            placeholder="Escriba la justificación..."/>
+
+                        <group invisible="not show_displacement_editing">
+                            <field name="displacement_id" class="text-primary"
+                                string="Nombre"
+                                placeholder="Ej. Bogotá - Medellín (03/05/2024 - 05/05/2024), etc.."
+                                domain="[('expense_id', '=', expense_id)]"
+                                options="{'no_create': True, 'no_open': True}"/>
+                        </group>
+                        <separator string="Servicios" invisible="not show_displacement_editing"/>
+                        <p invisible="not show_displacement_editing"> Edita los servicios asociados
+                            al desplazamiento seleccionado. Puedes especificar el tipo de servicio,
+                            como transporte, alojamiento, etc. Asegúrate de completar todos los
+                            detalles relevantes para cada servicio. </p>
+                        <field name="service_ids" invisible="not show_displacement_editing">
+                            <list nolabel="1" editable="bottom">
+                                <field name="service_id" string="Nombre"
+                                    placeholder="Ej. Alojamiento, Alimentación, Transporte, etc.."
+                                    options="{'no_create': True, 'no_open': True}"/>
+                                <field name="quantity" placeholder="Ej. 1, 2, 3, etc.."/>
+                                <field name="unit_price" placeholder="Ej. 100000, 200000, etc.."/>
+                                <field name="subtotal" placeholder="Ej. 100000, 200000, etc.."
+                                    readonly="1"/>
+                            </list>
+                        </field>
+                        <group invisible="not reject">
+                            <field name="rejection_reason_id"
+                                placeholder="Ej. Duplicado, Información incompleta, etc.."
+                                options="{'no_create': True, 'no_open': True}"/>
+                        </group>
+                        <field name="rejection_justification" invisible="not reject"
+                            placeholder="Escriba la justificación..."/>
+                    </sheet>
+                    <footer>
+                        <button name="action_back_to_instructions" string="Volver" type="object"
+                            class="btn-primary"
+                            invisible="not show_displacement_editing and not establish_company and not show_edit_instructions and not reject"/>
+                        <button name="action_approve_request" string="Aprobar"
+                            type="object" class="btn-primary"
+                            invisible="edit_value or reject or establish_company"/>
+                        <button name="action_edit_value" string="Editar"
+                            type="object" class="btn-primary"
+                            invisible="edit_value or reject or establish_company"/>
+                        <button name="action_show_reject" string="Rechazar" type="object"
+                            class="btn-primary"
+                            invisible="edit_value or reject or establish_company"/>
+
+                        <!-- Botones para el flujo de edición -->
+                        <button name="action_next_to_displacement_editing" string="Siguiente"
+                            type="object"
+                            class="btn-primary" invisible="not show_edit_instructions"/>
+                        <button name="action_confirm_displacement_changes"
+                            string="Confirmar" type="object" class="btn btn-primary"
+                            invisible="not show_displacement_editing"/>
+                        <button name="action_next_to_final_approval" string="Siguiente"
+                            type="object"
+                            class="btn-primary"
+                            invisible="not show_displacement_editing"/>
+
+                        <!-- Botón final de guardar -->
+                        <button name="action_approve_request" string="Guardar"
+                            type="object" class="btn-primary" invisible="not establish_company"/>
+                        <button name="action_reject" string="Guardar" type="object"
+                            class="btn-primary" invisible="not reject"/>
+
+                        <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

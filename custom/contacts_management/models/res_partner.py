@@ -19,9 +19,20 @@ class InheritedResPartner(models.Model):
     """CHAR"""
     normalized_name = fields.Char(
         string='Nombre normalizado', compute='_compute_normalized_name', index=True, store=True)
+    display_name = fields.Char(string='Nombre para mostrar', compute='_compute_display_name')
     """BOOLEAN"""
     is_business = fields.Boolean(string='Empresa', default=False)
     is_employee = fields.Boolean(string='Empleado', default=False)
+
+    @api.depends('name', 'is_business', 'is_employee')
+    def _compute_display_name(self):
+        for record in self:
+            if record.is_business and not record.is_employee:
+                record.display_name = record.name
+            elif record.is_employee and not record.is_business:
+                record.display_name = f"{record.parent_id.name}, {record.name}" if record.parent_id else record.name
+            else:
+                record.display_name = record.name
 
 
     @api.model_create_multi

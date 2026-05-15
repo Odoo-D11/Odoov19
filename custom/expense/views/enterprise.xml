@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_expense_enterprise_list" model="ir.ui.view">
+            <field name="name">expense.enterprise.list</field>
+            <field name="model">expense.enterprise</field>
+            <field name="arch" type="xml">
+                <list string="Empresas de Gastos (TSG)" duplicate="false" editable="bottom">
+                    <field name="name"
+                        placeholder="Ej. Tsg The IT Experts Sas, Novacom Net Sas, etc.."/>
+                    <field name="prefix" placeholder="Ej. TSG"/>
+                </list>
+            </field>
+        </record>
+
+    </data>
+</odoo>

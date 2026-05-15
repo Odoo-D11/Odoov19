@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <data>
+
+    <record id="view_expense_list" model="ir.ui.view">
+      <field name="name">expense.list</field>
+      <field name="model">expense.expense</field>
+      <field name="arch" type="xml">
+        <list string="Gastos (TSG)" duplicate="false" sample="1">
+          <field name="reference"/>
+          <field name="subject"/>
+          <field name="display_user" string="Empleado"/>
+          <field name="state"/>
+        </list>
+      </field>
+    </record>
+
+    <record id="view_expense_form" model="ir.ui.view">
+      <field name="name">expense.form</field>
+      <field name="model">expense.expense</field>
+      <field name="arch" type="xml">
+        <form string="Gastos (TSG)" duplicate="false">
+          <field name="rejected" invisible="1"/>
+          <field name="approved_amount" invisible="1"/>
+          <field name="enterprise_id" invisible="1" options="{'no_create': True, 'no_open': True}"/>
+          <field name="legalized_amount" invisible="1"/>
+          <field name="attached_evidence" invisible="1"/>
+          <field name="attached_reimbursement" invisible="1"/>
+          <!--CATEGORIA
+          VIATICOS (HOSPEDAJE, TRANSPORTE, ALIMENTACION)-->
+          <header invisible="category_id == 1 or not id">
+            <button
+              name="action_send_for_approval" type="object" groups="expense.group_creator_expense"
+              string="Enviar a aprobación" class="btn-primary"
+              invisible="state not in ('draft','rejected') or not id"/>
+            <button
+              name="action_approve" type="object"
+              groups="expense.group_accounting_expense,expense.group_manager_expense"
+              string="Aprobar" class="btn-primary"
+              invisible="state != 'to_approve'"/>
+            <button name="action_pay" type="object"
+              string="Pagar" class="btn-primary"
+              groups="expense.group_treasury_expense,expense.group_manager_expense"
+              invisible="state != 'approved'"/>
+            <button name="action_attach_evidence" type="object"
+              string="Adjuntar evidencia" class="btn-primary"
+              groups="expense.group_employee_expense,expense.group_manager_expense"
+              invisible="state != 'to_legalize' or attached_evidence"/>
+            <button name="action_reimburse" type="object"
+              string="Reembolsar" class="btn-primary"
+              groups="expense.group_employee_expense,expense.group_manager_expense"
+              invisible="state != 'to_legalize' or attached_reimbursement"/>
+            <button name="action_approve_legalization" type="object"
+              string="Aprobar" class="btn-primary"
+              groups="expense.group_accounting_expense,expense.group_manager_expense"
+              invisible="state != 'legalized'"/>
+            <button name="action_cause_request" type="object"
+              string="Causar" class="btn-primary"
+              groups="expense.group_accounting_expense,expense.group_manager_expense"
+              invisible="state != 'approved_evidence'"/>
+            <button name="action_close_request" type="object"
+              string="Finalizar" class="btn-primary"
+              groups="expense.group_accounting_expense,expense.group_manager_expense"
+              invisible="state != 'caused'"/>
+            <button name="action_view_attached_evidence" type="object"
+              string="Evidencias" class="btn-secondary"
+              groups="expense.group_employee_expense,expense.group_accounting_expense,expense.group_treasury_expense,expense.group_management_expense"
+              invisible="not attached_evidence and not attached_reimbursement"/>
+            <button name="action_cancel" type="object"
+              string="Cancelar" class="btn-secondary" groups="expense.group_creator_expense"
+              invisible="state not in ('to_approve','approved')"/>
+          </header>
+          <!--CATEGORIA
+          TIQUETES Y VUELOS-->
+          <header invisible="category_id == 2 or not id">
+            <button
+              name="action_send_for_approval" type="object"
+              groups="expense.group_creator_expense,expense.group_manager_expense"
+              string="Enviar a aprobación" class="btn-primary"
+              invisible="state not in ('draft','rejected') or not id"/>
+            <button name="action_approve_ticket" type="object"
+              groups="expense.group_management_expense,expense.group_manager_expense"
+              string="Aprobar" class="btn-primary"
+              invisible="state != 'to_approve'"/>
+            <button name="action_pay" type="object"
+              groups="expense.group_treasury_expense,expense.group_manager_expense"
+              string="Pagar" class="btn-primary"
+              invisible="state != 'approved'"/>
+            <button name="action_reject_ticket" type="object"
+              groups="expense.group_management_expense,expense.group_manager_expense,expense.group_treasury_expense"
+              string="Rechazar" class="btn-secondary"
+              invisible="state not in ('to_approve','approved')"/>
+          </header>
+          <div class="alert alert-info" role="alert"
+            invisible="displacement_ids or rejected">
+            <i class="fa fa-info-circle me-1" title="Información"/>
+            <span>La solicitud se encuentra en el estado <strong>
+                <field name="state" readonly="1" nolabel="1" style="text-transform: lowercase;"/>. </strong>
+            </span>
+          </div>
+          <div class="alert alert-info" role="alert"
+            invisible="not displacement_ids or not id or rejected or category_id != 2">
+            <i class="fa fa-info-circle me-1" title="Información"/> La solicitud <span
+              invisible="reference == 'Nuevo'">con referencia <strong>
+                <field name="reference" readonly="1" nolabel="1"/>
+              </strong>
+            </span>
+            se encuentra actualmente en el estado <strong>
+              <field name="state" readonly="1" nolabel="1" style="text-transform: lowercase;"/>, </strong>
+            <!-- Flujo cuando hay valor legalizado -->
+            <span
+              invisible="legalized_amount == 0">
+              <!-- Caso 0: solo solicitado y legalizado, valores distintos -->
+              <span
+                invisible="legalized_amount == 0 or approved_amount != 0 or requested_amount == legalized_amount">
+            con un valor solicitado de <strong>$ <field name="requested_amount" readonly="1"
+                    nolabel="1"/>
+                </strong> y un valor legalizado de <strong>$ <field
+                    name="legalized_amount" readonly="1" nolabel="1"/>
+                </strong>. </span>
+              <!-- Caso 1: solicitado == legalizado -->
+              <span invisible="legalized_amount == 0 or requested_amount != legalized_amount"> con
+            un valor solicitado y legalizado de <strong>$ <field name="legalized_amount"
+                    readonly="1" nolabel="1"/>
+                </strong>. </span>
+              <!-- Caso 2: aprobado == legalizado (y distinto de solicitado) -->
+              <span
+                invisible="legalized_amount == 0 or approved_amount != legalized_amount or requested_amount == legalized_amount">
+            con un valor aprobado y legalizado de <strong>$ <field name="legalized_amount"
+                    readonly="1" nolabel="1"/>
+                </strong>. </span>
+              <!-- Caso 3: detalle completo -->
+              <span
+                invisible="legalized_amount == 0 or requested_amount == legalized_amount or approved_amount == legalized_amount">
+            con un valor solicitado de <strong>$ <field name="requested_amount" readonly="1"
+                    nolabel="1"/>
+                </strong>, de los cuales se aprobó <strong>$ <field
+                    name="approved_amount" readonly="1" nolabel="1"/>
+                </strong>, y
+            posteriormente se legalizó <strong>$ <field name="legalized_amount" readonly="1"
+                    nolabel="1"/>
+                </strong>. </span>
+            </span>
+            <!-- Flujo normal: sin valor legalizado -->
+            <span
+              invisible="legalized_amount != 0">con un valor solicitado de <strong>$ <field
+                  name="requested_amount" readonly="1" nolabel="1"/>
+              </strong>
+              <span
+                invisible="approved_amount != 0">.</span>
+              <span invisible="approved_amount == 0">, de
+            los cuales se aprobó <strong>$ <field name="approved_amount" readonly="1" nolabel="1"/>
+                </strong>
+            . </span>
+            </span>
+            <span invisible="not enterprise_id"> La empresa responsable
+            del pago es <strong>
+                <field name="enterprise_id" readonly="1" nolabel="1"
+                  options="{'no_create': True, 'no_open': True}"/>
+              </strong>. </span>
+            Esta información es relevante para el ciclo de vida de la solicitud. </div>
+          <div class="alert alert-info" role="alert"
+            invisible="not displacement_ids or not id or rejected or category_id != 1">
+            <i class="fa fa-info-circle me-1" title="Información"/>
+            <span>La solicitud <span
+                invisible="reference == 'Nuevo'">con referencia <strong>
+                  <field name="reference" readonly="1" nolabel="1"/>
+                </strong>
+              </span>
+              se encuentra actualmente en el estado <strong>
+                <field name="state" readonly="1" nolabel="1" style="text-transform: lowercase;"/>
+              </strong>.
+              Esta información es relevante para el ciclo de vida de la solicitud. </span>
+          </div>
+          <div class="alert alert-danger" role="alert"
+            invisible="not rejected or state not in ('draft', 'to_legalize')">
+            <i class="fa fa-warning me-1" title="Error"/>
+            <span>La solicitud fue <strong>
+                rechazada.</strong> Por favor, revise el último mensaje del registro para conocer el
+              motivo y la justificación del rechazo. Si tiene dudas, comuníquese con el área
+              encargada. </span>
+          </div>
+          <sheet>
+            <!-- Layout de dos columnas -->
+            <div class="row">
+              <!-- Columna izquierda: Campos del formulario -->
+              <div class="col-lg-7">
+                <span style="font-weight: 500; color: #212529;">
+                  Asunto
+                </span>
+                <div class="form-title-responsive mb-4 text-truncate">
+                  <h1>
+                    <field name="subject"
+                      placeholder="Ej. Reunión con cliente, Viaje a Barranquilla, etc." nolabel="1"
+                      class="o_field_char o_field_title"/>
+                  </h1>
+                  <div>
+                    <field name="category_id" class="w-100 text-primary"
+                      options="{'no_create': True, 'no_open': True}"
+                      placeholder="¿A qué categoría pertenece esta solicitud? Ej. Tiquetes y vuelos, Viáticos (Alimentación, etc..)"/>
+                  </div>
+                </div>
+                <group>
+                  <field name="partner_id" options="{'no_create': True, 'no_open': True}"
+                    invisible="category_id != 1" required="category_id == 1"
+                    class="text-primary" string="Contacto" widget="ExpPartnerPopup"
+                    placeholder="Ej. Abigail Peterson, Alexander Pierce, etc."/>
+                  <field name="employee_id" options="{'no_create': True, 'no_open': True}"
+                    invisible="category_id != 2 and category_id" required="category_id != 1"
+                    class="text-primary" widget="ExpAvatarPopup"
+                    placeholder="Ej. Abigail Peterson, Alexander Pierce, etc."/>
+                  <field name="project_id" options="{'no_create': True, 'no_open': True}"
+                    placeholder="Ej. Administrativo - 30, Kreivo-18888, etc."/>
+                  <field name="creation_date" placeholder="Ej. 26/10/2025"/>
+                </group>
+                <div class="mt-3">
+                  <field name="observation" placeholder="Observaciones..." nolabel="1"/>
+                </div>
+              </div>
+              <!-- Columna derecha: Widget Timeline -->
+              <div class="col-lg-5 d-flex">
+                <div class="o_timeline_sidebar flex-grow-1">
+                  <field name="displacement_ids" widget="Timeline"
+                    options="{'no_open': True}" nolabel="1"/>
+                </div>
+              </div>
+            </div>
+          </sheet>
+          <chatter/>
+        </form>
+      </field>
+    </record>
+
+    <record id="view_expense_search" model="ir.ui.view">
+      <field name="name">expense.search</field>
+      <field name="model">expense.expense</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="subject"
+            filter_domain="[('active', 'in', [True, False]), ('subject', 'ilike', self)]"/>
+          <field name="reference"
+            filter_domain="[('active', 'in', [True, False]), ('reference', 'ilike', self)]"/>
+          <field name="category_id"
+            filter_domain="[('active', 'in', [True, False]), ('category_id.name', 'ilike', self)]"/>
+          <field name="state"
+            filter_domain="[('active', 'in', [True, False]), ('state', 'ilike', self)]"/>
+          <field name="employee_id"
+            filter_domain="[('active', 'in', [True, False]), ('display_user', 'ilike', self)]
+            "/>
+          <field name="project_id"
+            filter_domain="[('active', 'in', [True, False]), ('project_id.name', 'ilike', self)]"/>
+          <field name="enterprise_id"
+            filter_domain="[('active', 'in', [True, False]), ('enterprise_id.name', 'ilike', self)]"/>
+          <field name="creation_date" filter_domain="[('active', 'in', [True, False])]"/>
+          <filter name="my_requests" string="Mis solicitudes"
+            domain="['|', ('employee_id', '=', uid), ('create_uid', '=', uid), ('active', 'in', [True, False])]"/>
+          <separator/>
+          <filter name="all_requests" string="Todas las solicitudes"
+            domain="[('active', 'in', [True, False])]"/>
+          <separator/>
+          <filter name="tickets" string="Tiquetes y vuelos"
+            domain="[('category_id', '!=', False), ('category_id.name', 'ilike', 'tiquete'), ('active', 'in', [True, False])]"/>
+          <filter name="per_diems" string="Viáticos (Alimentación, hospedaje, etc..)"
+            domain="[('category_id', '!=', False), ('category_id.name', 'ilike', 'viático'), ('active', 'in', [True, False])]"/>
+          <separator/>
+          <filter name="draft" string="Borrador" domain="[('state', '=', 'draft')]"/>
+          <filter name="to_approve" string="Por aprobar"
+            domain="[('state', '=', 'to_approve'), ('active',  'in', [True, False])]"/>
+          <filter name="approved" string="Aprobados" domain="[('state', '=', 'approved')]"/>
+          <separator/>
+          <filter name="legalized" string="Legalizados"
+            domain="[('state', '=', 'legalized'), ('active', 'in', [True, False])]"/>
+          <filter name="to_legalize" string="Por legalizar"
+            domain="[('state', '=', 'to_legalize'), ('active', 'in', [True, False])]"/>
+          <separator/>
+          <filter name="paid" string="Pagados"
+            domain="[('state', 'in', ['paid']), ('active', 'in', [True, False])]"/>
+          <filter name="caused" string="Causados"
+            domain="[('state', 'in', ['caused']), ('active', 'in', [True, False])]"/>
+          <filter name="finalized" string="Finalizados"
+            domain="[('state', 'in', ['finalized']), ('active', 'in', [True, False])]"/>
+          <separator/>
+          <filter name="rejected" string="Rechazados"
+            domain="[('rejected', '=', True), ('active', 'in', [True, False])]"/>
+          <group name="group_by">
+            <filter name="group_by_category" string="Categoría"
+              domain="[('active', 'in', [True, False])]"
+              context="{'group_by': 'category_id'}"/>
+            <separator/>
+            <filter name="group_by_state" string="Estado" domain="[('active', 'in', [True, False])]"
+              context="{'group_by': 'state'}"/>
+            <separator/>
+            <filter name="group_by_enterprise" string="Empresa"
+              domain="[('active', 'in', [True, False])]"
+              context="{'group_by': 'enterprise_id'}"/>
+            <separator/>
+            <filter name="group_by_display_user" string="Empleado"
+              domain="[('active', 'in', [True, False])]"
+              context="{'group_by': 'display_user'}"/>
+            <separator/>
+            <filter name="group_by_project" string="Proyecto"
+              domain="[('active', 'in', [True, False])]"
+              context="{'group_by': 'project_id'}"/>
+          </group>
+          <searchpanel
+            groups="expense.group_creator_expense,expense.group_treasury_expense,expense.group_accounting_expense,expense.group_management_expense"
+            string="Panel de búsqueda">
+            <field name="category_id" string="Categoría" icon="fa-tags"/>
+            <field name="state" string="Estado" icon="fa-circle"/>
+            <field name="enterprise_id" string="Empresa" icon="fa-building"/>
+            <field name="project_id" string="Proyecto" icon="fa-folder"/>
+          </searchpanel>
+        </search>
+      </field>
+    </record>
+
+  </data>
+</odoo>

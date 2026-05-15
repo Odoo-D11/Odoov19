@@ -1,0 +1,40 @@
+.o_field_widget {
+    &.position-relative {
+        position: relative;
+    }
+
+    .bank-account-display {
+        font-family: "Courier New", monospace;
+        font-size: 14px;
+        color: #212529;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        line-height: 1.5;
+        padding: 2px 0;
+    }
+
+    .btn-link {
+        color: #6c757d;
+        text-decoration: none;
+        border: none !important;
+        box-shadow: none !important;
+
+        &:hover {
+            color: #02143f;
+        }
+
+        &:focus {
+            box-shadow: none !important;
+        }
+
+        i {
+            font-size: 12px;
+        }
+    }
+    input.pe-5 {
+        padding-right: 2.5rem !important;
+        font-family: "Courier New", monospace;
+        letter-spacing: 0.5px;
+        color: #212529;
+    }
+}

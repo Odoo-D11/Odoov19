@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_expense_approve_legalization_wizard" model="ir.ui.view">
+            <field name="name">expense.approve.legalization.wizard</field>
+            <field name="model">expense.approve.legalization.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Aprobar Legalización">
+                    <field name="expense_id" invisible="1"/>
+                    <field name="view_mode" invisible="1"/>
+                    <field name="has_evidence" invisible="1"/>
+                    <field name="has_reimbursement" invisible="1"/>
+                    <field name="rta" invisible="1"/>
+                    <field name="reason" invisible="1"/>
+
+                    <sheet>
+                        <!-- VISTA DE INSTRUCCIONES -->
+                        <div invisible="view_mode != 'instructions'">
+                            <separator string="Instrucciones para aprobar"/>
+                            <div class="mb-3"> Revise los archivos adjuntos correspondientes al
+                                empleado <b>
+                                    <field name="employee_id" readonly="1" class="text-primary"
+                                        options="{'no_create': True, 'no_open': True}"
+                                        style="margin-bottom: 0 !important; font-weight: bold;"/>
+                                </b>
+                                por un monto legalizado de <b class="text-primary"> $ <field
+                                        name="legalization_amount" readonly="1"
+                                        style="margin-bottom: 0 !important; font-weight: bold;"/>
+                                </b>.
+                                Use los botones en la parte inferior para revisar cada archivo por
+                                separado. </div>
+
+                            <!-- Ambos archivos (evidencia y reembolso) -->
+                            <ul invisible="not (has_evidence and has_reimbursement)">
+                                <li>Use el botón <b class="text-primary">"Evidencia"</b> para
+                                    revisar el archivo con los <b class="text-primary">comprobantes
+                                    (facturas, recibos, soportes)</b> de los gastos realizados
+                                    durante el desplazamiento.</li>
+                                <li>Use el botón <b class="text-primary">"Reembolso"</b> para
+                                    revisar el archivo que certifica el <b class="text-primary">dinero
+                                    sobrante</b> que el empleado devolverá porque <b
+                                        class="text-primary">no consumió todo el monto aprobado</b>.</li>
+                                <li>Puede alternar entre ambos archivos sin perder información
+                                    usando sus respectivos botones.</li>
+                                <li>Cuando finalice la revisión de ambos archivos, haga clic en <b
+                                        class="text-primary">"Responder"</b> para tomar la decisión
+                                    final.</li>
+                                <li>Si la <b class="text-primary">evidencia</b> y (si aplica) el <b
+                                        class="text-primary">reembolso</b> son correctos y
+                                    justifican los valores, puede aprobar la legalización para
+                                    avanzar al siguiente estado.</li>
+                                <li>Si encuentra <b class="text-primary">faltantes,
+                                        inconsistencias o valores no soportados</b>, rechace
+                                    indicando si el problema está en la evidencia, el reembolso o
+                                    ambos, y agregue una justificación clara.</li>
+                            </ul>
+
+                            <!-- Solo evidencia -->
+                            <ul invisible="not has_evidence or has_reimbursement">
+                                <li>Use el botón <b class="text-primary">"Evidencia"</b> para
+                                    revisar el archivo con los <b class="text-primary">comprobantes
+                                    (facturas, recibos, soportes)</b> de los gastos realizados.</li>
+                                <li>Verifique que cada comprobante sea <b class="text-primary">legible,
+                                    correspondiente al período del desplazamiento</b> y que los
+                                    conceptos coincidan con la naturaleza de la solicitud
+                                    (alimentación, hospedaje, transporte, etc.).</li>
+                                <li>Confirme que las sumas parciales de los documentos coincidan con
+                                    el <b class="text-primary">monto legalizado</b> y que no existan
+                                    valores duplicados o inconsistentes.</li>
+                                <li>Revise que no haya soportes con fechas <b class="text-primary">anteriores
+                                    a la creación</b> o posteriores al fin del desplazamiento, y que
+                                    las monedas empleadas (si aplica) estén correctamente
+                                    convertidas.</li>
+                                <li>Si todo está en orden, haga clic en <b class="text-primary">
+                                    "Responder"</b> y seleccione aprobar para que la solicitud
+                                    avance al siguiente estado.</li>
+                                <li>Si detecta <b class="text-primary">faltantes, ilegibilidad,
+                                    montos incoherentes o documentos no relacionados</b>, seleccione
+                                    rechazar e indique claramente el motivo y una justificación
+                                    detallada para que el empleado pueda corregir.</li>
+                            </ul>
+
+                            <!-- Solo reembolso -->
+                            <ul invisible="not has_reimbursement or has_evidence">
+                                <li>Use el botón <b class="text-primary">"Reembolso"</b> para
+                                    revisar el archivo que demuestra el <b class="text-primary">dinero
+                                    sobrante</b> que el empleado debe reintegrar porque <b
+                                        class="text-primary">no gastó todo el monto aprobado</b>.</li>
+                                <li>Verifique que el cálculo del <b class="text-primary">saldo a
+                                    devolver</b> sea consistente: Monto aprobado – Gastos
+                                    efectivamente soportados = Monto a reembolsar.</li>
+                                <li>Confirme que no existan valores negativos, redondeos
+                                    improcedentes o diferencias no justificadas y que el documento
+                                    incluya, si corresponde, comprobante de consignación /
+                                    reintegro.</li>
+                                <li>Si el archivo respalda correctamente el valor a devolver y no
+                                    hay inconsistencias, haga clic en <b class="text-primary">
+                                    "Responder"</b> y seleccione aprobar para continuar el flujo.</li>
+                                <li>Si observa <b class="text-primary">errores de cálculo, ausencia
+                                    de soporte, importes ambiguos o falta de claridad</b>, rechace
+                                    indicando el motivo y una justificación detallada para que el
+                                    empleado ajuste la información.</li>
+                            </ul>
+
+                            <!-- Ningún archivo -->
+                            <p class="text-muted mb-2" invisible="has_evidence or has_reimbursement">
+                                No se encontraron archivos de evidencia ni de reembolso para esta
+                                legalización. Puede continuar directamente a <b class="text-primary">
+                                "Responder"</b> para decidir si la acepta o rechaza. </p>
+                        </div>
+
+                        <!-- VISTA DE EVIDENCIA -->
+                        <div invisible="view_mode != 'evidence'">
+                            <separator string="Evidencia"/>
+                            <div class="mb-3"> Este documento contiene los <b class="text-primary">comprobantes,
+                                facturas y recibos</b> de los gastos realizados durante el
+                                desplazamiento. La evidencia sirve para <b class="text-primary">justificar
+                                el uso del dinero aprobado</b> y demostrar que los fondos fueron
+                                utilizados correctamente según el <b class="text-primary">propósito
+                                del viático</b>. Revise cuidadosamente que todos los gastos estén <b
+                                    class="text-primary">debidamente soportados</b> y correspondan
+                                al período y ubicación del desplazamiento. </div>
+                            <field name="attached_evidence" widget="pdf_viewer"
+                                filename="evidencia.pdf" readonly="1"/>
+                        </div>
+
+                        <!-- VISTA DE REEMBOLSO -->
+                        <div invisible="view_mode != 'reimbursement'">
+                            <separator string="Reembolso"/>
+                            <div class="mb-3"> Este documento contiene la evidencia del <b
+                                    class="text-primary">dinero sobrante</b> que el empleado no
+                                utilizó durante el desplazamiento. El reembolso ocurre cuando el
+                                empleado <b class="text-primary">gastó menos del monto aprobado</b>
+                                y desea <b class="text-primary">devolver el excedente a la empresa</b>
+                                para evitar quedar en deuda. Verifique que el monto a reembolsar sea <b
+                                    class="text-primary">correcto y esté debidamente documentado</b>
+                                antes de autorizar la <b class="text-primary">devolución a la
+                                compañía</b>. </div>
+                            <field name="attached_reimbursement" widget="pdf_viewer"
+                                filename="reembolso.pdf" readonly="1"/>
+                        </div>
+
+                        <!-- VISTA DE RESPUESTA -->
+                        <div invisible="view_mode != 'response' or rta == 'no'">
+                            <separator string="Aprobación"/>
+                            <div class="mb-3"> Ha revisado toda la documentación adjunta. Ahora debe
+                                tomar una <b class="text-primary">decisión
+                                    final</b> sobre la legalización presentada por el empleado <b>
+                                    <field name="employee_id" readonly="1" class="text-primary"
+                                        options="{'no_create': True, 'no_open': True}"
+                                        style="margin-bottom: 0 !important; font-weight: bold;"/>
+                                </b>.
+                                Si <b class="text-primary">aprueba</b>, la legalización será
+                                autorizada y la solicitud avanzará al siguiente estado. Si <b
+                                    class="text-primary">rechaza</b>, deberá especificar los motivos
+                                para que el empleado pueda realizar las correcciones necesarias. </div>
+
+                            <group invisible="rta == 'no'">
+                                <field name="rta" string="Respuesta"/>
+                            </group>
+                        </div>
+
+                        <!-- VISTA DE RECHAZO -->
+                        <div invisible="view_mode != 'response' or rta != 'no'">
+                            <separator string="Legalización Rechazada"/>
+                            <div class="mb-3"> Para rechazar esta legalización, especifique el <b
+                                    class="text-primary">motivo
+                                    del rechazo</b> y proporcione una <b class="text-primary">justificación
+                                detallada</b>. Esta información será enviada al empleado junto con
+                                la notificación de rechazo, permitiendo que comprenda las razones de
+                                la decisión y pueda corregir los aspectos señalados si es necesario. </div>
+                            <group>
+                                <field name="reason" string="Motivo"/>
+                            </group>
+                            <field name="rejection_justification"
+                                placeholder="Escriba la justificación detallada del rechazo..."/>
+                        </div>
+                    </sheet>
+
+                    <footer>
+                        <!-- Botones para INSTRUCCIONES -->
+                        <button name="action_show_response" type="object" string="Responder"
+                            class="btn-primary" invisible="view_mode != 'instructions'"/>
+                        <button name="action_show_evidence" type="object" string="Evidencia"
+                            class="btn-primary"
+                            invisible="view_mode != 'instructions' or not has_evidence"/>
+                        <button name="action_show_reimbursement" type="object"
+                            string="Reembolso" class="btn-primary"
+                            invisible="view_mode != 'instructions' or not has_reimbursement"/>
+
+                        <!-- Botones para EVIDENCIA -->
+                        <button name="action_back_to_previous" type="object" string="Volver"
+                            class="btn-primary" invisible="view_mode != 'evidence'"/>
+                        <button name="action_show_response" type="object" string="Responder"
+                            class="btn-primary" invisible="view_mode != 'evidence'"/>
+                        <button name="action_show_reimbursement" type="object"
+                            string="Reembolso" class="btn-primary"
+                            invisible="view_mode != 'evidence' or not has_reimbursement"/>
+
+                        <!-- Botones para REEMBOLSO -->
+                        <button name="action_back_to_previous" type="object" string="Volver"
+                            class="btn-primary" invisible="view_mode != 'reimbursement'"/>
+                        <button name="action_show_response" type="object" string="Responder"
+                            class="btn-primary" invisible="view_mode != 'reimbursement'"/>
+                        <button name="action_show_evidence" type="object" string="Evidencia"
+                            class="btn-primary"
+                            invisible="view_mode != 'reimbursement' or not has_evidence"/>
+
+                        <!-- Botones para RESPUESTA (cuando no hay rechazo) -->
+                        <button name="action_back_to_previous" type="object" string="Volver"
+                            class="btn-primary" invisible="view_mode != 'response' or rta == 'no'"/>
+                        <button name="action_approve_legalization" type="object"
+                            string="Guardar" class="btn-primary"
+                            invisible="view_mode != 'response' or rta == 'no'"/>
+
+                        <!-- Botones para RECHAZO (cuando rta == 'no') -->
+                        <button name="action_back_to_previous" type="object"
+                            string="Volver" class="btn-primary"
+                            invisible="view_mode != 'response' or rta != 'no'"/>
+                        <button name="action_approve_legalization" type="object"
+                            string="Guardar"
+                            class="btn-primary"
+                            invisible="view_mode != 'response' or rta != 'no'"/>
+
+                        <!-- Botón cancelar siempre visible -->
+                        <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_expense_pay_wizard" model="ir.ui.view">
+            <field name="name">expense.pay.wizard</field>
+            <field name="model">expense.pay.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Pagar Solicitud de Gastos (TSG)" duplicate="false" create="false">
+                    <field name="expense_id" invisible="1"
+                        options="{'no_create': True, 'no_open': True}"/>
+                    <field name="country_id" options="{'no_create': True, 'no_open': True}"
+                        invisible="1"/>
+                    <field name="category_id" invisible="1"
+                        options="{'no_create': True, 'no_open': True}"/>
+                    <field name="sequence" invisible="1"/>
+                    <sheet>
+                        <span style="font-weight: 500; color: #212529;">
+                            Nombre
+                        </span>
+                        <div class="form-title-responsive">
+                            <h1>
+                                <field name="employee_id" class="text-primary"
+                                    required="category_id != 1" invisible="category_id != 2"
+                                    options="{'no_create': True, 'no_open': True}"
+                                    placeholder="Ej. Dwight Schrute, Pam Beesly, Creed Bratton, etc.."/>
+                                <field name="partner_id" class="text-primary"
+                                    required="category_id != 2" invisible="category_id != 1"
+                                    options="{'no_create': True, 'no_open': True}"
+                                    placeholder="Ej. Dwight Schrute, Pam Beesly, Creed Bratton, etc.."/>
+                            </h1>
+                            <div>
+                                <field name="job_title"
+                                    placeholder="¿Cuál es el cargo del empleado? Ej. Gerente de ventas, Analista de sistemas, etc.."/>
+                            </div>
+                        </div>
+                        <separator string="Información privada"/>
+                        <div class="oe_grey">
+                            <p>
+                                La información privada se refiere a aquellos datos que son
+                                sensibles y que, por lo tanto, deben ser protegidos para garantizar
+                                la privacidad y la seguridad de la persona. Esto incluye datos como
+                                la dirección de residencia, el número de teléfono personal, el
+                                correo electrónico privado, entre otros.
+                            </p>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="private_email"
+                                    placeholder="Ej. dwight.schrute@dundermifflin.com"/>
+                                <label for="identification_number" string="Nro. identificación"/>
+                                <div class="o_row">
+                                    <field name="identification_type_id"
+                                        placeholder="Ej. Cédula de ciudadanía, Tarjeta de identidad, etc.."
+                                        options="{'no_create': True, 'no_open': True}"/>
+                                    <field name="identification_number"
+                                        placeholder="Numero de identificación.."/>
+                                </div>
+                            </group>
+                            <group>
+                                <field name="private_phone" widget="CodeCountryPhone"
+                                    placeholder="Ej. 3001234567"/>
+                                <field name="birthday" placeholder="Ej. 01/01/1990.."
+                                    invisible="category_id != 1" string="Fecha de nacimiento"/>
+                            </group>
+                        </group>
+                        <separator string="Cuenta bancaria" invisible="category_id != 2"/>
+                        <div class="oe_grey" invisible="category_id != 2">
+                            <p>
+                                La cuenta bancaria es un contrato por el cual una entidad financiera
+                                se obliga a custodiar el dinero de un cliente y a ponerlo a su
+                                disposición en cualquier momento que este lo solicite. Además,
+                                permite realizar operaciones como transferencias, pagos y depósitos,
+                                facilitando la gestión de recursos económicos de manera segura y
+                                eficiente.
+                            </p>
+                        </div>
+                        <group invisible="category_id != 2">
+                            <group>
+                                <field name="bank_id"
+                                    placeholder="Ej. Bancolombia, Davivienda, etc.."
+                                    options="{'no_create': True, 'no_open': True}"/>
+                                <field name="type_account_id"
+                                    placeholder="Ej. Ahorros, Corriente, etc.."
+                                    options="{'no_create': True, 'no_open': True}"/>
+                            </group>
+                            <group>
+                                <field name="bank_account" widget="BankAccount"
+                                    placeholder="Ej. 123456789.."/>
+                            </group>
+                        </group>
+                        <separator string="Información del tiquete" invisible="category_id != 1"/>
+                        <div class="oe_grey" invisible="category_id != 1">
+                            <p>
+                                El tiquete es un documento que respalda la solicitud de pago y debe
+                                ser presentado junto con la información requerida para su
+                                procesamiento. Asegúrese de que toda la información sea precisa y
+                                esté actualizada.
+                            </p>
+                        </div>
+                        <group invisible="category_id != 1">
+                            <group>
+                                <field name="link" placeholder="Ej. https://www.ejemplo.com"/>
+                                <field name="reservation_code" placeholder="Ej. ABC123"/>
+                            </group>
+                            <group>
+                                <field name="airline" placeholder="Ej. Avianca, Latam, etc.."/>
+                            </group>
+                        </group>
+                        <separator string="Desplazamientos" invisible="category_id != 1"/>
+                        <field name="displacement_ids" invisible="category_id != 1" mode="kanban">
+                            <kanban class="o_kanban_dashboard res_partner_kanban" create="false"
+                                delete="false">
+                                <field name="ticket_id"/>
+                                <field name="origin_id"/>
+                                <field name="destination_id"/>
+                                <field name="suggested_initial_date"/>
+                                <field name="suggested_final_date"/>
+                                <field name="initial_date"/>
+                                <field name="final_date"/>
+                                <field name="modality_type"/>
+                                <templates>
+                                    <t t-name="kanban-box">
+                                        <t t-set="supplier"
+                                            t-value="'/expense/static/src/img/displacement.png'"/>
+                                        <div
+                                            class="oe_kanban_global_click o_res_partner_kanban_main">
+                                            <img t-att-src="supplier" alt="Proveedor"/>
+                                            <div class="o_content_center col-12 p-1">
+                                                <div class="oe_title_kanban">
+                                                    <strong t-esc="record.origin_id.value"/>
+                                                    <i class="fa fa-arrow-right me-1 ms-1"
+                                                        title="Desplazamiento"/>
+                                                    <strong t-esc="record.destination_id.value"/>
+                                                </div>
+                                                <div>
+                                                    <em>
+                                                        <t
+                                                            t-if="record.suggested_initial_date.raw_value or record.suggested_final_date.raw_value">
+                                                            <span>
+                                                                <t
+                                                                    t-if="record.suggested_initial_date.raw_value">
+                                                                    <t
+                                                                        t-esc="record.suggested_initial_date.value"/>
+                                                                </t>
+                                                                <t
+                                                                    t-else="">
+                                                                    <t
+                                                                        t-esc="record.initial_date.value"/>
+                                                                </t>
+                                                                - <t
+                                                                    t-if="record.suggested_final_date.raw_value">
+                                                                    <t
+                                                                        t-esc="record.suggested_final_date.value"/>
+                                                                </t>
+                                                                <t
+                                                                    t-else="">
+                                                                    <t
+                                                                        t-esc="record.final_date.value"/>
+                                                                </t>
+                                                            </span>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <span>
+                                                                <t t-esc="record.initial_date.value"/>
+                                                                - <t t-esc="record.final_date.value"/>
+                                                            </span>
+                                                        </t>
+                                                    </em>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </templates>
+                            </kanban>
+                        </field>
+                    </sheet>
+                    <footer>
+                        <button name="action_pay" type="object"
+                            string="Confirmar" class="btn-primary"/>
+                        <button name="action_cancel" special="cancel"
+                            string="Cancelar" class="btn-secondary"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_expense_pay_displacement_form" model="ir.ui.view">
+            <field name="name">expense.pay.displacement.form</field>
+            <field name="model">expense.pay.displacement</field>
+            <field name="arch" type="xml">
+                <form create="false" class="o_form_displacement_pay"> <!--No
+                    quitar la clase-->
+                    <field name="wizard_id" invisible="1"/>
+                    <sheet>
+                        <separator string="Información General"/>
+                        <p class="oe_grey">
+                            Revisa la ubicación de desplazamiento. Indica la ciudad de origen y
+                            destino, así como las fechas de inicio y finalización del
+                            desplazamiento. Esta
+                            información es esencial para calcular los viáticos y gastos relacionados
+                            con el desplazamiento.
+                        </p>
+                        <group>
+                            <group>
+                                <div class="o_checkbox_container">
+                                    <div class="o_checkbox_title_container">
+                                        <div class="o_title_with_border">
+                                            <span style="font-weight: 500; color: #212529;">
+                                                Modalidad
+                                            </span>
+                                            <p class="mb-0">
+                                                <span class="oe_grey">Seleccione la modalidad del
+                                                    desplazamiento: <b>Solo ida</b> — sin regreso; <b>Ida
+                                                    y vuelta</b> — con regreso. Elija la opción que
+                                                    corresponda al tipo de desplazamiento.</span>
+                                                <span
+                                                    class="d-inline-flex align-items-center flex-nowrap">
+                                                    <i class="fa fa-long-arrow-right ms-2 me-2"
+                                                        aria-hidden="true"/>
+                                                    <field
+                                                        name="modality_type"
+                                                        string="Modalidad"
+                                                        required="1"
+                                                        class="text-primary w-auto field-clear"/>
+
+                                                </span>
+                                            </p>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </group>
+                            <group>
+                                <field name="ticket_id" string="Tiquete"
+                                    required="1"
+                                    options="{'no_create': True, 'no_open': True}"
+                                    placeholder="Ej. Básico, Estándar, etc."/>
+                                <label for="origin_id" string="Desde"/>
+                                <div class="o_row">
+                                    <field name="origin_id"
+                                        options="{'no_create': True, 'no_open': True}"
+                                        string="Desde"
+                                        placeholder="Ej. Bogotá, Medellín, etc."/>
+                                    <span style="font-weight: 500; color: #212529;"
+                                        class="ms-1 me-1">Hasta</span>
+                                    <field name="destination_id" string="Hasta"
+                                        options="{'no_create': True, 'no_open': True}"
+                                        placeholder="Ej. Barranquilla, Cali, etc."/>
+                                </div>
+                                <label for="initial_date" string="Inicio"/>
+                                <div class="o_row">
+                                    <field name="initial_date" placeholder="Ej. 2025-01-01"/>
+                                    <span style="font-weight: 500; color: #212529;"
+                                        invisible="modality_type == 'one_way'"
+                                        class="ms-1 me-1">Fin</span>
+                                    <field name="final_date" widget="date"
+                                        required="modality_type == 'round_trip'"
+                                        placeholder="Ej. 2025-01-05"
+                                        invisible="modality_type == 'one_way'"
+                                        class="text-primary w-auto ms-1"/>
+                                </div>
+                            </group>
+                        </group>
+                        <separator string="Fechas Sugeridas"/>
+                        <p class="oe_grey">
+                            Las fechas sugeridas son aquellas que se proponen para el desplazamiento
+                            relacionado con el tiquete, indicando el periodo estimado en el que se
+                            espera realizar el viaje o actividad correspondiente.
+                        </p>
+                        <group>
+                            <group>
+                                <field name="suggested_initial_date" required="1"
+                                    placeholder="Ej. 01/01/2023 10:00 AM"/>
+                            </group>
+                            <group invisible="modality_type == 'one_way'">
+                                <field name="suggested_final_date"
+                                    required="modality_type == 'round_trip'"
+                                    placeholder="Ej. 10/01/2023 09:00 AM"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

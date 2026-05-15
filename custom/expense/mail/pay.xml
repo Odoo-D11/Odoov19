@@ -1,0 +1,554 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="mail_template_expense_pending_to_be_paid" model="mail.template">
+            <field name="name">Solicitud pendiente de pago</field>
+            <field name="model_id" ref="expense.model_expense_expense"/>
+            <field name="subject">Solicitud {{ object.reference }}</field>
+            <field name="body_html" type="html">
+                <div style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;color:#222"
+                    t-if="object.category_id.name == 'Viáticos (Alimentación, Hospedaje, etc.)'">
+                    <t t-set="hour_ctx" t-value="(ctx and ctx.get('hour')) or None"/>
+                    <t
+                        t-set="hour"
+                        t-value="hour_ctx if hour_ctx is not None else datetime.datetime.now().hour"/>
+                    <t
+                        t-set="saludo"
+                        t-value="'Buenos días' if hour &lt; 12 else ('Buenas tardes' if hour &lt; 19 else 'Buenas noches')"/>
+                    <p
+                        style="font-size:13px;margin:0 0 10px 0;line-height:1.45;">
+                        <t t-esc="saludo"/>,</p>
+                    <p
+                        style="font-size:13px;margin:0 0 14px 0;line-height:1.5;"> Se ha creado una
+                        nueva solicitud que requiere su atención para realizar el pago
+                        correspondiente. Esta solicitud fue creada por <strong>
+                            <t t-esc="object.create_uid.name"/>
+                        </strong> y
+                        ya cuenta con la aprobación correspondiente. Le invitamos a revisar los
+                        datos registrados y continuar con el proceso según los lineamientos
+                        establecidos. Puede consultar más detalles en la plataforma dando clic <t
+                            t-set="website_url" t-value="object.get_base_url()"/> <a
+                            t-att-href="website_url" target="_blank"
+                            style="color:#1155cc;text-decoration:underline;">aquí</a>. Si necesita
+                        información adicional, contacte al responsable de la solicitud. A
+                        continuación se detallan los datos de la solicitud: </p>
+                    <ul
+                        style="font-size:13px;margin:0 0 18px 18px;padding:0;line-height:1.4;">
+                        <li>
+                            <strong>Referencia:</strong>
+                            <t t-esc="object.reference"/>
+                        </li>
+                        <li>
+                            <strong>Asunto:</strong>
+                            <t t-esc="object.subject"/>
+                        </li>
+                        <li>
+                            <strong>Categoría:</strong>
+                            <t t-esc="(object.category_id and object.category_id.name) or '—'"/>
+                        </li>
+                        <li>
+                            <strong>Proyecto:</strong>
+                            <t t-esc="(object.project_id and object.project_id.name) or '—'"/>
+                        </li>
+                        <li>
+                            <strong>Empleado:</strong>
+                            <t t-esc="(object.employee_id and object.employee_id.name) or '—'"/>
+                        </li>
+                        <li><strong>Total solicitado:</strong> $ <t
+                                t-esc="'{:,.0f}'.format(object.requested_amount).replace(',','.')"/> <t
+                                t-if="object.approved_amount != 0"> | <strong>Total aprobado:</strong>
+                            $ <t
+                                    t-esc="'{:,.0f}'.format(object.approved_amount).replace(',','.')"/>
+                            </t></li>
+                        <li>
+                            <strong>Empresa:</strong>
+                            <t t-esc="ctx.get('enterprise_id') or '—'"/>
+                        </li>
+                    </ul>
+                    <p
+                        style="font-size:13px;margin:0 0 12px 0;color:#222;">A continuación, se
+                        detallan los datos del desplazamiento:</p>
+                    <t
+                        t-if="object.displacement_ids">
+                        <table
+                            style="width:100%;border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.35;border-style:solid;border-color:#4d4d4d;border-width:1px 1px 0 1px;color:#000;">
+                            <thead>
+                                <tr>
+                                    <td colspan="4"
+                                        style="padding:5px 8px;text-align:center;text-transform:uppercase;letter-spacing:.06em;font-weight:700;border-bottom:1px solid #4d4d4d;">
+                                        <t t-if="len(object.displacement_ids) == 1">Desplazamiento</t>
+                                        <t t-else="">Desplazamientos</t>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th
+                                        style="border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d;border-right:1px solid #4d4d4d;padding:5px 8px;text-align:left;width:66%;font-weight:700;">
+                                        Nombre</th>
+                                    <th
+                                        style="border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d;border-right:1px solid #4d4d4d;padding:5px 8px;text-align:right;width:10%;font-weight:700;">
+                                        Cantidad</th>
+                                    <th
+                                        style="border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d;border-right:1px solid #4d4d4d;padding:5px 8px;text-align:right;width:12%;font-weight:700;">Precio
+                                        Unit.</th>
+                                    <th
+                                        style="border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d;padding:5px 8px;text-align:right;width:12%;font-weight:700;">
+                                        Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="object.displacement_ids" t-as="displacement">
+                                    <t t-set="ini"
+                                        t-value="displacement.initial_date and displacement.initial_date.strftime('%d/%m/%Y') or ''"/>
+                                    <t t-set="fin"
+                                        t-value="displacement.final_date and displacement.final_date.strftime('%d/%m/%Y') or ''"/>
+                                    <tr>
+                                        <td colspan="4"
+                                            style="border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d;padding:4px 8px;font-weight:600;">
+                                            <t
+                                                t-esc="(displacement.origin_id and displacement.origin_id.name) or '—'"/>
+                                            → <t
+                                                t-esc="(displacement.destination_id and displacement.destination_id.name) or '—'"/>
+                                            (<t t-esc="ini"/> - <t t-esc="fin"/>) </td>
+                                    </tr>
+                                    <t t-foreach="displacement.service_line_ids" t-as="service_line">
+                                        <tr>
+                                            <td
+                                                style="border-bottom:1px solid #4d4d4d;border-right:1px solid #4d4d4d;padding:4px 8px;">
+                                                <t
+                                                    t-esc="(service_line.service_id and service_line.service_id.name) or '—'"/>
+                                            </td>
+                                            <td
+                                                style="border-bottom:1px solid #4d4d4d;border-right:1px solid #4d4d4d;padding:4px 8px;text-align:right;">
+                                                <t
+                                                    t-esc="'{:,.0f}'.format(service_line.quantity).replace(',','.')"/>
+                                            </td>
+                                            <td
+                                                style="border-bottom:1px solid #4d4d4d;border-right:1px solid #4d4d4d;padding:4px 8px;text-align:right;">
+                                                $ <t
+                                                    t-esc="'{:,.0f}'.format(service_line.unit_price).replace(',','.')"/>
+                                            </td>
+                                            <td
+                                                style="border-bottom:1px solid #4d4d4d;padding:4px 8px;text-align:right;">
+                                                $ <t
+                                                    t-esc="'{:,.0f}'.format(service_line.total_amount).replace(',','.')"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </t>
+                            </tbody>
+                        </table>
+                        <t t-set="total_general"
+                            t-value="sum(sum(l.total_amount for l in d.service_line_ids) for d in object.displacement_ids)"/>
+                        <table
+                            style="width:100%;border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.35;border:0;color:#000;margin-top:8px;">
+                            <colgroup>
+                                <col style="width:66%;"/>
+                                <col style="width:10%;"/>
+                                <col style="width:12%;"/>
+                                <col style="width:12%;"/>
+                            </colgroup>
+                            <tr>
+                                <td colspan="4"
+                                    style="height:8px;line-height:8px;padding:0;border:none;"/>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="border:none;padding:0;"/>
+                                <td
+                                    style="border-top:1px solid #4d4d4d;padding:4px 8px;text-align:right;font-weight:700;">
+                                    Total</td>
+                                <td
+                                    style="border-top:1px solid #4d4d4d;padding:4px 8px;text-align:right;font-weight:700;">
+                                    $ <t t-esc="'{:,.0f}'.format(total_general).replace(',','.')"/></td>
+                            </tr>
+                        </table>
+                    </t>
+                </div>
+                <div t-if="object.category_id.name == 'Tiquetes y vuelos'"
+                    style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;color:#222;">
+                    <t t-set="hour_ctx" t-value="(ctx and ctx.get('hour')) or None"/>
+                    <t t-set="hour"
+                        t-value="hour_ctx if hour_ctx is not None else datetime.datetime.now().hour"/>
+                    <t t-set="saludo"
+                        t-value="'Buenos días' if hour &lt; 12 else ('Buenas tardes' if hour &lt; 19 else 'Buenas noches')"/>
+                    <p style="font-size:13px;margin:0 0 10px 0;line-height:1.45;">
+                        <t t-esc="saludo"/>,</p>
+                    <p
+                        style="font-size:13px;margin:0 0 14px 0;line-height:1.5;"> Se ha creado una
+                        nueva solicitud que requiere su atención para realizar el pago
+                        correspondiente. Esta solicitud fue creada por <strong>
+                            <t t-esc="object.create_uid.name"/>
+                        </strong> y
+                        ya cuenta con la aprobación correspondiente. Le invitamos a revisar los
+                        datos registrados y continuar con el proceso según los lineamientos
+                        establecidos. Puede consultar más detalles en la plataforma dando clic <a
+                            href="http://38.52.158.27/" target="_blank"
+                            style="color:#1155cc;text-decoration:underline;">aquí</a>. A
+                        continuación, se detallan los datos de la solicitud:</p>
+                    <ul
+                        style="font-size:13px;margin:0 0 18px 18px;padding:0;line-height:1.4;">
+                        <li>
+                            <strong>Referencia:</strong>
+                            <t t-esc="object.reference"/>
+                        </li>
+                        <li>
+                            <strong>Asunto:</strong>
+                            <t t-esc="object.subject"/>
+                        </li>
+                        <li>
+                            <strong>Categoría:</strong>
+                            <t t-esc="(object.category_id and object.category_id.name) or '—'"/>
+                        </li>
+                        <li>
+                            <strong>Proyecto:</strong>
+                            <t t-esc="(object.project_id and object.project_id.name) or '—'"/>
+                        </li>
+                        <li>
+                            <strong>Contacto:</strong>
+                            <t t-esc="(object.partner_id and object.partner_id.name) or '—'"/>
+                        </li>
+                    </ul>
+                </div>
+            </field>
+        </record>
+
+        <record id="mail_template_expense_pay" model="mail.template">
+            <field name="name">Solicitud pagada</field>
+            <field name="model_id" ref="expense.model_expense_expense"/>
+            <field name="subject">Solicitud {{ object.reference }}</field>
+            <field name="body_html" type="html">
+                <div style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;color:#222"
+                    t-if="object.category_id.name == 'Viáticos (Alimentación, Hospedaje, etc.)'">
+                    <t t-set="hour_ctx" t-value="(ctx and ctx.get('hour')) or None"/>
+                    <t t-set="hour"
+                        t-value="hour_ctx if hour_ctx is not None else datetime.datetime.now().hour"/>
+                    <t t-set="saludo"
+                        t-value="'Buenos días' if hour &lt; 12 else ('Buenas tardes' if hour &lt; 19 else 'Buenas noches')"/>
+                    <p style="font-size:13px;margin:0 0 10px 0;line-height:1.45;">
+                        <t t-esc="saludo"/>,</p>
+                    <p style="font-size:13px;margin:0 0 14px 0;line-height:1.5;"> Se ha realizado
+                        una solicitud a su nombre. Esta solicitud fue creada por <strong>
+                            <t t-esc="object.create_uid.name"/>
+                        </strong> y
+                        ha sido <strong>pagada</strong> por el área de <strong>Tesorería</strong>.
+                        El monto ha sido transferido según los datos registrados y el proceso de
+                        aprobación previamente realizado. Puede consultar más detalles en la
+                        plataforma dando clic <t
+                            t-set="website_url" t-value="object.get_base_url()"/> <a
+                            t-att-href="website_url" target="_blank"
+                            style="color:#1155cc;text-decoration:underline;">aquí</a>. Si requiere
+                        información adicional o tiene algún inconveniente con el pago, por favor
+                        contacte a su jefe inmediato. A continuación, se detallan los datos de su
+                        solicitud: </p>
+                    <ul style="font-size:13px;margin:0 0 18px 18px;padding:0;line-height:1.4;">
+                        <li>
+                            <strong>Referencia:</strong>
+                            <t t-esc="object.reference"/>
+                        </li>
+                        <li>
+                            <strong>Asunto:</strong>
+                            <t t-esc="object.subject"/>
+                        </li>
+                        <li>
+                            <strong>Categoría:</strong>
+                            <t t-esc="(object.category_id and object.category_id.name) or '—'"/>
+                        </li>
+                        <li>
+                            <strong>Proyecto:</strong>
+                            <t t-esc="(object.project_id and object.project_id.name) or '—'"/>
+                        </li>
+                        <li>
+                            <strong>Empleado:</strong>
+                            <t t-esc="(object.employee_id and object.employee_id.name) or '—'"/>
+                        </li>
+                        <li><strong>Total solicitado:</strong> $ <t
+                                t-esc="'{:,.0f}'.format(object.requested_amount).replace(',','.')"/> <t
+                                t-if="object.approved_amount != 0"> | <strong>Total aprobado:</strong>
+                            $ <t
+                                    t-esc="'{:,.0f}'.format(object.approved_amount).replace(',','.')"/>
+                            </t></li>
+                        <li>
+                            <strong>Empresa responsable:</strong>
+                            <t t-esc="object.enterprise_id.name or '—'"/>
+                        </li>
+                    </ul>
+
+                    <p style="font-size:13px;margin:0 0 12px 0;color:#222;">A continuación,
+                        se detallan los desplazamientos registrados:</p>
+
+                    <!-- Desplazamientos -->
+                    <t t-if="object.displacement_ids">
+                        <!-- Tabla principal (sin borde inferior) -->
+                        <table
+                            style="width:100%;border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.35;border-style:solid;border-color:#4d4d4d;border-width:1px 1px 0 1px;color:#000;">
+                            <thead>
+                                <tr>
+                                    <td colspan="4"
+                                        style="padding:5px 8px;text-align:center;text-transform:uppercase;letter-spacing:.06em;font-weight:700;border-bottom:1px solid #4d4d4d;">
+                                        <t t-if="len(object.displacement_ids) == 1">Desplazamiento</t>
+                                        <t t-else="">Desplazamientos</t>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th
+                                        style="border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d;border-right:1px solid #4d4d4d;padding:5px 8px;text-align:left;width:66%;font-weight:700;">
+                                        Nombre</th>
+                                    <th
+                                        style="border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d;border-right:1px solid #4d4d4d;padding:5px 8px;text-align:right;width:10%;font-weight:700;">
+                                        Cantidad</th>
+                                    <th
+                                        style="border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d;border-right:1px solid #4d4d4d;padding:5px 8px;text-align:right;width:12%;font-weight:700;">Precio
+                                        Unit.</th>
+                                    <th
+                                        style="border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d;padding:5px 8px;text-align:right;width:12%;font-weight:700;">
+                                        Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="object.displacement_ids" t-as="displacement">
+                                    <t t-set="ini"
+                                        t-value="displacement.initial_date and displacement.initial_date.strftime('%d/%m/%Y') or ''"/>
+                                    <t t-set="fin"
+                                        t-value="displacement.final_date and displacement.final_date.strftime('%d/%m/%Y') or ''"/>
+
+                                    <!-- Fila de ruta -->
+                                    <tr>
+                                        <td colspan="4"
+                                            style="border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d;padding:4px 8px;font-weight:600;">
+                                            <t
+                                                t-esc="(displacement.origin_id and displacement.origin_id.name) or '—'"/>
+                                            → <t
+                                                t-esc="(displacement.destination_id and displacement.destination_id.name) or '—'"/>
+                                            (<t t-esc="ini"/> - <t t-esc="fin"/>) </td>
+                                    </tr>
+
+                                    <!-- Líneas -->
+                                    <t t-foreach="displacement.service_line_ids" t-as="service_line">
+                                        <tr>
+                                            <td
+                                                style="border-bottom:1px solid #4d4d4d;border-right:1px solid #4d4d4d;padding:4px 8px;">
+                                                <t
+                                                    t-esc="(service_line.service_id and service_line.service_id.name) or '—'"/>
+                                            </td>
+                                            <td
+                                                style="border-bottom:1px solid #4d4d4d;border-right:1px solid #4d4d4d;padding:4px 8px;text-align:right;">
+                                                <t
+                                                    t-esc="'{:,.0f}'.format(service_line.quantity).replace(',','.')"/>
+                                            </td>
+                                            <td
+                                                style="border-bottom:1px solid #4d4d4d;border-right:1px solid #4d4d4d;padding:4px 8px;text-align:right;">
+                                                $ <t
+                                                    t-esc="'{:,.0f}'.format(service_line.unit_price).replace(',','.')"/>
+                                            </td>
+                                            <td
+                                                style="border-bottom:1px solid #4d4d4d;padding:4px 8px;text-align:right;">
+                                                $ <t
+                                                    t-esc="'{:,.0f}'.format(service_line.total_amount).replace(',','.')"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <!-- Total (tabla separada para evitar “recuadro”) -->
+                        <t t-set="total_general"
+                            t-value="sum(sum(l.total_amount for l in d.service_line_ids) for d in object.displacement_ids)"/>
+                        <table
+                            style="width:100%;border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.35;border:0;color:#000;margin-top:8px;">
+                            <colgroup>
+                                <col style="width:66%;"/>
+                                <col style="width:10%;"/>
+                                <col style="width:12%;"/>
+                                <col style="width:12%;"/>
+                            </colgroup>
+                            <tr>
+                                <td colspan="4"
+                                    style="height:8px;line-height:8px;padding:0;border:none;"/>
+                            </tr>
+                            <tr>
+                                <td colspan="2" style="border:none;padding:0;"/>
+                                <td
+                                    style="border-top:1px solid #4d4d4d;padding:4px 8px;text-align:right;font-weight:700;">
+                                    Total</td>
+                                <td
+                                    style="border-top:1px solid #4d4d4d;padding:4px 8px;text-align:right;font-weight:700;">
+                                    $ <t t-esc="'{:,.0f}'.format(total_general).replace(',','.')"/></td>
+                            </tr>
+                        </table>
+                    </t>
+
+                    <p style="font-size:13px;margin:18px 0 0 0;line-height:1.5;"> Recuerde que, una
+                        vez finalizado el desplazamiento, <strong>debe ingresar a la
+                            plataforma y legalizar los servicios utilizados durante el mismo</strong>.
+                        Esto permitirá completar el proceso y cumplir con los lineamientos
+                        establecidos. </p>
+
+                </div>
+                <div style="margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;color:#222"
+                    t-if="object.category_id.name == 'Tiquetes y vuelos'">
+                    <t t-set="hour_ctx" t-value="(ctx and ctx.get('hour')) or None"/>
+                    <t t-set="hour"
+                        t-value="hour_ctx if hour_ctx is not None else datetime.datetime.now().hour"/>
+                    <t
+                        t-set="saludo"
+                        t-value="'Buenos días' if hour &lt; 12 else ('Buenas tardes' if hour &lt; 19 else 'Buenas noches')"/>
+                    <p
+                        style="font-size:13px;margin:0 0 10px 0;line-height:1.45;">
+                        <t t-esc="saludo"/>,<br/><br/> Envío reserva correspondiente a la compra del
+                        tiquete solicitado, por favor realizar el <strong>Check in</strong> en los
+                        horarios establecidos. Recuerde verificar los datos del vuelo y asegurarse
+                        de cumplir con los requisitos de la aerolínea, como la documentación
+                        necesaria y las restricciones de equipaje. Si tiene alguna duda o requiere
+                        asistencia adicional, no dude en contactar a su jefe inmediato. A
+                        continuación, encontrará los detalles del tiquete:</p>
+                    <ul style="font-size:13px;margin:0 0 18px 18px;padding:0;line-height:1.4;">
+                        <li>
+                            <strong>Referencia:</strong>
+                            <t t-esc="object.reference"/>
+                        </li>
+                        <li>
+                            <strong>Asunto:</strong>
+                            <t t-esc="object.subject"/>
+                        </li>
+                        <li>
+                            <strong>Correo:</strong>
+                            <t t-esc="ctx.get('email') or '—'"/>
+                        </li>
+                        <li>
+                            <strong>Link:</strong>
+                            <a t-att-href="ctx.get('link') or '#'" target="_blank"
+                                style="color:#1155cc;text-decoration:underline;">
+                                <t t-esc="ctx.get('link') or '—'"/>
+                            </a>
+                        </li>
+                        <li>
+                            <strong>Aerolinea:</strong>
+                            <t t-esc="ctx.get('airline') or '—'"/>
+                        </li>
+                        <li>
+                            <strong>Codigo de reserva:</strong>
+                            <t t-esc="ctx.get('reservation_code') or '—'"/>
+                        </li>
+                    </ul>
+                    <p
+                        style="font-size:13px;margin:0 0 12px 0;color:#222;">
+                        <t t-if="len(object.displacement_ids) == 1">
+                            Se detalla el desplazamiento registrado:
+                        </t>
+                        <t t-else="">
+                            Se detallan los desplazamientos registrados:
+                        </t>
+                    </p>
+
+                    <table
+                        style="width:100%;border-collapse:collapse;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.35;border-style:solid;border-color:#4d4d4d;border-width:1px 1px 0 1px;color:#000;">
+                        <thead>
+                            <tr>
+                                <td colspan="4"
+                                    style="padding:5px 8px;text-align:center;text-transform:uppercase;letter-spacing:.06em;font-weight:700;border-bottom:1px solid #4d4d4d;">
+                                    <t t-if="len(object.displacement_ids) == 1">
+                                        Desplazamiento
+                                    </t>
+                                    <t t-else="">
+                                        Desplazamientos
+                                    </t>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th
+                                    style="border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d;border-right:1px solid #4d4d4d;padding:5px 8px;text-align:left;width:40%;font-weight:700;">
+                                    Nombre
+                                </th>
+                                <th
+                                    style="border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d;border-right:1px solid #4d4d4d;padding:5px 8px;text-align:right;width:20%;font-weight:700;">
+                                    Tiquete
+                                </th>
+                                <th
+                                    style="border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d;border-right:1px solid #4d4d4d;padding:5px 8px;text-align:right;width:20%;font-weight:700;">
+                                    Modalidad
+                                </th>
+                                <th
+                                    style="border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d;border-right:1px solid #4d4d4d;padding:5px 8px;text-align:right;width:20%;font-weight:700;">
+                                    Fecha y hora de salida
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <t t-foreach="object.displacement_ids" t-as="displacement"
+                                t-if="not ctx.get('displacement')">
+                                <tr>
+                                    <td
+                                        style="border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d;padding:4px 8px;">
+                                        <t
+                                            t-esc="(displacement.origin_id and displacement.origin_id.name) or '—'"/>
+                                        → <t
+                                            t-esc="(displacement.destination_id and displacement.destination_id.name) or '—'"/>
+                                    </td>
+                                    <td
+                                        style="border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d; border-left:1px solid #4d4d4d;padding:4px 8px; text-align:right;">
+                                        <t t-esc="displacement.ticket_id.name or '—'"/>
+                                    </td>
+                                    <td
+                                        style="border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d; border-left:1px solid #4d4d4d;padding:4px 8px;text-align:right;">
+                                        <t
+                                            t-esc="{'one_way':'Solo ida','round_trip':'Ida y vuelta'}.get(displacement.modality_type,'—')"/>
+                                    </td>
+                                    <td
+                                        style="border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d; border-left:1px solid #4d4d4d;padding:4px 8px;text-align:right;">
+                                        <t
+                                            t-esc="displacement.initial_date and format_datetime(displacement.initial_date, tz=env.context.get('tz') or env.user.tz, dt_format='dd/MM/yyyy hh:mm a')"/>
+                                        ️ ️ <t t-if="displacement.final_date"> → <t
+                                                t-esc="displacement.final_date and format_datetime(displacement.final_date, tz=env.context.get('tz') or env.user.tz, dt_format='dd/MM/yyyy hh:mm a')"/>
+                                        </t>
+                                    </td>
+                                </tr>
+                            </t>
+                            <t t-if="ctx.get('displacement')">
+                                <t t-set="displacement" t-value="ctx.get('displacement')"/>
+                                <t t-foreach="displacement" t-as="displacement">
+                                    <tr>
+                                        <td
+                                            style="border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d;padding:4px 8px;">
+                                            <t
+                                                t-esc="(displacement.origin_id and displacement.origin_id.name) or '—'"/>
+                                            → <t
+                                                t-esc="(displacement.destination_id and displacement.destination_id.name) or '—'"/>
+                                        </td>
+                                        <td
+                                            style="border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d; border-left:1px solid #4d4d4d;padding:4px 8px; text-align:right;">
+                                            <t
+                                                t-esc="(displacement.ticket_id and displacement.ticket_id.name) or '—'"/>
+                                        </td>
+                                        <td
+                                            style="border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d; border-left:1px solid #4d4d4d;padding:4px 8px;text-align:right;">
+                                            <t
+                                                t-esc="{'one_way':'Solo ida','round_trip':'Ida y vuelta'}.get(displacement.modality_type,'—')"/>
+                                        </td>
+                                        <td
+                                            style="border-top:1px solid #4d4d4d;border-bottom:1px solid #4d4d4d; border-left:1px solid #4d4d4d;padding:4px 8px;text-align:right;">
+                                            <t t-if="not displacement.suggested_initial_date"
+                                                t-esc="displacement.initial_date and format_datetime(displacement.initial_date, tz=env.context.get('tz') or env.user.tz, dt_format='dd/MM/yyyy hh:mm a')"/>
+                                            <t
+                                                t-if="displacement.suggested_initial_date"
+                                                t-esc="displacement.suggested_initial_date and format_datetime(displacement.suggested_initial_date, tz=env.context.get('tz') or env.user.tz, dt_format='dd/MM/yyyy hh:mm a')"/>
+                                            ️ <t t-if="not displacement.suggested_final_date and displacement.final_date"> → <t
+                                                    t-esc="displacement.final_date and format_datetime(displacement.final_date, tz=env.context.get('tz') or env.user.tz, dt_format='dd/MM/yyyy hh:mm a')"/>
+                                            </t>
+                                            <t
+                                                t-if="displacement.suggested_final_date"> → <t
+                                                    t-esc="displacement.suggested_final_date and format_datetime(displacement.suggested_final_date, tz=env.context.get('tz') or env.user.tz, dt_format='dd/MM/yyyy hh:mm a')"/>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </field>
+        </record>
+
+    </data>
+</odoo>

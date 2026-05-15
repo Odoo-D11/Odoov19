@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="expense_attach_evidence_wizard" model="ir.ui.view">
+            <field name="name">expense.attach.evidence.wizard</field>
+            <field name="model">expense.attach.evidence.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Adjuntar evidencia">
+                    <field name="expense_id" invisible="1"/>
+                    <field name="next_page" invisible="1"/>
+                    <sheet>
+                        <separator string="Instrucciones para adjuntar evidencia"
+                            invisible="next_page"/>
+                        <separator string="Adjuntar evidencia"
+                            invisible="not next_page"/>
+                        <div class="mb-3" invisible="next_page"> A continuación siga los siguientes
+                            pasos para legalizar la solicitud de viáticos <b>
+                                <field name="expense_id" readonly="1" class="text-primary"
+                                    options="{'no_create': True, 'no_open': True}"
+                                    style="margin-bottom: 0 !important; font-weight: bold;"/>
+                            </b>
+                            y evitar inconvenientes con la subida de los documentos requeridos. </div>
+                        <ul
+                            invisible="next_page">
+                            <li>
+                                <b class="text-primary">Debe subir un único archivo PDF</b> que
+                                contenga todas las evidencias de los servicios utilizados para la
+                                solicitud. </li>
+                            <li> El archivo PDF debe contener <b class="text-primary">todas las
+                                facturas
+                                    y recibos</b> correspondientes a los gastos realizados durante
+                                el viaje. </li>
+                            <li> Solo se puede subir archivos con formato <b class="text-primary">
+                                PDF</b>, si sube un documento con otro formato el sistema <b
+                                    class="text-primary">no lo reconocerá</b> y no guardará el
+                                documento. </li>
+                            <li> Solo se deben adjuntar <b class="text-primary">facturas, recibos y
+                                documentos</b> que correspondan directamente a la <b
+                                    class="text-primary">
+                                    <field name="expense_id" readonly="1"
+                                        style="margin-bottom: 0 !important; font-weight: bold;"
+                                        options="{'no_create': True, 'no_open': True}"/>. </b> No se
+                                aceptarán <b class="text-primary">evidencias de otras solicitudes o
+                                desplazamientos</b>. </li>
+                            <li> Si se adjuntan <b class="text-primary">evidencias incorrectas</b>,
+                                la solicitud será <b class="text-primary">rechazada</b> y deberás <b
+                                    class="text-primary">volver a cargar</b> el archivo
+                                correctamente. </li>
+                            <li> Verifica que el archivo no contenga <b class="text-primary">evidencias
+                                duplicadas, incompletas</b>, o que pertenezcan a <b
+                                    class="text-primary">otros viajes</b>. Esto puede <b
+                                    class="text-primary">retrasar</b> el proceso de legalización. </li>
+                            <li> En el PDF, asegúrate de indicar el <b class="text-primary">valor
+                                individual</b> de <b class="text-primary">cada gasto</b> y
+                                relacionarlo con el <b class="text-primary">servicio utilizado</b>
+                                en esta <b class="text-primary">solicitud específica</b>. </li>
+                            <li> Cada <b class="text-primary">solicitud</b> debe tener su <b
+                                    class="text-primary">propio archivo PDF</b>. Si tienes varias <b
+                                    class="text-primary">solicitudes</b>, debes subir un <b
+                                    class="text-primary">archivo diferente</b> para cada una. </li>
+                            <li> Actualmente usted <b class="text-primary">
+                                    <field name="employee_id" readonly="1"
+                                        options="{'no_create': True, 'no_open': True}"
+                                        style="margin-bottom: 0 !important; font-weight: bold;"/>
+                                </b>
+                                tiene un saldo pendiente de <b class="text-primary"> $ <field
+                                        name="outstanding_amount" readonly="1"
+                                        style="margin-bottom: 0 !important; font-weight: bold;"/>
+                                </b>
+                                por legalizar. </li>
+                        </ul>
+                        <div invisible="next_page">
+                            <b class="text-primary">
+                                Nota:</b> En el PDF debe indicar claramente <b class="text-primary">el
+                            valor individual por cada una de las evidencias</b> incluidas en el
+                            documento. </div>
+                        <div class="mb-3"
+                            invisible="not next_page"> A continuación suba el archivo PDF que
+                            contiene las evidencias de los servicios utilizados para la solicitud <b>
+                                <field name="expense_id" readonly="1" class="text-primary"
+                                    options="{'no_create': True, 'no_open': True}"
+                                    style="margin-bottom: 0 !important; font-weight: bold;"/>
+                            </b>
+                            por el empleado <b>
+                                <field name="employee_id" readonly="1" class="text-primary"
+                                    options="{'no_create': True, 'no_open': True}"
+                                    style="margin-bottom: 0 !important; font-weight: bold;"/>
+                            </b>
+                            . </div>
+                        <group invisible="not next_page">
+                            <group>
+                                <field name="evidence_file" filename="evidence_file_name"/>
+                            </group>
+                            <group>
+                                <label for="evidence_amount" string="Total"/>
+                                <div class="o_row">
+                                    <i class="fa fa-dollar me-2" title="Valor de la evidencia"/>
+                                    <field name="evidence_amount" string="Total"/>
+                                </div>
+                            </group>
+                        </group>
+                        <footer>
+                            <button string="Siguiente" type="object" name="action_next_page"
+                                class="btn-primary" invisible="next_page"/>
+                            <button string="Volver" type="object"
+                                name="action_back_to_instructions"
+                                class="btn-primary" invisible="not next_page"/>
+                            <button string="Guardar" type="object"
+                                name="action_attach_evidence" invisible="not next_page"
+                                class="btn-primary"/>
+                            <button string="Cancelar" special="cancel"
+                                class="btn-secondary"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

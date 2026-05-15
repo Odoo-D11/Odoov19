@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <t t-name="BankAccountFieldTemplate">
+        <div t-if="!props.readonly" class="o_field_widget position-relative">
+            <input
+                t-ref="inputRef"
+                type="text"
+                class="o_input pe-5"
+                t-att-value="inputValue"
+                t-att-placeholder="props.placeholder"
+                t-on-input="onInputChange"
+                maxlength="20"
+            />
+            <button
+                t-if="showToggleButton"
+                type="button"
+                class="btn btn-link btn-sm position-absolute end-0 top-50 translate-middle-y me-2"
+                style="z-index: 10; padding: 2px 4px; width: 24px; height: 24px; min-height: 24px;"
+                t-on-click="onToggleVisibility"
+                t-att-title="eyeTitle">
+                <i t-att-class="'fa ' + eyeIcon" aria-hidden="true" style="font-size: 12px;"></i>
+            </button>
+        </div>
+        <div t-else="" class="o_field_widget d-flex align-items-center">
+            <span class="bank-account-display flex-grow-1">
+                <t t-if="displayValue" t-esc="displayValue"/>
+                <span t-else="" class="text-muted">No especificado</span>
+            </span>
+            <button
+                t-if="showToggleButton"
+                type="button"
+                class="btn btn-link btn-sm p-1 ms-2"
+                t-on-click="onToggleVisibility"
+                t-att-title="eyeTitle">
+                <i t-att-class="'fa ' + eyeIcon" aria-hidden="true"></i>
+            </button>
+        </div>
+    </t>
+</templates>

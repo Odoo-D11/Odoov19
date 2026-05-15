@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="expense_attach_reimburse_evidence_wizard" model="ir.ui.view">
+            <field name="name">expense.attach.reimburse.evidence.wizard</field>
+            <field name="model">expense.attach.reimburse.evidence.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Reembolsar evidencia">
+                    <field name="expense_id" invisible="1"/>
+                    <sheet>
+                        <separator string="Instrucciones para reembolsar"
+                            invisible="next_page"/>
+                        <separator string="Adjuntar evidencia"
+                            invisible="not next_page"/>
+                        <div class="mb-3" invisible="next_page"> A continuación siga los siguientes
+                            pasos para legalizar la solicitud de viáticos <b>
+                                <field name="expense_id" readonly="1" class="text-primary"
+                                    options="{'no_create': True, 'no_open': True}"
+                                    style="margin-bottom: 0 !important; font-weight: bold;"/>
+                            </b>
+                            y evitar inconvenientes con la subida de los documentos requeridos. </div>
+                        <ul
+                            invisible="next_page">
+                            <li>
+                                <b class="text-primary">Debe subir un único archivo PDF</b> que
+                                contenga la evidencia del reembolso realizado. </li>
+                            <li> Solo se puede subir archivos con formato <b class="text-primary">
+                                PDF</b>, si sube un documento con otro formato el sistema <b
+                                    class="text-primary">no lo reconocerá</b> y no guardará el
+                                documento. </li>
+                            <li> Actualmente usted <b class="text-primary">
+                                    <field name="employee_id" readonly="1"
+                                        options="{'no_create': True, 'no_open': True}"
+                                        style="margin-bottom: 0 !important; font-weight: bold;"/>
+                                </b>
+                                tiene un saldo pendiente de <b class="text-primary"> $ <field
+                                        name="outstanding_amount" readonly="1"
+                                        style="margin-bottom: 0 !important; font-weight: bold;"/>
+                                </b>
+                                por legalizar. </li>
+
+                        </ul>
+                        <div invisible="next_page">
+                            <b class="text-primary">Nota:</b> En el PDF debe indicar claramente <b
+                                class="text-primary">el valor exacto del reembolso.</b> Si no tiene
+                            evidencia para adjuntar, puede hacer clic en <b
+                                class="text-primary">"No Reembolsar"</b>. Al usar esta opción:
+                            mantendrá una deuda pendiente con la empresa, la solicitud cambiará a
+                            estado <b class="text-primary">"Legalizado"</b> y ya no podrá adjuntar
+                            evidencia posteriormente. <b class="text-primary">Use "No Reembolsar"
+                            únicamente cuando no tenga ninguna evidencia que adjuntar.</b>
+                        </div>
+                        <div class="mb-3"
+                            invisible="not next_page"> A continuación suba el archivo PDF que
+                            contiene el <b>valor del reembolso</b> realizado para la solicitud <b>
+                                <field name="expense_id" readonly="1" class="text-primary"
+                                    options="{'no_create': True, 'no_open': True}"
+                                    style="margin-bottom: 0 !important; font-weight: bold;"/>
+                            </b>
+                            por el empleado <b>
+                                <field name="employee_id" readonly="1" class="text-primary"
+                                    options="{'no_create': True, 'no_open': True}"
+                                    style="margin-bottom: 0 !important; font-weight: bold;"/>
+                            </b>
+                            . </div>
+                        <group invisible="not next_page">
+                            <group>
+                                <field name="evidence_file" filename="evidence_file_name"/>
+                            </group>
+                            <group>
+                                <label for="evidence_amount" string="Total"/>
+                                <div class="o_row">
+                                    <i class="fa fa-dollar me-2" title="Total de la evidencia"/>
+                                    <field name="evidence_amount" string="Total"/>
+                                </div>
+                            </group>
+                        </group>
+                        <footer>
+                            <button string="Siguiente" type="object" name="action_next_page"
+                                class="btn-primary" invisible="next_page"/>
+                            <button string="No Reembolsar" type="object"
+                                name="action_no_reimbursement"
+                                confirm="¿Está seguro de que desea no reembolsar? Una vez hecho esto, no podrá adjuntar evidencia posteriormente."
+                                class="btn-primary" invisible="next_page"/>
+                            <button string="Volver" type="object"
+                                name="action_back_to_instructions"
+                                class="btn-primary" invisible="not next_page"/>
+                            <button string="Guardar" type="object"
+                                name="action_attach_evidence" invisible="not next_page"
+                                class="btn-primary"/>
+                            <button string="Cancelar" special="cancel"
+                                class="btn-secondary"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_expense_displacement_form" model="ir.ui.view">
+            <field name="name">expense.displacement.form</field>
+            <field name="model">expense.displacement</field>
+            <field name="arch" type="xml">
+                <form string="Desplazamiento">
+                    <field name="expense_id" invisible="1"
+                        options="{'no_create': True, 'no_open': True}"/>
+                    <field name="category_id" invisible="1"
+                        options="{'no_create': True, 'no_open': True}"/>
+                    <field name="currency_id" invisible="1"
+                        options="{'no_create': True, 'no_open': True}"/>
+                    <sheet>
+                        <separator string="Información General"/>
+                        <p class="oe_grey" invisible="category_id == 2">
+                            Proporciona detalles generales sobre el desplazamiento, incluyendo
+                            el tipo de tiquete, origen, destino y las fechas de inicio y
+                            finalización del viaje. Esta información es esencial para
+                            organizar y planificar el desplazamiento de manera efectiva.
+                        </p>
+                        <group invisible="category_id == 2">
+                            <group>
+                                <div class="o_checkbox_container">
+                                    <div class="o_checkbox_title_container">
+                                        <div class="o_title_with_border">
+                                            <span style="font-weight: 500; color: #212529;">
+                                                Modalidad
+                                            </span>
+                                            <p class="mb-0">
+                                                <span class="text-muted">Seleccione la modalidad del
+                                                    desplazamiento: <b>Solo ida</b> — sin regreso; <b>Ida
+                                                    y vuelta</b> — con regreso. Elija la opción que
+                                                    corresponda al tipo de desplazamiento.</span>
+                                                <span
+                                                    class="d-inline-flex align-items-center flex-nowrap">
+                                                    <i class="fa fa-long-arrow-right ms-2 me-2"
+                                                        aria-hidden="true"/>
+                                                    <field
+                                                        name="modality_type"
+                                                        string="Modalidad"
+                                                        required="category_id != 2"
+                                                        class="text-primary w-auto field-clear"/>
+
+                                                </span>
+                                            </p>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </group>
+                            <group>
+                                <field name="ticket_id" string="Tiquete"
+                                    required="category_id != 2"
+                                    options="{'no_create': True, 'no_open': True}"
+                                    placeholder="Ej. Básico, Estándar, etc."/>
+                                <label for="origin_id" string="Desde"/>
+                                <div class="o_row">
+                                    <field name="origin_id"
+                                        options="{'no_create': True, 'no_open': True}"
+                                        string="Desde"
+                                        placeholder="Ej. Bogotá, Medellín, etc."/>
+                                    <span style="font-weight: 500; color: #212529;"
+                                        class="ms-1 me-1">Hasta</span>
+                                    <field name="destination_id" string="Hasta"
+                                        options="{'no_create': True, 'no_open': True}"
+                                        placeholder="Ej. Barranquilla, Cali, etc."/>
+                                </div>
+                                <label for="initial_date" string="Inicio"/>
+                                <div class="o_row">
+                                    <field name="initial_date" placeholder="Ej. 2025-01-01"/>
+                                    <span style="font-weight: 500; color: #212529;"
+                                        invisible="modality_type == 'one_way'"
+                                        class="ms-1 me-1">Fin</span>
+                                    <field name="final_date" widget="date"
+                                        required="modality_type == 'round_trip'"
+                                        placeholder="Ej. 2025-01-05"
+                                        invisible="modality_type == 'one_way'"
+                                        class="text-primary w-auto ms-1"/>
+                                </div>
+                            </group>
+                        </group>
+                        <p class="oe_grey" invisible="category_id != 2">
+                            Registra la ubicación de desplazamiento. Indica la ciudad de origen y
+                            destino, así como las fechas de inicio y finalización del
+                            desplazamiento. Esta
+                            información es esencial para calcular los viáticos y gastos relacionados
+                            con el desplazamiento.
+                        </p>
+                        <group invisible="category_id != 2">
+                            <group>
+                                <field name="origin_id"
+                                    options="{'no_create': True, 'no_open': True}"
+                                    string="Desde"
+                                    placeholder="Ej. Bogotá, Medellín, etc."/>
+                                <label for="initial_date" string="Inicio"/>
+                                <div class="o_row">
+                                    <field name="initial_date" placeholder="Ej. 2025-01-01"/>
+                                    <span style="font-weight: 500; color: #212529;"
+                                        class="ms-1 me-1">Fin</span>
+                                    <field name="final_date" widget="date"
+                                        placeholder="Ej. 2025-01-05" required="category_id != 1"
+                                        class="text-primary w-auto ms-1"/>
+                                </div>
+                            </group>
+                            <group>
+                                <field name="destination_id" string="Hasta"
+                                    options="{'no_create': True, 'no_open': True}"
+                                    placeholder="Ej. Barranquilla, Cali, etc."/>
+                            </group>
+                        </group>
+                        <separator string="Servicios" invisible="category_id != 2"/>
+                        <p class="oe_grey" invisible="category_id != 2">
+                            Registra los servicios asociados al trayecto. Puedes especificar el tipo
+                            de servicio, como transporte, alojamiento, etc. Asegúrate de completar
+                            todos los detalles relevantes para cada servicio.
+                        </p>
+                        <field name="service_line_ids" invisible="category_id != 2">
+                            <list editable="bottom" string="Servicios">
+                                <field name="currency_id" column_invisible="1"/>
+                                <field name="service_id"
+                                    options="{'no_create': True, 'no_open': True}"
+                                    placeholder="Ej. Hospedaje, Alimentación, Transporte, etc."
+                                    class="text-primary" string="Nombre"/>
+                                <field name="quantity" string="Cantidad"/>
+                                <field name="unit_price" string="Precio Unit."/>
+                                <field name="total_amount" string="Subtotal" readonly="1"/>
+                            </list>
+                        </field>
+                        <div class="o_line_totals_container" invisible="category_id != 2">
+                            <div class="o_line_totals_wrapper">
+                                <field name="total" widget="line-totals-field" nolabel="1"
+                                    readonly="1"
+                                    options="{'currency_field': 'currency_id'}"/>
+                            </div>
+                        </div>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

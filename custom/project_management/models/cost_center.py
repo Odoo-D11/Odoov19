@@ -45,7 +45,8 @@ class InheritedProjectCostCenter(models.Model):
         # Initialize to empty recordsets to avoid UnboundLocalError
         coincidences = self.env['cost.center'].browse([])
         code_coincidences = self.env['cost.center'].browse([])
-        analytical_account = vals.get('analytical_account_id', self.analytical_account_id.id)
+        analytical_account = vals.get(
+            'analytical_account_id', self.analytical_account_id.id)
         project_id = vals.get('project_id', self.project_id.id)
         code = vals.get('code', self.code)
         # Validar que no exista el mismo centro de costo en el mismo proyecto
@@ -81,4 +82,4 @@ class InheritedProjectCostCenter(models.Model):
                       ('name', operator, name),
                       ('code', operator, name)]
         return super(InheritedProjectCostCenter, self).name_search(
-            name=name, args=args + domain, limit=limit)
+            name, args + domain, operator, limit)

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_expense_refund_list" model="ir.ui.view">
+            <field name="name">expense.refund.list</field>
+            <field name="model">expense.refund</field>
+            <field name="arch" type="xml">
+                <list string="Reembolsos">
+                    <field name="reference"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_expense_refund_form" model="ir.ui.view">
+            <field name="name">expense.refund.form</field>
+            <field name="model">expense.refund</field>
+            <field name="arch" type="xml">
+                <form string="Reembolso">
+                    <field name="currency_id" invisible="1"/>
+                    <field name="state" invisible="1"/>
+                    <field name="has_attached_evidence" invisible="1"/>
+                    <field name="reference" readonly="1" invisible="1"/>
+                    <header invisible="not id">
+                        <widget name="attach_document_pdf" string="Adjuntar evidencia"
+                            action="attach_document" highlight="1"
+                            invisible="state not in ['draft', 'rejected'] or has_attached_evidence"/>
+                        <button name="action_send_for_approval" type="object"
+                            string="Enviar a aprobación"
+                            invisible="state not in ['draft', 'rejected'] or not has_attached_evidence"
+                            class="btn-primary"/>
+                        <button name="action_approve" type="object" string="Aprobar"
+                            invisible="state not in ['to_approve', 'to_review']" class="btn-primary"/>
+                        <button name="action_reject" type="object" string="Rechazar"
+                            invisible="state not in ['to_approve', 'to_review']"
+                            class="btn-secondary"/>
+                        <button name="action_pay" type="object" string="Pagar"
+                            invisible="state != 'legalized'" class="btn-primary"/>
+                        <button name="action_cause" type="object" string="Causar"
+                            invisible="state != 'paid'" class="btn-primary"/>
+                        <button name="action_finalize" type="object" string="Finalizar"
+                            invisible="state != 'caused'" class="btn-primary"/>
+                        <button name="action_view_attached_evidence" type="object"
+                            invisible="not has_attached_evidence"
+                            string="Evidencias" class="btn-secondary"/>
+                    </header>
+                    <div class="alert alert-info" role="alert" invisible="state == 'rejected'">
+                        <i class="fa fa-info-circle me-1" title="Información"/>
+                        <span>La solicitud <span invisible="reference == 'Nuevo'" class="me-1">con
+                            referencia <strong>
+                                    <field name="reference" readonly="1" nolabel="1"/>
+                                </strong>
+                            </span>
+                        <span
+                                invisible="state != 'draft'">se encuentra en estado <strong>
+                                    <field name="state" readonly="1" nolabel="1"
+                                        style="text-transform: lowercase;"/>. </strong></span>
+                        </span>
+                        <span invisible="state != 'to_approve'">se encuentra pendiente de aprobación
+                            por parte del área de Operaciones.</span>
+                        <span invisible="state != 'to_review'">se encuentra pendiente de revisión
+                            por parte del área de Administración.</span>
+                        <span invisible="state != 'legalized'">fue legalizada y se encuentra
+                            pendiente de ser marcada como pagada por parte del área de Contabilidad.</span>
+                        <span invisible="state != 'paid'">fue marcada como pagada y se encuentra
+                            pendiente de ser causada por parte del área de Contabilidad.</span>
+                        <span invisible="state != 'caused'">fue causada y se encuentra pendiente de
+                            finalización por parte del área de Contabilidad.</span>
+                        <span invisible="state != 'finalized'">fue finalizada.</span>
+
+                    </div>
+                    <div class="alert alert-danger" role="alert"
+                        invisible="state != 'rejected'">
+                        <i class="fa fa-warning me-1" title="Error"/>
+                        <span>La solicitud fue <strong>
+                                rechazada.</strong> Por favor, revise el último mensaje del registro
+                            para conocer el motivo y la justificación del rechazo. Si tiene dudas,
+                            comuníquese con el área encargada. </span>
+                    </div>
+                    <sheet>
+                        <span style="font-weight: 500; color: #212529;">
+                            Asunto
+                        </span>
+                        <div class="form-title-responsive mb-4 text-truncate">
+                            <h1>
+                                <field name="subject"
+                                    placeholder="Ej. Material de oficina..."
+                                    nolabel="1" class="o_field_char o_field_title"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="employee_id"
+                                    placeholder="Ej. Dwight Schrute, Michael Scott, etc."
+                                    options="{'no_create': True, 'no_open': True}"/>
+                                <field name="project_id"
+                                    placeholder="Ej. Administrativo, Comercial, etc."
+                                    options="{'no_create': True, 'no_open': True}"/>
+                                <field name="amount" placeholder="Ej. 100, 200, etc."
+                                    options="{'currency_field': 'currency_id'}"/>
+                            </group>
+                            <group>
+                                <field name="enterprise_id" placeholder="Ej. Dunder Mifflin, etc."
+                                    options="{'no_create': True, 'no_open': True}"/>
+                                <field name="create_date" placeholder="Ej. 01/01/2024, etc."/>
+                            </group>
+                        </group>
+                        <field name="reason" placeholder="Motivo...."/>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

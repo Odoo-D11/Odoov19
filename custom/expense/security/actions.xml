@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="expense_action" model="ir.actions.act_window">
+        <field name="name">Solicitudes</field>
+        <field name="res_model">expense.expense</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{'search_default_my_requests': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay gastos registrados.
+            </p>
+            <p> Un <b class="text-primary">gasto</b> es un registro relacionado con viajes o
+                actividades laborales fuera de la oficina, que permite documentar y solicitar
+                reembolsos por los importes incurridos. Utiliza esta sección para crear, gestionar y
+                hacer seguimiento de tus <b class="text-primary">gastos</b> de manera eficiente,
+                adjuntando comprobantes y especificando detalles como fecha, motivo y monto. El
+                sistema facilita la revisión y aprobación por parte de los responsables, asegurando
+                transparencia y control en el proceso. Además, puedes consultar el historial y
+                estado de tus solicitudes para mantener un seguimiento claro y ordenado de tus
+                finanzas laborales. </p>
+        </field>
+    </record>
+
+    <record id="expense_refund_action" model="ir.actions.act_window">
+        <field name="name">Reintegros</field>
+        <field name="res_model">expense.refund</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{'search_default_my_requests': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay reintegros registrados.
+            </p>
+            <p> Un <b class="text-primary">reintegro</b> es un proceso mediante el cual los
+                empleados pueden solicitar el reembolso de gastos previamente incurridos y
+                aprobados. Utiliza esta sección para crear, gestionar y hacer seguimiento de tus
+                solicitudes de reintegro de manera eficiente, adjuntando comprobantes y
+                especificando detalles como fecha, motivo y monto. El sistema facilita la revisión y
+                aprobación por parte de los responsables, asegurando transparencia y control en el
+                proceso. Además, puedes consultar el historial y estado de tus solicitudes para
+                mantener un seguimiento claro y ordenado de tus finanzas laborales. </p>
+        </field>
+    </record>
+
+    <record id="expense_team_action" model="ir.actions.act_window">
+        <field name="name">Equipos</field>
+        <field name="res_model">expense.team</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay equipos registrados.
+            </p>
+            <p> Un <b class="text-primary">equipo</b> es un grupo de usuarios que comparten
+                responsabilidades en la gestión y aprobación de gastos dentro de la organización.
+                Utiliza esta sección para crear, editar y gestionar los equipos, asignando roles y
+                permisos específicos a cada miembro. Esto facilita la colaboración y el control en
+                el proceso de revisión y aprobación de gastos, asegurando una gestión eficiente y
+                transparente. </p>
+        </field>
+    </record>
+
+    <record id="expense_enterprise_action" model="ir.actions.act_window">
+        <field name="name">Empresas</field>
+        <field name="res_model">expense.enterprise</field>
+        <field name="view_mode">list</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay empresas registradas.
+            </p>
+            <p> Una <b class="text-primary">empresa</b> es una entidad responsable de la gestión y
+                pago de los gastos generados por los empleados. Utiliza esta sección para crear,
+                editar y gestionar las empresas, asignando roles y permisos específicos a cada una.
+                Esto facilita la organización y control en el proceso de revisión y aprobación de
+                gastos, asegurando una gestión eficiente y transparente. </p>
+        </field>
+    </record>
+
+    <record id="expense_category_action" model="ir.actions.act_window">
+        <field name="name">Categorías</field>
+        <field name="res_model">expense.category</field>
+        <field name="view_mode">list</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay categorías registradas.
+            </p>
+            <p> Una <b class="text-primary">categoría</b> es una clasificación que permite organizar
+                y agrupar los gastos de manera eficiente. Utiliza esta sección para crear, editar y
+                gestionar las categorías, asignando roles y permisos específicos a cada una. Esto
+                facilita la organización y control en el proceso de revisión y aprobación de gastos,
+                asegurando una gestión eficiente y transparente. </p>
+        </field>
+    </record>
+
+    <record id="expense_service_action" model="ir.actions.act_window">
+        <field name="name">Servicios</field>
+        <field name="res_model">expense.service</field>
+        <field name="view_mode">list</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay servicios registrados.
+            </p>
+            <p> Un <b class="text-primary">servicio</b> es una actividad o conjunto de actividades
+                realizadas para satisfacer una necesidad específica dentro de la organización.
+                Utiliza esta sección para crear, editar y gestionar los servicios, asignando roles y
+                permisos específicos a cada uno. Esto facilita la organización y control en el
+                proceso de revisión y aprobación de gastos, asegurando una gestión eficiente y
+                transparente. </p>
+        </field>
+    </record>
+
+    <record id="expense_rejection_reason_action" model="ir.actions.act_window">
+        <field name="name">Motivos de rechazo</field>
+        <field name="res_model">expense.rejection.reason</field>
+        <field name="view_mode">list</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay motivos de rechazo registrados.
+            </p>
+            <p> Un <b class="text-primary">motivo de rechazo</b> es una razón específica por la cual
+                un gasto puede ser rechazado durante el proceso de revisión. Utiliza esta sección
+                para crear, editar y gestionar los motivos de rechazo, asegurando una gestión
+                eficiente y transparente de los gastos. </p>
+        </field>
+    </record>
+
+    <record id="expense_type_ticket_action" model="ir.actions.act_window">
+        <field name="name">Tipos de Ticket</field>
+        <field name="res_model">expense.type.ticket</field>
+        <field name="view_mode">list</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay tipos de ticket registrados.
+            </p>
+            <p> Un <b class="text-primary">tipo de ticket</b> es una categoría que permite
+                clasificar los gastos según su naturaleza. Utiliza esta sección para crear, editar y
+                gestionar los tipos de ticket, asegurando una gestión eficiente y transparente de
+                los gastos. </p>
+        </field>
+    </record>
+
+    <record id="expense_project_management_action" model="ir.actions.act_window">
+        <field name="name">Proyectos</field>
+        <field name="res_model">project.management</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crea un nuevo proyecto
+            </p>
+            <p> Un <b class="text-primary">proyecto</b> es una iniciativa temporal con un objetivo
+                específico, que requiere planificación y ejecución. Permite gestionar recursos,
+                tareas y plazos para alcanzar metas definidas. Utiliza esta sección para crear,
+                gestionar y hacer seguimiento de tus <b
+                    class="text-primary">proyectos</b> de manera eficiente.</p>
+        </field>
+    </record>
+
+    <record id="expense_employee_action" model="ir.actions.act_window">
+        <field name="name">Empleados</field>
+        <field name="res_model">hr.employee</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No hay empleados registrados.
+            </p>
+            <p> Los <b class="text-primary">Empleados</b> son los miembros del equipo que forman
+                parte de la empresa y contribuyen a su funcionamiento diario. Desde este módulo
+                puedes gestionar la información de cada empleado, su puesto, departamento y otros
+                datos relevantes. <b class="text-primary">La gestión de empleados</b> permite
+                organizar, consultar y actualizar los datos del personal, facilitando la
+                administración de recursos humanos y mejorando la eficiencia en los procesos
+                internos. </p>
+        </field>
+    </record>
+
+    <menuitem
+        id="menu_root_expense"
+        name="Gastos"
+        action="expense_action"
+        sequence="240"
+        web_icon="expense,static/description/icon.png"
+        groups="expense.group_consult_expense"
+    />
+
+    <menuitem
+        id="menu_request_expense"
+        name="Solicitudes"
+        parent="expense.menu_root_expense"
+        sequence="1"
+    />
+
+    <menuitem
+        id="menu_expense_my_requests"
+        name="Mis solicitudes"
+        parent="expense.menu_request_expense"
+        action="expense.expense_action"
+        sequence="1"
+    />
+
+    <menuitem
+        id="menu_expense_refund_requests"
+        name="Reintegros"
+        parent="expense.menu_request_expense"
+        action="expense.expense_refund_action"
+        sequence="2"
+    />
+
+    <menuitem
+        id="menu_expense_employees"
+        name="Empleados"
+        parent="expense.menu_root_expense"
+        action="expense.expense_employee_action"
+        sequence="2"
+    />
+
+    <menuitem
+        id="menu_expense_report"
+        name="Informes"
+        parent="expense.menu_root_expense"
+        action="expense.expense_action"
+        sequence="3"
+    />
+
+    <menuitem
+        id="menu_expense_configuration"
+        name="Configuración"
+        parent="expense.menu_root_expense"
+        sequence="10"
+    />
+
+    <menuitem
+        id="menu_expense_team"
+        name="Equipos"
+        parent="expense.menu_expense_configuration"
+        action="expense.expense_team_action"
+        sequence="1"
+    />
+
+    <menuitem
+        id="menu_expense_enterprise"
+        name="Empresas"
+        parent="expense.menu_expense_configuration"
+        action="expense.expense_enterprise_action"
+        sequence="2"
+    />
+
+    <menuitem
+        id="menu_expense_project"
+        name="Proyectos"
+        parent="expense.menu_expense_configuration"
+        action="expense.expense_project_management_action"
+        sequence="3"
+    />
+
+    <menuitem
+        id="menu_expense_service"
+        name="Servicios"
+        parent="expense.menu_expense_configuration"
+        action="expense.expense_service_action"
+        sequence="4"
+    />
+
+    <menuitem
+        id="menu_expense_category"
+        name="Categorías"
+        parent="expense.menu_expense_configuration"
+        action="expense.expense_category_action"
+        sequence="5"
+    />
+
+    <!--<menuitem
+        id="menu_expense_type_ticket"
+        name="Tipos de Ticket"
+        parent="expense.menu_expense_configuration"
+        action="expense.expense_type_ticket_action"
+        sequence="5"
+    />-->
+
+    <menuitem
+        id="menu_expense_rejection_reason"
+        name="Motivos de rechazo"
+        parent="expense.menu_expense_configuration"
+        action="expense.expense_rejection_reason_action"
+        sequence="6"
+    />
+
+
+</odoo>

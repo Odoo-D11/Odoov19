@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record model="ir.module.category" id="category_module_expense">
+        <field name="name">Gastos</field>
+        <field name="sequence">23</field>
+    </record>
+
+    <record model="res.groups.privilege" id="category_expense">
+        <field name="name">Gastos</field>
+        <field name="sequence">32</field>
+        <field name="category_id" ref="category_module_expense"/>
+    </record>
+
+    <record id="group_consult_expense" model="res.groups">
+        <field name="name">Consulta</field>
+        <field name="comment">Consulta de gastos</field>
+        <field name="privilege_id" ref="expense.category_expense"/>
+    </record>
+
+    <record id="group_employee_expense" model="res.groups">
+        <field name="name">Empleado</field>
+        <field name="comment">Permisos de empleado</field>
+        <field name="privilege_id" ref="expense.category_expense"/>
+        <field name="implied_ids"
+            eval="[(4, ref('expense.group_consult_expense'))]"/>
+    </record>
+
+    <record id="group_creator_expense" model="res.groups">
+        <field name="name">Creador</field>
+        <field name="comment">Creador de gastos</field>
+        <field name="privilege_id" ref="expense.category_expense"/>
+        <field name="implied_ids"
+            eval="[(4, ref('expense.group_employee_expense'))]"/>
+    </record>
+
+    <record id="group_manager_expense" model="res.groups">
+        <field name="name">Administrador</field>
+        <field name="comment">Permisos completos</field>
+        <field name="privilege_id" ref="expense.category_expense"/>
+        <field name="implied_ids"
+            eval="[(4, ref('expense.group_creator_expense'))]"/>
+    </record>
+
+    <record id="group_accounting_expense" model="res.groups">
+        <field name="name">Gastos / Contabilidad</field>
+        <field name="comment">Permisos de contabilidad</field>
+        <field name="implied_ids" eval="[(4, ref('expense.group_consult_expense'))]"/>
+    </record>
+
+    <record id="group_treasury_expense" model="res.groups">
+        <field name="name">Gastos / Tesorería</field>
+        <field name="comment">Permisos de tesorería</field>
+        <field name="implied_ids" eval="[(4, ref('expense.group_consult_expense'))]"/>
+    </record>
+
+    <record id="group_management_expense" model="res.groups">
+        <field name="name">Gastos / Gerencia</field>
+        <field name="comment">Permisos de gerencia</field>
+        <field name="implied_ids" eval="[(4, ref('expense.group_consult_expense'))]"/>
+    </record>
+</odoo>

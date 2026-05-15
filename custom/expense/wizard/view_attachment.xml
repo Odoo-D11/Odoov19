@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_attachment_wizard" model="ir.ui.view">
+            <field name="name">view.attachment.wizard</field>
+            <field name="model">expense.view.attachment</field>
+            <field name="arch" type="xml">
+                <form string="Ver Evidencia">
+                    <field name="view_mode" invisible="1"/>
+                    <field name="evidence" invisible="1"/>
+                    <field name="reimbursement" invisible="1"/>
+                    <sheet>
+                        <div invisible="view_mode != 'evidence'">
+                            <separator string="Evidencia"/>
+                            <div class="mb-3"> Este documento contiene los <b class="text-primary">comprobantes,
+                                facturas y recibos</b> de los gastos realizados durante el
+                                desplazamiento. La evidencia sirve para <b class="text-primary">justificar
+                                el uso del dinero aprobado</b> y demostrar que los fondos fueron
+                                utilizados correctamente según el <b class="text-primary">propósito
+                                del viático</b>. Revise cuidadosamente que todos los gastos estén <b
+                                    class="text-primary">debidamente soportados</b> y correspondan
+                                al período y ubicación del desplazamiento. </div>
+                            <field name="attached_evidence" widget="pdf_viewer"
+                                filename="evidencia.pdf" readonly="1"/>
+                        </div>
+
+                        <!-- VISTA DE REEMBOLSO -->
+                        <div invisible="view_mode != 'reimbursement'">
+                            <separator string="Reembolso"/>
+                            <div class="mb-3"> Este documento contiene la evidencia del <b
+                                    class="text-primary">dinero sobrante</b> que el empleado no
+                                utilizó durante el desplazamiento. El reembolso ocurre cuando el
+                                empleado <b
+                                    class="text-primary">gastó menos del monto aprobado</b> y desea <b
+                                    class="text-primary">devolver el excedente a la empresa</b> para
+                                evitar quedar en deuda. Verifique que el monto a reembolsar sea <b
+                                    class="text-primary">correcto y esté debidamente documentado</b>
+                                antes de autorizar la <b class="text-primary">devolución a la
+                                compañía</b>. </div>
+                            <field name="attached_reimbursement" widget="pdf_viewer"
+                                filename="reembolso.pdf" readonly="1"/>
+                        </div>
+                    </sheet>
+                    <footer>
+                        <button name="action_view_evidence" string="Evidencia" type="object"
+                            class="btn-primary" invisible="view_mode == 'evidence' or not evidence"/>
+                        <button name="action_view_reimbursement" string="Reembolso" type="object"
+                            class="btn-primary" invisible="view_mode == 'reimbursement' or not reimbursement"/>
+                        <button string="Cerrar" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_refund_attachment_wizard" model="ir.ui.view">
+            <field name="name">expense.refund.view.attachment.form</field>
+            <field name="model">expense.refund.view.attachment</field>
+            <field name="arch" type="xml">
+                <form string="Ver Evidencia">
+                    <sheet>
+                        <separator string="Evidencia adjunta"/>
+                        <field name="attached_document" widget="pdf_viewer"
+                            filename="evidencia.pdf" readonly="1"/>
+                    </sheet>
+                    <footer>
+                        <button string="Cerrar" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+
+</odoo>

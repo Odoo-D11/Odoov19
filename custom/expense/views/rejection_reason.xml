@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+
+        <record id="view_expense_rejection_reason_list" model="ir.ui.view">
+            <field name="name">expense.rejection.reason.list</field>
+            <field name="model">expense.rejection.reason</field>
+            <field name="arch" type="xml">
+                <list string="Motivos de Rechazo" editable="bottom">
+                    <field name="name"
+                        placeholder="Ej. Falta de documentación, Duplicado, etc."/>
+                </list>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>
