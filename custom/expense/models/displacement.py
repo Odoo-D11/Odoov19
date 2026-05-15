@@ -38,12 +38,24 @@ class ExpenseDisplacement(models.Model):
         currency_field='currency_id', string='Total', compute='_compute_total', store=True)
     """CHAR"""
     display_name = fields.Char(
-        string='Descripción', compute='_compute_display_name')
+        string='Descripción', compute='_compute_display_name', store=True)
 
     @api.depends('origin_id', 'destination_id',
                  'initial_date', 'final_date',
                  'service_line_ids', 'service_line_ids.unit_price', 'service_line_ids.quantity')
     def _compute_display_name(self):
+        def _fmt_dt(dt):
+            if not dt:
+                return None
+            return fields.Datetime.to_datetime(dt).strftime('%d/%m/%Y')
+
+        def _format_colombian_currency(val):
+            try:
+                intval = int(round(val))
+            except Exception:
+                intval = 0
+            return '{:,}'.format(intval).replace(',', '.')
+
         for record in self:
             # Ciudades
             city = ''
@@ -51,19 +63,13 @@ class ExpenseDisplacement(models.Model):
                 if record.origin_id.id == record.destination_id.id:
                     city = record.origin_id.name
                 else:
-                    city = '{} - {}'.format(record.origin_id.name,
-                                            record.destination_id.name)
+                    city = '{} - {}'.format(record.origin_id.name, record.destination_id.name)
             elif record.origin_id:
                 city = record.origin_id.name
             elif record.destination_id:
                 city = record.destination_id.name
 
             # Fechas
-            def _fmt_dt(dt):
-                if not dt:
-                    return None
-                return fields.Datetime.to_datetime(dt).strftime('%d/%m/%Y')
-
             start = _fmt_dt(record.initial_date)
             end = _fmt_dt(record.final_date)
             date_str = ''
@@ -74,24 +80,11 @@ class ExpenseDisplacement(models.Model):
             elif end:
                 date_str = '({})'.format(end)
 
-            # Total (suma de servicios: unit_price * quantity)
-            total_val = 0
-            for line in record.service_line_ids:
-                total_val += (line.unit_price or 0) * (line.quantity or 0)
-
-            def _format_colombian_currency(val):
-                try:
-                    intval = int(round(val))
-                except Exception:
-                    intval = 0
-                return '{:,}'.format(intval).replace(',', '.')
-
+            # Total — reutiliza record.total (ya calculado por _compute_total)
             total_str = ''
             if record.service_line_ids:
-                total_str = '$ {}'.format(
-                    _format_colombian_currency(total_val))
+                total_str = '$ {}'.format(_format_colombian_currency(record.total))
 
-            # display_name: "Ciudad: ... | Dia: (...) | Total: $ ..."
             parts = []
             if city:
                 parts.append('Ciudad: {}'.format(city))
@@ -100,16 +93,15 @@ class ExpenseDisplacement(models.Model):
             if total_str:
                 parts.append('Total: {}'.format(total_str))
 
-            record.display_name = ' | '.join(
-                parts) if parts else 'Desplazamiento'
-            
+            record.display_name = ' | '.join(parts) if parts else 'Desplazamiento'
+
     @api.depends('service_line_ids', 'service_line_ids.unit_price', 'service_line_ids.quantity')
     def _compute_total(self):
         for record in self:
-            total_val = 0
-            for line in record.service_line_ids:
-                total_val += (line.unit_price or 0) * (line.quantity or 0)
-            record.total = total_val
+            record.total = sum(
+                (line.unit_price or 0) * (line.quantity or 0)
+                for line in record.service_line_ids
+            )
 
     @api.onchange('modality_type')
     def _onchange_modality_type(self):
@@ -138,116 +130,98 @@ class ExpenseDisplacement(models.Model):
 
     @api.constrains('initial_date', 'final_date', 'category_id', 'expense_id')
     def _check_dates(self):
-        for record in self:
-            # --- Helpers ---
-            def to_date(dt):
-                return fields.Datetime.to_datetime(dt).date() if dt else None
+        # has_group una sola vez fuera del loop de records
+        user = self.env.user
+        is_finance = (
+            user.has_group('expense.group_accounting_expense')
+            or user.has_group('expense.group_treasury_expense')
+        )
 
-            def is_business_day(d: date) -> bool:
-                # L-V y no festivo (observed=True aplica traslados por Ley Emiliani)
-                if d.weekday() >= 5:
-                    return False
-                return d not in country_holidays("CO", years=d.year, observed=True)
+        # Cache de festivos por año — evita reinstanciar HolidayBase en cada llamada
+        _holiday_cache = {}
 
-            def add_business_days_inclusive(start: date, n_inclusive: int) -> date:
-                """Devuelve la fecha que corresponde al 'n'-ésimo día hábil
-                contando desde 'start'. Si 'start' no es hábil, comienza a contar
-                desde el siguiente día hábil."""
-                if n_inclusive <= 1:
-                    # si piden 1 día (incluyendo creación) => devolver el primer hábil >= start
-                    d = start
-                    while not is_business_day(d):
-                        d += timedelta(days=1)
-                    return d
-                # contar el 1er día hábil (>= start)
+        def is_business_day(d: date) -> bool:
+            if d.weekday() >= 5:
+                return False
+            if d.year not in _holiday_cache:
+                _holiday_cache[d.year] = country_holidays("CO", years=d.year, observed=True)
+            return d not in _holiday_cache[d.year]
+
+        def to_date(dt):
+            return fields.Datetime.to_datetime(dt).date() if dt else None
+
+        def add_business_days_inclusive(start: date, n_inclusive: int) -> date:
+            if n_inclusive <= 1:
                 d = start
-                count = 0
-                while count < n_inclusive:
-                    if is_business_day(d):
-                        count += 1
-                        if count == n_inclusive:
-                            return d
+                while not is_business_day(d):
                     d += timedelta(days=1)
+                return d
+            d = start
+            count = 0
+            while count < n_inclusive:
+                if is_business_day(d):
+                    count += 1
+                    if count == n_inclusive:
+                        return d
+                d += timedelta(days=1)
 
-            # --- Fechas base (normalizadas a date) ---
+        for record in self:
             initial_date = to_date(record.initial_date)
             final_date = to_date(record.final_date)
 
-            # Orden de fechas
             if initial_date and final_date and initial_date > final_date:
                 raise ValidationError(
                     _('La fecha de inicio no puede ser posterior a la fecha de finalización.'))
 
-            # Regla de “mínimo de días por categoría” (ignorando fines de semana/festivos)
-            if record.category_id and record.expense_id and record.expense_id.creation_date and initial_date:
-                creation_date = fields.Date.to_date(
-                    record.expense_id.creation_date)
+            if not is_finance and record.category_id and record.expense_id and record.expense_id.creation_date and initial_date:
+                creation_date = fields.Date.to_date(record.expense_id.creation_date)
+                total_days_inclusive = 0
+                category_name_msg = record.category_id.display_name
 
-                # Permisos
-                user = record.env.user
-                is_finance = user.has_group('expense.group_accounting_expense') or user.has_group(
-                    'expense.group_treasury_expense')
+                if record.category_id.name == 'Viáticos (Alimentación, Hospedaje, etc.)':
+                    total_days_inclusive = 2
+                    category_name_msg = 'Viáticos'
+                elif record.category_id.name == 'Tiquetes y vuelos':
+                    total_days_inclusive = 2
+                    category_name_msg = 'Tiquetes'
 
-                if not is_finance:
-                    # Define los mínimos **incluyendo el día de creación** (en días hábiles)
-                    total_days_inclusive = 0
-                    category_name_msg = record.category_id.display_name
+                if total_days_inclusive > 0:
+                    min_allowed_date = add_business_days_inclusive(creation_date, total_days_inclusive)
+                    if initial_date < min_allowed_date:
+                        raise ValidationError(_(
+                            'Para la categoría %s, la fecha de inicio debe ser al menos %d día(s) hábiles '
+                            'contando desde la fecha de creación (%s). La fecha mínima permitida es: %s'
+                        ) % (
+                            category_name_msg,
+                            total_days_inclusive,
+                            creation_date.strftime('%d/%m/%Y'),
+                            min_allowed_date.strftime('%d/%m/%Y'),
+                        ))
 
-                    if record.category_id.name == 'Viáticos (Alimentación, Hospedaje, etc.)':
-                        # "mínimo 2 días contando el día de creación" => 2 días HÁBILES inclusivos
-                        total_days_inclusive = 2
-                        category_name_msg = 'Viáticos'
-                    elif record.category_id.name == 'Tiquetes y vuelos':
-                        # "mínimo 2 días contando el día de creación" => 2 días HÁBILES inclusivos
-                        total_days_inclusive = 2
-                        category_name_msg = 'Tiquetes'
-
-                    if total_days_inclusive > 0:
-                        min_allowed_date = add_business_days_inclusive(
-                            creation_date, total_days_inclusive)
-                        if initial_date < min_allowed_date:
-                            raise ValidationError(_(
-                                'Para la categoría %s, la fecha de inicio debe ser al menos %d día(s) hábiles '
-                                'contando desde la fecha de creación (%s). La fecha mínima permitida es: %s'
-                            ) % (
-                                category_name_msg,
-                                total_days_inclusive,
-                                creation_date.strftime('%d/%m/%Y'),
-                                min_allowed_date.strftime('%d/%m/%Y'),
-                            ))
-
-            # Solapamientos (igual que antes; opcional optimizar con limit=1)
             if record.expense_id and initial_date and final_date:
                 start_dt = fields.Datetime.to_datetime(record.initial_date).replace(
                     hour=0, minute=0, second=0, microsecond=0)
                 end_dt = fields.Datetime.to_datetime(record.final_date).replace(
                     hour=23, minute=59, second=59, microsecond=999999)
 
-                overlapping = self.env['expense.displacement'].search([
+                # Una sola query — si hay solapamiento, el max(final_date) viene del mismo resultado
+                all_overlaps = self.env['expense.displacement'].search([
                     ('expense_id', '=', record.expense_id.id),
                     ('id', '!=', record.id),
                     ('initial_date', '<=', end_dt),
                     ('final_date', '>=', start_dt),
-                ], limit=1)
-
-                if overlapping:
-                    # Si quieres sugerir “día siguiente permitido”, calcula el fin máximo:
-                    all_overlaps = self.env['expense.displacement'].search([
-                        ('expense_id', '=', record.expense_id.id),
-                        ('id', '!=', record.id),
-                        ('initial_date', '<=', end_dt),
-                        ('final_date', '>=', start_dt),
-                    ])
+                ])
+                if all_overlaps:
+                    first = all_overlaps[0]
                     last_end = max(d.final_date.date() for d in all_overlaps)
-                    min_allowed = (last_end + timedelta(days=1)
-                                   ).strftime('%d/%m/%Y')
+                    min_allowed = (last_end + timedelta(days=1)).strftime('%d/%m/%Y')
                     raise ValidationError(_(
                         'Ya existe otro desplazamiento que coincide con las fechas seleccionadas: '
                         'Desplazamiento existente: %s - %s. Fecha mínima permitida para el nuevo desplazamiento: %s.'
                     ) % (
-                        overlapping.initial_date.date().strftime('%d/%m/%Y'),
-                        overlapping.final_date.date().strftime('%d/%m/%Y'),
-                        min_allowed
+                        first.initial_date.date().strftime('%d/%m/%Y'),
+                        first.final_date.date().strftime('%d/%m/%Y'),
+                        min_allowed,
                     ))
 
     def _notify_timeline_update(self, expense_ids=None, reason="update"):

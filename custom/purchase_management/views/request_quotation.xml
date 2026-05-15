@@ -92,12 +92,6 @@
                         <widget name="product_linking_launcher"
                             groups="purchase_management.group_purchase_user_management"
                             invisible="not state == 'approved'"/>
-                        <button name="action_reject_request" type="object"
-                            string="Rechazar" class="btn btn-secondary"
-                            groups="purchase_management.group_purchase_sagrilaft_approval"
-                            invisible="not is_min_providers_approval_pending and not rejected_by_project_leader"/>
-                        <button name="action_view_traceability" string="Trazabilidad" type="object"
-                            class="btn-secondary" invisible="state != 'order_created'"/>
                         <button name="action_return_to_requester" type="object" string="Rechazar"
                             class="btn btn-primary"
                             groups="purchase_management.group_purchase_user_management"
@@ -109,8 +103,15 @@
                         <button name="action_unlock" string="Desbloquear" type="object"
                             class="btn btn-primary" invisible="not locked"
                             groups="purchase_management.group_unlock_request_quotation,purchase_management.group_manager_purchase_management"/>
+                        <button name="action_reject_request" type="object"
+                            string="Rechazar" class="btn btn-secondary"
+                            groups="purchase_management.group_purchase_sagrilaft_approval"
+                            invisible="not is_min_providers_approval_pending and not rejected_by_project_leader"/>
+                        <button name="action_view_traceability" string="Trazabilidad" type="object"
+                            class="btn-secondary" invisible="state != 'order_created'"/>
                         <button name="action_lock" string="Bloquear" type="object"
-                            class="btn btn-secondary" invisible="locked"
+                            class="btn btn-secondary"
+                            invisible="locked or is_min_providers_approval_pending or all_quotation_rejected or commitee_approval_rejected or rejected_by_project_leader or pause_request or state in ('draft', 'approved', 'order_created', 'cancelled')"
                             groups="purchase_management.group_unlock_request_quotation,purchase_management.group_manager_purchase_management"/>
                         <button name="action_cancel" type="object" string="Cancelar"
                             class="btn btn-secondary"
