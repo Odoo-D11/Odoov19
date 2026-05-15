@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="email_template_opportunity_return" model="mail.template">
+            <field name="name">Notificación de devolución de oportunidad</field>
+            <field name="model_id" ref="opportunities.model_opportunity"/>
+            <field name="subject">Oportunidad Devuelta</field>
+            <field name="email_from">odoo@tsg.net.co</field>
+            <field name="body_html" type="html">
+                <span style="font-family: Arial, sans-serif; color: #333333; font-size: 14px;">
+                    Estimado equipo comercial, <br/><br/> La oportunidad con referencia <b>
+                        <t t-out="object.reference"/>
+                    </b> ha sido devuelta por el
+                    equipo de preventa. A continuación, se presenta la observación realizada por el
+                    equipo: <br/><br/>
+                    <span
+                        style="color: #017e84; font-style: italic;">"<t
+                            t-out="ctx.get('reason')"/>"</span><br/><br/> Se recomienda evaluar esta
+                    información y verificar si es posible continuar con el proceso. </span>
+            </field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+    </data>
+</odoo>

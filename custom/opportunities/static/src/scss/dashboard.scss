@@ -1,0 +1,75 @@
+.purchase-dashboard {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #f4f6fb;
+
+    .dashboard-header {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .dashboard-scroll {
+        overflow-y: auto;
+        padding: 1.5rem;
+    }
+
+    .kpi-card {
+        border-radius: 0.75rem;
+        background: linear-gradient(145deg, #ffffff 0%, #f8faff 100%);
+
+        .kpi-label {
+            letter-spacing: 0.08em;
+            font-size: 0.75rem;
+        }
+
+        .kpi-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .kpi-subtitle {
+            font-size: 0.85rem;
+        }
+    }
+
+    .card {
+        border-radius: 0.75rem;
+    }
+
+    .card-title {
+        font-weight: 600;
+    }
+
+    .chart-wrapper {
+        position: relative;
+        height: 260px;
+    }
+
+    table {
+        font-size: 0.9rem;
+    }
+
+    .badge.bg-primary-subtle {
+        background-color: rgba(13, 110, 253, 0.1) !important;
+    }
+
+    .badge.bg-success-subtle {
+        background-color: rgba(25, 135, 84, 0.1) !important;
+    }
+
+    .badge.bg-info-subtle {
+        background-color: rgba(13, 202, 240, 0.1) !important;
+    }
+
+    .badge.bg-warning-subtle {
+        background-color: rgba(255, 193, 7, 0.15) !important;
+    }
+
+    .badge.bg-danger-subtle {
+        background-color: rgba(220, 53, 69, 0.15) !important;
+    }
+
+    .badge.bg-secondary-subtle {
+        background-color: rgba(108, 117, 125, 0.15) !important;
+    }
+}

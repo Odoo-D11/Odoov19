@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="opportunity_upload_document_wizard" model="ir.ui.view">
+            <field name="name">opportunity.upload.document.wizard</field>
+            <field name="model">opportunity.upload.document</field>
+            <field name="arch" type="xml">
+                <form string="Subir Documento" create="false">
+                    <sheet>
+                        <field name="next_step" invisible="1"/>
+                        <field name="rta" invisible="1"/>
+                        <separator string="Documentación" invisible="next_step"/>
+                        <p class="oe_grey" invisible="next_step"> La documentación en un CRM es
+                            esencial para respaldar la información y acciones realizadas en una
+                            oportunidad o caso. Permite registrar y organizar la información
+                            relevante, facilitando la trazabilidad y el cumplimiento de los
+                            procesos. <ins> A continuación, ingrese el enlace de la carpeta que va a
+                            contener toda la documentación asociada. Una vez registrado el enlace,
+                            de clic en el botón <b>"Siguiente"</b> para seleccionar si va a
+                            calificar la oportunidad o no.</ins>
+                        </p>
+                        <separator string="Calificación"
+                            invisible="not next_step and rta != '1' or rta in ['2']"/>
+                        <p class="oe_grey" invisible="not next_step or rta"> La calificación de una
+                            oportunidad es un proceso que permite evaluar la viabilidad y el
+                            potencial de éxito de una oportunidad de negocio. Se basa en la
+                            evaluación de diversos factores, como el interés del cliente, la
+                            necesidad del producto o servicio, el presupuesto disponible y el tiempo
+                            de cierre. <ins> Si desea calificar la oportunidad, seleccione la opción <b>
+                            "Sí"</b> y complete los campos requeridos. De lo contrario, seleccione
+                            la opción <b>
+                                    "No"</b> e ingrese el motivo por el cual no se va a calificar la
+                            oportunidad.</ins>
+                        </p>
+                        <p class="oe_grey" invisible="rta != '1' or not next_step"> A continuación,
+                            ingrese el enlace de la calificación asociada a la oportunidad.<ins> Una
+                            vez registrado el enlace, se enviará un correo al líder de preventa para
+                            que realice las acciones correspondientes. Este enlace debe contener
+                                toda la información necesaria para evaluar la oportunidad de manera
+                            efectiva y precisa.</ins>
+                        </p>
+                        <separator string="Motivo" invisible="rta != '2'"/>
+                        <p class="oe_grey" invisible="rta != '2'"> Ingrese el motivo por el cual no
+                            se va a calificar la oportunidad. Este campo es obligatorio para
+                            continuar con el proceso. <ins> La información proporcionada ayudará a
+                            mejorar la gestión de oportunidades futuras y a entender mejor las
+                            razones detrás de la decisión de no calificar la oportunidad.</ins>
+                        </p>
+                        <group>
+                            <div class="o_row" invisible="next_step">
+                                <i class="fa fa-folder me-2" title="Enlace de la carpeta"/>
+                                <field name="link" placeholder="Ej. https://onedrive.com/folder/..."/>
+                            </div>
+                            <field name="rta" string="Respuesta"
+                                invisible="not next_step or rta"/>
+                            <div class="o_row" invisible="not next_step or rta != '1'">
+                                <i class="fa fa-folder me-2" title="Enlace de la calificación"/>
+                                <field name="rating_link"
+                                    placeholder="Ej. https://onedrive.com/folder/..."/>
+                            </div>
+                        </group>
+                        <field name="reason" invisible="rta != '2'" string="Motivo"
+                            placeholder="Ej. No cumple con los requisitos mínimos..."/>
+                    </sheet>
+                    <footer>
+                        <button name="action_next_step" string="Siguiente" class="btn-primary"
+                            type="object" invisible="next_step"/>
+                        <button name="action_next_step" string="Volver" class="btn-primary"
+                            type="object" invisible="not next_step or rta"/>
+                        <button name="return_to_question" string="Volver" class="btn-primary"
+                            type="object" invisible="not rta"/>
+                        <button name="action_upload_document" class="btn-primary"
+                            type="object" invisible="not rta" string="Guardar"/>
+                        <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

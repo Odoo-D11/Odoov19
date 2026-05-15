@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="opportunity_activity_view_form" model="ir.ui.view">
+            <field name="name">opportunity.activity.view.form</field>
+            <field name="model">opportunity.activity</field>
+            <field name="arch" type="xml">
+                <form string="Activity" duplicate="false">
+                    <header>
+                        <button name="action_create_pipeline" string="Crear Pipeline"
+                            type="object" class="btn-primary"
+                            invisible="requires_lead_id and lead_id or not id"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="member_id"
+                                    options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"
+                                    placeholder="Ej. Juan Pérez..." class="text-primary"/>
+                                <field name="partner_id" string="Nombre del cliente"
+                                    placeholder="Ej. ICBF - Instituto Colombiano de Bienestar Familiar..."
+                                    domain="[('is_business', '=', True), ('name', '!=', 'Tsg The It Experts Sas')]"
+                                    options="{&quot;no_create&quot;: True, &quot;no_open&quot;: True}"
+                                    class="text-primary"/>
+
+                                <label for="type_activity_id" string="Tipo de actividad"/>
+                                <div class="o_row">
+                                    <field name="type_activity_id" class="text-primary"
+                                        string="Tipo de actividad"
+                                        placeholder="Ej. Llamada, Reunion, Negociacion, etc..."
+                                        options="{&quot;no_create&quot;: True, &quot;no_open&quot;: True}"/>
+                                    <i class="fa fa-long-arrow-right ms-1 me-1"
+                                        title="Fecha de la actividad"/>
+                                    <span style="font-weight: 500; color: #212529;"
+                                        class="ms-1 me-1">Fecha</span>
+                                    <field name="date" class="text-primary w-auto ms-1"/>
+                                </div>
+                                <label for="lead_id" string="Oportunidad"/>
+                                <div class="o_row w-100">
+                                    <field name="requires_lead_id"/>
+                                    <span invisible="requires_lead_id" class="text-danger">
+                                        <i class="fa fa-ban me-1 text-danger" title="Advertencia"/>
+                                        No se requiere esta información.</span>
+                                    <field name="lead_id" required="requires_lead_id"
+                                        invisible="not requires_lead_id"
+                                        options="{&quot;no_create&quot;: True}"
+                                        placeholder="Ej. CRM-2024-0001..." class="me-2 mb-0"/>
+                                </div>
+                            </group>
+                            <group>
+                                <div class="o_checkbox_container">
+                                    <div class="o_checkbox_title_container">
+                                        <field
+                                            name="requires_engagement_date"/>
+                                        <div class="o_title_with_border">
+                                            <label for="requires_engagement_date"
+                                                string="Compromiso"/>
+                                            <p invisible="not requires_engagement_date">
+                                                <span class="text-muted">
+                                                    Especifique la fecha, hora y cualquier acuerdo
+                                                    relevante que haya sido establecido durante la
+                                                    actividad. Asegúrese de incluir todos los
+                                                    detalles necesarios para el seguimiento
+                                                    adecuado.
+                                                </span>
+                                                <field name="engagement_date"
+                                                    options="{'min_date': 'today',}"
+                                                    class="text-primary w-auto ms-1"
+                                                    required="requires_engagement_date"
+                                                    placeholder="Ej. 2024-01-01"/>
+                                            </p>
+                                            <p class="text-danger"
+                                                invisible="requires_engagement_date">
+                                                <i class="fa fa-ban me-1 text-danger"
+                                                    title="Advertencia"/> No se realizó ningún
+                                                compromiso de reunión o llamada con el cliente
+                                                durante la actividad. </p>
+                                            <div class="o_button_row"
+                                                invisible="not requires_engagement_date">
+                                                <field name="engagement"
+                                                    placeholder="Ej. llamar a..."
+                                                    required="requires_engagement_date"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </group>
+                        </group>
+                        <field name="observations"
+                            placeholder="Agregue aquí cualquier observación relevante..."/>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="opportunity_activity_view_tree" model="ir.ui.view">
+            <field name="name">opportunity.activity.view.tree</field>
+            <field name="model">opportunity.activity</field>
+            <field name="arch" type="xml">
+                <list string="Activities" duplicate="false" sample="1">
+                    <field name="date" class="text-primary" string="Fecha"/>
+                    <field name="type_activity_id" string="Actividad" class="text-primary"/>
+                    <field name="member_id"/>
+                    <field name="partner_id"/>
+                    <field name="lead_id"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="opportunity_activity_view_search" model="ir.ui.view">
+            <field name="name">opportunity.activity.view.search</field>
+            <field name="model">opportunity.activity</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="type_activity_id" string="Actividad" class="text-primary"
+                        filter_domain="[('name', 'ilike', self)]"/>
+                    <field name="member_id" string="Responsable" class="text-primary"
+                        filter_domain="[('employee_id.name', 'ilike', self)]"/>
+                    <field name="partner_id" string="Cliente" class="text-primary"
+                        filter_domain="[('name', 'ilike', self)]"/>
+                    <field name="lead_id" string="Oportunidad" class="text-primary"
+                        filter_domain="[('name', 'ilike', self)]"/>
+                    <filter name="assigned_to_me" string="Mis actividades"
+                        domain="[('member_id.employee_id.user_id', '=', uid)]"/>
+                    <group name="group_by">
+                        <filter name="group_by_type_activity_id" string="Actividad"
+                            context="{'group_by': 'type_activity_id'}"/>
+                        <filter name="group_by_member_id" string="Responsable"
+                            context="{'group_by': 'member_id'}"/>
+                        <filter name="group_by_partner_id" string="Cliente"
+                            context="{'group_by': 'partner_id'}"/>
+                        <filter name="group_by_lead_id" string="Oportunidad"
+                            context="{'group_by': 'lead_id'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+    </data>
+</odoo>

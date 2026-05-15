@@ -1,0 +1,450 @@
+.table_opportunity_activity table thead > tr > th[data-name="member_id"] {
+    width: 75% !important;
+}
+
+.table_opportunity_activity table thead > tr > th[data-name="team_id"] {
+    width: 15% !important;
+}
+
+.table_opportunity_assignment table thead > tr > th[data-name="member_id"] {
+    width: 100% !important;
+}
+
+.table_opportunity_assignment .o_list_button {
+    width: 10% !important;
+}
+
+.table_opportunity_assignment tbody > tr > td {
+    button {
+        width: 100% !important;
+    }
+}
+
+.table_opportunity_documentation table thead > tr > th[data-name="resume"] {
+    width: 100% !important;
+}
+
+.table_opportunity_documentation .o_list_button {
+    width: 10% !important;
+}
+
+.table_opportunity_documentation tbody > tr > td {
+    button {
+        width: 100% !important;
+    }
+    div {
+        flex-wrap: nowrap !important;
+    }
+}
+
+.table_opportunity_business_line table thead > tr > th[data-name="business_line_id"] {
+    width: 90% !important;
+}
+
+.table_opportunity_business_line table thead > tr > th[data-name="percentage_id"] {
+    width: 10% !important;
+}
+
+.participant_line_ids table thead > tr > th[data-name="team_id"] {
+    width: 75% !important;
+}
+
+.participant_line_ids table thead > tr > th[data-name="role_id"] {
+    width: 10% !important;
+}
+
+.participant_line_ids table thead > tr > th[data-name="percentage_id"] {
+    width: 15% !important;
+}
+
+.o_associative_figure table thead > tr > th[data-name="enterprise_id"] {
+    width: 85% !important;
+}
+
+.o_associative_figure table thead > tr > th[data-name="percentage_id"] {
+    width: 15% !important;
+}
+
+.o_edit_financial_assessment_lines table thead > tr > th[data-name="financial_costs_id"] {
+    width: 85% !important;
+}
+
+.o_edit_financial_assessment_lines table thead > tr > th[data-name="percentage"] {
+    width: 15% !important;
+}
+
+.o_list_opportunity_view table thead > tr > th[data-name="reference"] {
+    width: 15% !important;
+}
+
+.o_list_opportunity_view table thead > tr > th[data-name="name"] {
+    width: 40% !important;
+}
+
+.o_list_opportunity_view table thead > tr > th[data-name="partner_id"] {
+    width: 35% !important;
+}
+
+.o_list_opportunity_view table thead > tr > th[data-name="stage"] {
+    width: 10% !important;
+}
+
+.oe_opportunity_timesheet_list table thead > tr > th[data-name="date"] {
+    width: 10% !important;
+}
+
+.oe_opportunity_timesheet_list table thead > tr > th[data-name="description"] {
+    width: 75% !important;
+}
+
+.oe_opportunity_timesheet_list table thead > tr > th[data-name="duration"] {
+    width: 15% !important;
+}
+
+.o_checkbox_container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .o_checkbox_title_container {
+        display: flex;
+        gap: 0.5rem;
+
+        .o_title_with_border {
+            flex-grow: 1;
+            border-left: 1px solid #d8dadd; /* Gris opaco */
+            padding-left: 12px;
+
+            label {
+                margin: 0;
+                font-size: 14px;
+                font-weight: 500;
+            }
+
+            p {
+                margin-bottom: 0.3rem;
+                margin-top: 0.3rem;
+            }
+
+            .o_button_row {
+                text-align: left;
+
+                .o_participation_button {
+                    background: transparent; /* Fondo transparente */
+                    border: none; /* Sin bordes */
+                    color: #02143f; /* Color del texto */
+                    font-size: 14px;
+                    font-weight: 500; /* Negrita */
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem; /* Espacio entre el ícono y el texto */
+                    cursor: pointer;
+                    padding: 0 0 0 10px;
+                }
+            }
+        }
+    }
+}
+
+.button_badge {
+    background: transparent;
+    border: none;
+    color: #02143f !important;
+    font-size: 14px;
+    font-weight: 500;
+    align-items: center;
+    cursor: pointer;
+    padding: 0;
+    margin-top: -4px;
+}
+
+.dropdown-icon {
+    transition: transform 0.3s ease-in-out;
+}
+
+.dropdown-icon.rotate-up {
+    transform: rotate(180deg);
+}
+
+.o_presale_sidebar {
+    position: relative; /* Posicionar relativo al contenedor padre */
+    flex-grow: 0; /* Evitar que la barra lateral crezca */
+    flex-shrink: 0; /* Evitar que la barra lateral se reduzca */
+    height: 100%; /* Ocupar toda la altura del contenedor padre */
+    background-color: #ffffff; /* Fondo blanco */
+    overflow: auto; /* Permitir desplazamiento si el contenido es largo */
+    padding: 16px; /* Espaciado interno */
+    border-right: 1px solid #ddd;
+    z-index: 10; /* Asegurar que esté por encima de otros elementos pero sin sobrepasar los menús principales */
+    overflow-x: hidden; /* Ocultar la barra de desplazamiento horizontal */
+    width: 300px; /* Ancho fijo para la barra lateral */
+
+    .sidebar-header {
+        display: flex;
+        font-size: 14px; /* Tamaño más pequeño */
+        align-items: center;
+        font-weight: bold;
+        color: #02143f; /* Color del texto */
+        margin-bottom: 8px;
+    }
+
+    .sidebar-content {
+        display: flex;
+        flex-direction: column;
+        gap: 2px; /* Espaciado entre elementos */
+    }
+
+    .sidebar-item {
+        position: relative;
+        display: flex;
+        align-items: center;
+        padding: 4px 12px;
+        overflow: hidden;
+        transition: background-color 0.3s ease;
+
+        &::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 4px;
+            bottom: 4px;
+            width: 0;
+            background-color: #5b9bd5;
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .avatar {
+            width: 30px; /* Tamaño ajustado */
+            height: 30px;
+            background-color: var(--avatar-color); /* Color dinámico */
+            border-radius: 6px; /* Bordes redondeados */
+            color: white;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px; /* Espaciado con el nombre */
+            font-size: 12px;
+            flex-shrink: 0; /* Evita que el avatar se deforme */
+            transition: transform 0.3s ease;
+        }
+
+        .info-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-width: 0;
+            overflow: hidden;
+            flex: 1;
+            transition: transform 0.3s ease;
+
+            .name {
+                font-size: 13px;
+                font-weight: 500;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                display: block;
+            }
+
+            .details {
+                font-size: 12px;
+                color: #7f8c8d; /* Letra opaca */
+            }
+        }
+
+        &.is-selected {
+            background-color: #f5faff;
+
+            /* animar pseudo-borde */
+            &::before {
+                width: 4px;
+            }
+
+            /* desplazar avatar y texto */
+            .avatar {
+                transform: translateX(8px);
+            }
+            .info-container {
+                transform: translateX(8px);
+            }
+        }
+    }
+
+    .sidebar-statuses {
+        margin-top: 1rem;
+
+        .statuses-header {
+            font-size: 14px;
+            font-weight: bold;
+            color: #02143f;
+            margin-bottom: 8px;
+        }
+
+        .statuses-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .status-item {
+            position: relative; /* ① permitir pseudo-elemento */
+            overflow: hidden; /* ① recortar contenido interno */
+            display: flex;
+            align-items: center;
+            padding: 4px 8px; /* padding base */
+            cursor: pointer;
+            border-bottom: 1px solid #f1f1f1;
+            transition:
+                background-color 0.3s ease,
+                /* ② transición de fondo */ padding-left 0.3s ease; /* ② transición de padding */
+
+            /* Pseudo-elemento para el “borde” animado */
+            &::before {
+                content: "";
+                position: absolute;
+                left: 0;
+                top: 4px;
+                bottom: 4px;
+                width: 0; /* empieza en 0 */
+                background-color: #5b9bd5; /* color de acento */
+                transition: width 0.3s ease; /* transición de ancho */
+                border-radius: 2px;
+            }
+
+            .status-avatar {
+                flex: 0 0 auto;
+                transition: transform 0.3s ease; /* ③ avatar también se anima */
+                margin-right: 12px;
+                width: 30px;
+                height: 30px;
+                border-radius: 6px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #ffffff;
+            }
+
+            .status-info {
+                display: flex;
+                flex-direction: column;
+                min-width: 0; /* clave para ellipsis */
+                overflow: hidden; /* recortar texto */
+                transition: transform 0.3s ease; /* ③ desplaza junto al avatar */
+                font-size: 16px;
+
+                .status-name {
+                    display: block;
+                    width: 100%; /* ocupa todo el contenedor */
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    font-size: 13px;
+                    font-weight: 500;
+                    color: #2c3e50;
+                }
+                .status-details {
+                    font-size: 12px;
+                    color: #7f8c8d;
+                }
+            }
+
+            &.is-selected {
+                background-color: #f5faff; /* fondo suave */
+
+                /* agranda el pseudo-borde */
+                &::before {
+                    width: 4px;
+                }
+                /* desplaza avatar y texto */
+                .status-avatar {
+                    transform: translateX(8px);
+                }
+                .status-info {
+                    transform: translateX(8px);
+                }
+            }
+        }
+
+        .no-statuses {
+            font-size: 14px;
+            color: #7f8c8d;
+            text-align: center;
+            margin-top: 8px;
+        }
+    }
+
+    .toggle-archived-container {
+        .toggle-label {
+            font-family: "Roboto", sans-serif; // o la fuente corporativa
+            font-size: 0.875rem; // 14px
+            font-weight: 600; // seminegrita
+            text-transform: uppercase; // mayúsculas
+            color: #02143f; // tu color corporativo
+            margin-right: 0.5rem; // separación al toggle
+            transition: color 0.2s ease;
+
+            &:hover {
+                color: darken(#02143f, 10%); // efecto sutil al pasar el ratón
+            }
+        }
+        .toggle-archived-btn {
+            background: none;
+            border: none;
+            padding: 4px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+
+            .toggle-icon {
+                font-size: 1.4em;
+                color: #ccc; /* gris por defecto */
+                transition: color 0.2s ease;
+            }
+
+            /* Cuando está activo, pintamos con tu color corporativo */
+            .toggle-icon.active {
+                color: #02143f; /* tu color corporativo */
+            }
+        }
+    }
+
+    .o-loading-overlay {
+        position: absolute; /* cubre todo el sidebar */
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.8);
+        z-index: 20; /* encima del contenido */
+    }
+
+    .spinner {
+        width: 30px;
+        height: 30px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #02143f; /* color corporativo */
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 8px;
+    }
+
+    .loading-text {
+        font-size: 0.9rem;
+        color: #02143f;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+}

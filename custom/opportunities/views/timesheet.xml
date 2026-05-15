@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="wizard_opportunity_form_view_timesheet" model="ir.ui.view">
+            <field name="name">opportunity.wizard.timesheet.form</field>
+            <field name="model">opportunity</field>
+            <field name="arch" type="xml">
+                <form string="Timesheet" create="false" edit="false" delete="false">
+                    <sheet>
+                        <separator string="Hoja de tiempos"/>
+                        <p class="oe_grey">
+                            El registro de horas en el CRM documenta los períodos dedicados a
+                            tareas, proyectos e interacciones con clientes. Esto facilita un mayor
+                            control y organización de las actividades, permite evaluar la eficiencia
+                            del equipo y optimizar la asignación de recursos.
+                        </p>
+                        <field name="timesheet_ids">
+                            <list string="Tiempos" sample="1" class="oe_opportunity_timesheet_list">
+                                <field name="date" string="Fecha" />
+                                <field name="end_date" column_invisible="1" string="Fecha fin"/>
+                                <field name="state" string="Estado" column_invisible="1"/>
+                                <field name="member_id" string="Empleado" column_invisible="1"
+                                    options="{'no_create': True, 'no_open': True}"/>
+                                <field name="description" string="Estado"/>
+                                <field name="duration" placeholder="Duración"/>
+                            </list>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="opportunity_timesheet_form_view" model="ir.ui.view">
+            <field name="name">opportunity.timesheet.form</field>
+            <field name="model">opportunity.timesheet</field>
+            <field name="arch" type="xml">
+                <form string="Tiempos" create="false" edit="false" delete="false">
+                    <sheet>
+                        <separator string="Hoja de tiempos"/>
+                        <p class="oe_grey">
+                            El registro de horas en el CRM documenta los períodos dedicados a
+                            tareas, proyectos e interacciones con clientes. Esto facilita un mayor
+                            control y organización de las actividades, permite evaluar la eficiencia
+                            del equipo y optimizar la asignación de recursos.
+                        </p>
+                        <group>
+                            <group>
+                                <field name="member_id" class="text-primary"
+                                    options="{'no_create': True, 'no_open': True}"/>
+                                <label for="start_date" string="Inicio"/>
+                                <div class="o_row">
+                                    <field name="start_date" class="text-primary" string="Inicio"/>
+                                    <i class="fa fa-long-arrow-right ms-1 me-1"
+                                        title="Fecha fin"/>
+                                    <span style="font-weight: 500; color: #212529;"
+                                        class="ms-1 me-1">Fin</span>
+                                    <field name="end_date" class="text-primary w-auto ms-1"/>
+                                </div>
+                                <field name="duration" string="Duración" placeholder="Duración"
+                                    class="text-primary"/>
+                            </group>
+                            <group>
+                                <field name="state" string="Estado"/>
+                            </group>
+                        </group>
+                        <field name="description" string="Descripción" placeholder="Descripción"
+                            options="{'codeview': true}"/>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

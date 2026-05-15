@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+    <data>
+
+        <record id="assing_pre_sale_wizard" model="ir.ui.view">
+            <field name="name">assing.pre.sale.wizard</field>
+            <field name="model">opportunity.assign.pre.sale</field>
+            <field name="arch" type="xml">
+                <form string="Asignar preventa">
+                    <sheet>
+                        <separator string="Asignar personal de preventa"/>
+                        <p class="oe_grey"> El equipo de preventa es responsable de brindar soporte
+                            técnico y asesoramiento especializado a los clientes, con el objetivo de
+                            identificar y satisfacer sus necesidades y expectativas. A continuación,
+                            seleccione el personal de preventa que se encargará de la oportunidad <field
+                                name="lead_id"
+                                options="{'no_open': True, 'no_create': True}"
+                                class="text-primary"
+                                style="margin-bottom: 0px !important; font-weight: bold;"/>
+                        </p>
+                        <field name="line_ids">
+                            <list editable="bottom" class="participant_line_ids">
+                                <field name="member_id" string="Nombre"
+                                    placeholder="Ej. (Juan Pérez, María Gómez, etc.)"
+                                    options="{'no_open': True, 'no_create': True}"/>
+                                <field name="role_id" options="{'no_open': True, 'no_create': True}"
+                                    placeholder="Ej. Principal, Apoyo, etc."/>
+                                <field name="percentage_id" string="Participación"
+                                    options="{'no_open': True, 'no_create': True}"
+                                    placeholder="Ej. 10%, 20%, etc..."/>
+                            </list>
+                        </field>
+                    </sheet>
+                    <footer>
+                        <button name="assign_pre_sale" string="Guardar" type="object"
+                            class="btn-primary"/>
+                        <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

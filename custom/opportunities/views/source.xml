@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_opportunity_source_list" model="ir.ui.view">
+            <field name="name">opportunity.source.list</field>
+            <field name="model">opportunity.source</field>
+            <field name="arch" type="xml">
+                <list string="Source" sample="1" duplicate="false" editable="bottom">
+                    <field name="name"
+                        placeholder="Ej. Camara de comercio, Relación comercial, Ecopetrol - Siproe, etc."/>
+                </list>
+            </field>
+        </record>
+
+    </data>
+</odoo>

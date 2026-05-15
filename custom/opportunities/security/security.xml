@@ -1,0 +1,79 @@
+<odoo>
+    <!-- PERMISOS CRM -->
+
+    <record model="ir.module.category" id="category_module_opportunities">
+        <field name="name">CRM</field>
+        <field name="sequence">34</field>
+    </record>
+
+    <record model="res.groups.privilege" id="category_opportunities">
+        <field name="name">CRM</field>
+        <field name="sequence">35</field>
+        <field name="category_id" ref="category_module_opportunities"/>
+    </record>
+
+    <record id="group_consult_opportunities" model="res.groups">
+        <field name="name">Consulta</field>
+        <field name="comment">Consulta de oportunidades</field>
+        <field name="privilege_id" ref="opportunities.category_opportunities"/>
+    </record>
+
+    <record id="group_create_opportunities" model="res.groups">
+        <field name="name">Creador</field>
+        <field name="comment">Creador de oportunidades</field>
+        <field name="privilege_id" ref="opportunities.category_opportunities"/>
+        <field name="implied_ids" eval="[(4, ref('opportunities.group_consult_opportunities'))]"/>
+    </record>
+
+    <record id="group_manager_opportunities" model="res.groups">
+        <field name="name">Gerencia</field>
+        <field name="comment">Permisos de gerencia</field>
+        <field name="privilege_id" ref="opportunities.category_opportunities"/>
+        <field name="implied_ids"
+            eval="[(4, ref('opportunities.group_create_opportunities'))]"/>
+    </record>
+
+    <record id="group_root_opportunities" model="res.groups">
+        <field name="name">Administrador</field>
+        <field name="comment">Permisos totales</field>
+        <field name="privilege_id" ref="opportunities.category_opportunities"/>
+        <field name="implied_ids"
+            eval="[(4, ref('opportunities.group_manager_opportunities'))]"/>
+    </record>
+
+
+    <!-- PERMISOS ADICIONALES CRM -->
+
+    <record id="group_pre_sales_opportunities" model="res.groups">
+        <field name="name">CRM / Preventa</field>
+        <field name="comment">Permisos de preventa</field>
+        <field name="implied_ids" eval="[(4, ref('opportunities.group_consult_opportunities'))]"/>
+    </record>
+
+    <record id="group_leader_pre_sales_opportunities" model="res.groups">
+        <field name="name">CRM / Lider preventa</field>
+        <field name="comment">Permisos de lider preventa</field>
+        <field name="implied_ids"
+            eval="[(4, ref('opportunities.group_consult_opportunities')), (4, ref('opportunities.group_pre_sales_opportunities'))]"/>
+    </record>
+
+    <record id="group_financial_opportunities" model="res.groups">
+        <field name="name">CRM / Financiero</field>
+        <field name="comment">Permisos financieros</field>
+        <field name="implied_ids" eval="[(4, ref('opportunities.group_consult_opportunities'))]"/>
+    </record>
+
+    <record id="group_opportunity_consult_timesheet" model="res.groups">
+        <field name="name">CRM / Ver tiempos</field>
+        <field name="comment">Permisos para ver la tabla de tiempos</field>
+        <field name="implied_ids" eval="[(4, ref('opportunities.group_consult_opportunities'))]"/>
+    </record>
+
+    <record id="group_opportunity_dowload_report" model="res.groups">
+        <field name="name">CRM / Descargar reporte</field>
+        <field name="comment">Permisos para descargar el reporte de oportunidades</field>
+        <field name="implied_ids" eval="[(4, ref('opportunities.group_consult_opportunities'))]"/>
+    </record>
+
+
+</odoo>

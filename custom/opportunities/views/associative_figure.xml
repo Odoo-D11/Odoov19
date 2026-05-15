@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+    <data>
+
+        <record id="opportunity_form_view_associative_figure" model="ir.ui.view">
+            <field name="name">opportunity.form.associative.figure</field>
+            <field name="model">opportunity</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <separator string="Figura asociativa"/>
+                        <p class="oe_grey">La figura asociativa es una estructura legal que permite
+                            a varias empresas colaborar en una propuesta comercial, definiendo
+                            responsabilidades, beneficios y riesgos. La empresa líder en el
+                            registro <b>
+                                <field name="reference" style="margin-bottom: 0px !importan;"
+                                    class="text-primary"/>
+                            </b> es <b>
+                                <field name="enterprise_id" style="margin-bottom: 0px !important;"
+                                    options="{'no_open': True, 'no_create': True}"
+                                    class="text-primary" readonly="1"
+                                    placeholder="Ej. Tsg The It Experts, Knox, Novacom Net,etc..."/>
+                            </b>
+                            con una participación del <b>
+                                <field name="percentage_enterprise" class="text-primary"
+                                    style="margin-bottom: 0px !important;"/>
+                            </b>
+                        </p>
+                        <field name="associative_figure_line_ids">
+                            <list editable="bottom" class="o_associative_figure">
+                                <field name="enterprise_id" string="Nombre" class="text-primary"
+                                    options="{'no_open': True, 'no_create': True}"
+                                    placeholder="Ej. Tsg The It Experts, Knox, Novacom Net,etc..."/>
+                                <field name="percentage_id" placeholder="Ej. 10%, 20%, 30%, etc..."
+                                    options="{'no_open': True, 'no_create': True}"/>
+                            </list>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

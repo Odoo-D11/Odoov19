@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="opportunity_lead_won" model="ir.ui.view">
+            <field name="name">opportunity.won</field>
+            <field name="model">opportunity.won</field>
+            <field name="arch" type="xml">
+                <form string="Ganar Oportunidad">
+                    <field name="rta" invisible="1"/>
+                    <field name="next_step" invisible="1"/>
+                    <sheet>
+                        <separator string="Oportunidad ganada"
+                            invisible="rta in ['no', False] and next_step"/>
+                        <p class="oe_grey" invisible="rta in ['no', False] and next_step"> Ganar una
+                            oportunidad en un CRM es un proceso que permite cerrar y concretar la
+                            venta o el acuerdo con un cliente o prospecto. Es el resultado de un
+                            trabajo y esfuerzo conjunto, y es esencial para lograr los objetivos y
+                            metas establecidas. A continuación, seleccione si logró ganar la
+                            oportunidad <b class="text-primary">
+                                <field name="lead_id" readonly="1"
+                                    options="{'no_create': True, 'no_open': True}"
+                                    style="margin-bottom: 0px !important;"/>
+                            </b>
+                        </p>
+                        <separator string="Oportunidad perdida"
+                            invisible="rta in ['yes', False] or not next_step"/>
+                        <p class="oe_grey" invisible="rta in ['yes', False] or not next_step">
+                            Perder una oportunidad en el CRM implica que esta ha sido descartada o
+                            pospuesta debido a problemas o inconvenientes con la propuesta
+                            comercial. Por favor, indique a continuación el motivo por el cual no se
+                            presentará la oportunidad <b
+                                class="text-primary">
+                                <field name="lead_id" readonly="1"
+                                    options="{'no_create': True, 'no_open': True}"
+                                    style="margin-bottom: 0px !important;"/>
+                            </b>
+                        </p>
+                        <group>
+                            <field name="rta" invisible="next_step"/>
+                            <field name="reason_id" options="{'no_create': True, 'no_open': True}"
+                                invisible="not next_step"
+                                placeholder="Ej. Desierto el proceso, Por incumbencia, etc..."/>
+                        </group>
+                        <field name="observation"
+                            placeholder="Escriba el motivo por el cual no se pudo ganar la oportunidad..."
+                            invisible="rta in ['yes', False] or not next_step"/>
+                    </sheet>
+                    <footer>
+                        <button name="action_next_step" string="Volver" type="object"
+                            invisible="not next_step" class="btn-primary"/>
+                        <button name="action_next_step" string="Siguiente" type="object"
+                            invisible="next_step" class="btn-primary"/>
+                        <button name="action_set_won" string="Guardar" type="object"
+                            class="btn-primary" invisible="not next_step"/>
+                        <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

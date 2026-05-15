@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="approve_financial_assessment_wizard" model="ir.ui.view">
+            <field name="name">approve.financial.assessment.wizard</field>
+            <field name="model">approve.financial.assessment</field>
+            <field name="arch" type="xml">
+                <form string="Aprobar valoración financiera">
+                    <sheet>
+                        <field name="edit_financial_costs" invisible="1"/>
+                        <field name="next_step" invisible="1"/>
+                        <field name="rta" invisible="1"/>
+                        <separator string="Aprobar valoración financiera"
+                            invisible="edit_financial_costs"/>
+                        <p class="oe_grey" invisible="next_step or edit_financial_costs"> Aprobar
+                            una oportunidad en un CRM es un proceso que permite validar y autorizar
+                            la continuidad de la oportunidad o caso. Es esencial para garantizar la
+                            calidad y viabilidad de las acciones y decisiones tomadas, y asegurar el
+                            cumplimiento de los procesos y políticas establecidas. A continuación,
+                            se muestra la valoración financiera asociada a la oportunidad <b
+                                class="text-primary">
+                                <field name="lead_id" options="{'no_open': True, 'no_create': True}"
+                                    class="text-truncate"
+                                    style="margin-bottom: 0px !important;"/>. </b> Después de
+                            revisar la información, haga clic en <b class="text-primary">"Siguiente"</b>
+                            para seleccionar si desea aprobarla o no. </p>
+                        <p class="oe_grey" invisible="not next_step"> Aprobar una oportunidad en un
+                            CRM es un proceso que permite validar y autorizar la continuidad de la
+                            oportunidad o caso. Es esencial para garantizar la calidad y viabilidad
+                            de las acciones y decisiones tomadas, y asegurar el cumplimiento de los
+                            procesos y políticas establecidas.
+                        </p>
+                        <separator string="Editar porcentaje" invisible="not edit_financial_costs"/>
+                        <p invisible="not edit_financial_costs"> Para cambiar los
+                            porcentajes de costos financieros en esta oportunidad, asegúrate de
+                            realizar los ajustes de manera precisa para reflejar correctamente los
+                            costos asociados. Este proceso te permite personalizar los valores
+                            específicamente para esta oportunidad, sin afectar otros registros ni
+                            configuraciones globales. Sigue los siguientes pasos detalladamente:
+                        </p>
+                        <ul
+                            invisible="not edit_financial_costs">
+                            <li> Localiza la fila correspondiente al item que deseas ajustar, <b
+                                    class="text-primary">por
+                                    ejemplo, seguro y pólizas, overhead,
+                                    etc... </b>
+                            </li>
+
+                            <li> Haz clic en la columna de <b class="text-primary">porcentaje</b> y
+                                escribe el nuevo valor que deseas asignar. <b class="text-primary">por
+                                ejemplo, 2, 1,5, etc...</b> Nota: Introduce el valor utilizando una
+                                coma (,) como separador decimal, por ejemplo: 2,5. <b
+                                    class="text-primary">No uses el
+                                    punto (.) para evitar errores de formato. </b></li>
+                            <li>
+                                Repite el proceso para todos los items que requieran un
+                                ajuste.
+                            </li>
+                            <li> Una vez realizados los cambios, asegúrate de guardar para que estos
+                                ajustes se <b class="text-primary">apliquen únicamente a esta
+                                oportunidad.</b> Recuerda que los cambios realizados aquí <b
+                                    class="text-primary">no
+                                    afectarán otras oportunidades</b> ni los valores globales. </li>
+                        </ul>
+                        <field name="edit_financial_costs_ids"
+                            invisible="not edit_financial_costs">
+                            <list editable="bottom" class="o_edit_financial_assessment_line"
+                                create="false" delete="false">
+                                <field name="financial_costs_id"
+                                    options="{'no_open': True, 'no_create': True}"/>
+                                <field name="percentage"/>
+                            </list>
+                        </field>
+                        <field name="assessment" invisible="next_step or edit_financial_costs"
+                            options="{'codeview': true}"/>
+                        <group invisible="not next_step">
+                            <field name="rta"/>
+                        </group>
+                        <field name="observations" invisible="not next_step or not rta"
+                            placeholder="Esciba aquí el motivo de su decisión..."/>
+                    </sheet>
+
+                    <footer>
+                        <button name="action_next_step" string="Siguiente" type="object"
+                            class="btn-primary" invisible="next_step or edit_financial_costs"/>
+                        <button name="action_edit_financial_costs" string="Editar"
+                            groups="opportunities.group_financial_opportunities,opportunities.group_manager_opportunities"
+                            type="object" class="btn-primary"
+                            invisible="next_step or edit_financial_costs"/>
+                        <button name="action_edit_financial_costs" string="Volver"
+                            groups="opportunities.group_financial_opportunities,opportunities.group_manager_opportunities"
+                            type="object" class="btn-primary"
+                            invisible="not edit_financial_costs"/>
+                        <button name="action_save_financial_costs" string="Guardar"
+                            groups="opportunities.group_financial_opportunities,opportunities.group_manager_opportunities"
+                            type="object" class="btn-primary"
+                            invisible="not edit_financial_costs"/>
+                        <button name="action_next_step" string="Volver" type="object"
+                            class="btn-primary" invisible="not next_step"/>
+                        <button name="action_approve" string="Guardar" type="object"
+                            class="btn-primary" invisible="not next_step"/>
+                        <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

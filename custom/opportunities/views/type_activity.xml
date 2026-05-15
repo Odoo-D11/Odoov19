@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+    <data>
+
+        <record id="opportunity_type_activity_view_list" model="ir.ui.view">
+            <field name="name">opportunity.type.activity.view.list</field>
+            <field name="model">opportunity.type.activity</field>
+            <field name="arch" type="xml">
+                <list string="Activities" duplicate="false" editable="bottom">
+                    <field name="name" placeholder="Ej. Llamada, Reunión, Subsanaciones, etc."/>
+                </list>
+            </field>
+        </record>
+
+    </data>
+</odoo>

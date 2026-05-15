@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+
+    <!--IR_SEQUENCE (SECUENCIA) CRM-->
+
+    <record id="crm_lead_sequence" model="ir.sequence">
+        <field name="name">opportunity</field>
+        <field name="code">opportunity</field>
+        <field name="prefix">CRM-%(year)s-</field>
+        <field name="padding">4</field>
+    </record>
+
+    <!--IR_SEQUENCE
+    (SECUENCIA) EDM or RFI-->
+
+    <record id="crm_edm_sequence" model="ir.sequence">
+        <field name="name">opportunity.edm</field>
+        <field name="code">opportunity.edm</field>
+        <field name="prefix">EDM-%(year)s-</field>
+        <field name="padding">4</field>
+    </record>
+
+    <!--IR_SEQUENCE
+    (SECUENCIA) PIPELINE-->
+
+    <record id="crm_pipeline_sequence" model="ir.sequence">
+        <field name="name">opportunity.pipeline</field>
+        <field name="code">opportunity.pipeline</field>
+        <field name="prefix">PIP-%(year)s-</field>
+        <field name="padding">4</field>
+    </record>
+
+    <!--IR_FILTERS-->
+
+    <record id="crm_lead_filter" model="ir.filters">
+        <field name="name">En preventa</field>
+        <field name="model_id">opportunity</field>    
+        <field name="user_ids" eval="False"/>
+        <field name="action_id" ref="opportunities.action_menu_opportunity"/>
+        <field name="domain">['&amp;', ('stage', 'in', ['in_pre_sale']), ('stage_pre_sale', '!=', False)]</field>
+        <field name="context">{'group_by': ['stage_pre_sale']}</field>
+    </record>
+
+</odoo>

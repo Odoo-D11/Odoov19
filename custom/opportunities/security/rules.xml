@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+      <!--  <record id="crm_activity_rule" model="ir.rule">
+            <field name="name">Access CRM Activities by Team</field>
+            <field name="model_id" ref="crm_lead.model_crm_activity"/>
+            <field name="domain_force">[
+                ('team_id.member_ids.employee_id.user_id', '=', user.id)
+                ]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        </record>-->
+
+    </data>
+</odoo>

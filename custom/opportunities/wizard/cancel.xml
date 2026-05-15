@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="opportunity_cancel_wizard" model="ir.ui.view">
+            <field name="name">opportunity.cancel.wizard</field>
+            <field name="model">opportunity.cancel</field>
+            <field name="arch" type="xml">
+                <form string="Cancelar Oportunidad">
+                    <sheet>
+                        <separator string="Cancelar"/>
+                        <p class="oe_grey"> Una oportunidad en un CRM que no se ha concretado en una
+                            venta efectiva se marca como cancelada. Este estado es el resultado de
+                            un proceso de cancelación y cierre, en el que se ha decidido no
+                            continuar con la negociación y se ha dado por finalizada la oportunidad.
+                            Por favor, indique a continuación el motivo por el cual cancela la
+                            oportunidad <field
+                                name="lead_id"
+                                class="text-primary"
+                                options="{'no_create': True, 'no_open': True}"
+                                style="margin-bottom: 0 !important; font-weight: bold;"/>. </p>
+                        <group>
+                            <field name="reason_id" options="{'no_create': True, 'no_open': True}"
+                                placeholder="Ej. Desierto el proceso, Duplicada, No se cumple requerimiento ponderable, etc..."/>
+                        </group>
+                        <field name="observation"
+                            placeholder="Ej. Se cancela la oportunidad por no cumplir..."/>
+                    </sheet>
+                    <footer>
+                        <button name="action_cancel" string="Guardar" type="object"
+                            class="btn-primary"/>
+                        <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

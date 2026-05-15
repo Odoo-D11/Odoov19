@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="action_menu_opportunity" model="ir.actions.act_window">
+            <field name="name">Oportunidades</field>
+            <field name="res_model">opportunity</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{'search_default_assigned_to_me': 1}</field>
+            <field name="view_ids"
+                eval="[(5, 0, 0),
+                                    (0, 0, {'view_mode': 'list', 'view_id': ref('opportunities.opportunity_view_list')}),
+                                    (0, 0, {'view_mode': 'form', 'view_id': ref('opportunities.opportunity_view_form')})]"></field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No se ha encontrado ninguna oportunidad.
+                </p>
+                <p> CRM significa <b class="text-primary">Customer Relationship Management,</b> en
+                    español, <b class="text-primary">Gestión de Relaciones con el Cliente.
+                    </b> Es una
+                    estrategia empresarial centrada en el cliente que busca gestionar y mejorar las
+                    relaciones con los clientes actuales y potenciales de una empresa. <b
+                        class="text-primary">El
+                        objetivo
+                        principal del CRM es comprender, anticipar y responder de manera efectiva a
+                    las
+                        necesidades y
+                        expectativas de los clientes, con el fin de maximizar la satisfacción del
+                    cliente,
+                    </b>
+                    la retención y la lealtad, y, en última instancia, impulsar el crecimiento y la
+                    rentabilidad del negocio. </p>
+            </field>
+        </record>
+
+
+        <record id="action_view_partner" model="ir.actions.act_window">
+            <field name="name">Clientes</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">kanban,list,form</field>
+            <field name="domain">[('is_business', '=', True),
+                ('name', '!=', 'Tsg The It Experts Sas')]</field>
+            <field name="context">{'default_is_business': True}</field>
+            <field name="view_ids"
+                eval="[(5, 0, 0),
+                                         (0, 0, {'view_mode': 'kanban', 'view_id': ref('contacts_management.new_view_kanban_res_partner')}),
+                                         (0, 0, {'view_mode': 'list', 'view_id': ref('contacts_management.new_view_list_res_partner')}),
+                                         (0, 0, {'view_mode': 'form', 'view_id': ref('contacts_management.new_view_form_res_partner')})]"></field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No se ha encontrado ningún cliente.
+                </p>
+                <p> Los clientes son la razón de ser de cualquier empresa. <b class="text-primary">Un
+                    cliente es una
+                        persona o entidad que adquiere un producto o servicio de una empresa a
+                        cambio de
+                        un pago.
+                    </b>
+                    Los clientes son la fuente de ingresos de una empresa y, por lo tanto, son
+                    fundamentales para su supervivencia y crecimiento. <b class="text-primary">La
+                    gestión de clientes es una parte
+                        fundamental de cualquier negocio, ya que permite a las empresas identificar,
+                    atraer, retener y
+                        fidelizar a los clientes, lo que a su vez les permite aumentar sus ingresos
+                        y
+                        rentabilidad.
+                    </b>
+                </p>
+            </field>
+        </record>
+
+        <record id="opportunity_team_action" model="ir.actions.act_window">
+            <field name="name">Equipos</field>
+            <field name="res_model">opportunity.team</field>
+            <field name="view_mode">list,form</field>
+            <field name="view_ids"
+                eval="[(5, 0, 0),
+                                    (0, 0, {'view_mode': 'list', 'view_id': ref('opportunities.opportunity_team_view_list')}),
+                                    (0, 0, {'view_mode': 'form', 'view_id': ref('opportunities.opportunity_team_view_form')})]"></field>
+            <field name="domain">[]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No se ha encontrado ningún equipo de ventas.
+                </p>
+                <p> Los <b class="text-primary">Equipos de Ventas</b> son grupos de personas que
+                    trabajan juntas para alcanzar un objetivo común: vender productos o servicios. <b
+                        class="text-primary">Los
+                        equipos de ventas
+                        pueden ser de diferentes tamaños y estructuras, y pueden estar formados por
+                    vendedores,
+                        gerentes de ventas, representantes de ventas, especialistas en marketing, y
+                    otros
+                        profesionales
+                        de ventas.</b> Los equipos de ventas pueden ser internos o externos, y
+                    pueden trabajar en diferentes áreas geográficas, mercados, productos o
+                    servicios. </p>
+            </field>
+        </record>
+
+        <record id="opportunity_team_member_action" model="ir.actions.act_window">
+            <field name="name">Integrantes</field>
+            <field name="res_model">opportunity.team.member</field>
+            <field name="view_mode">list,form</field>
+            <field name="view_ids"
+                eval="[(5, 0, 0),
+                                    (0, 0, {'view_mode': 'list', 'view_id': ref('opportunities.opportunity_team_member_view_list')}),
+                                    (0, 0, {'view_mode': 'form', 'view_id': ref('opportunities.opportunity_team_member_view_form')})]"></field>
+            <field name="domain">[]</field>
+            <field name="context">{'group_by': 'team_id'}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No se ha encontrado ningún integrante.
+                </p>
+                <p> Los <b class="text-primary">Integrantes</b> son los profesionales que forman
+                    parte de un equipo de ventas y trabajan juntos para alcanzar los objetivos de
+                    ventas de la empresa. <b class="text-primary">Los
+                        integrantes pueden tener diferentes roles y responsabilidades, como
+                    vendedores, gerentes
+                        de ventas, representantes de ventas, especialistas en marketing, y otros
+                    profesionales
+                        de ventas.</b> Los integrantes pueden ser internos o externos, y pueden
+                    trabajar en diferentes áreas geográficas, mercados, productos o servicios. </p>
+            </field>
+        </record>
+
+        <record id="opportunity_activity_action" model="ir.actions.act_window">
+            <field name="name">Tipo de actividad</field>
+            <field name="res_model">opportunity.type.activity</field>
+            <field name="view_mode">list</field>
+            <field name="view_ids"
+                eval="[(5, 0, 0),
+                                    (0, 0, {'view_mode': 'list', 'view_id': ref('opportunities.opportunity_type_activity_view_list')}),]"></field>
+            <field name="domain">[]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No se ha encontrado ningún tipo de actividad.
+                </p>
+                <p> Los <b class="text-primary">Tipos de Actividades</b> son las diferentes acciones
+                    y tareas que se realizan en el proceso de ventas y relaciones con los clientes. <b
+                        class="text-primary">Los
+                        tipos de actividades pueden incluir llamadas telefónicas, correos
+                    electrónicos, reuniones, visitas a clientes, presentaciones de productos,
+                    demostraciones de productos, negociaciones, cierres de ventas, y otros
+                        eventos y acciones relacionados con la gestión de ventas y relaciones con
+                        los
+                        clientes.</b> Los tipos de actividades pueden variar según el tipo de
+                    empresa, la industria, el mercado, y las necesidades y preferencias de los
+                    clientes. </p>
+            </field>
+        </record>
+
+
+        <record id="opportunity_type_document_action" model="ir.actions.act_window">
+            <field name="name">Tipo de documento</field>
+            <field name="res_model">opportunity.type.document</field>
+            <field name="view_mode">list</field>
+            <field name="view_ids"
+                eval="[(5, 0, 0),
+                                    (0, 0, {'view_mode': 'list', 'view_id': ref('opportunities.opportunity_type_document_view_list')}),]"></field>
+            <field name="domain">[]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No se ha encontrado ningún tipo de documento.
+                </p>
+                <p> Los <b class="text-primary">Tipos de Documentos</b> son los diferentes formatos
+                    y estilos de documentos que se utilizan en la gestión de ventas y relaciones con
+                    los clientes. <b class="text-primary">Los
+                        tipos de documentos pueden incluir propuestas de ventas, contratos,
+                    presentaciones de productos, informes de ventas, facturas, correos
+                        electrónicos, y otros documentos relacionados con la gestión de ventas y
+                    relaciones con los clientes.</b> Los tipos de documentos pueden variar según el
+                    tipo de empresa, la industria, el mercado, y las necesidades y preferencias de
+                    los clientes. </p>
+            </field>
+        </record>
+
+
+        <record id="opportunity_type_business_line_action" model="ir.actions.act_window">
+            <field name="name">Línea de negocio</field>
+            <field name="res_model">opportunity.type.business.line</field>
+            <field name="view_mode">list</field>
+            <field name="domain">[]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No se ha encontrado ninguna línea de negocio.
+                </p>
+                <p> Las <b class="text-primary">Líneas de Negocio</b> son las diferentes áreas o
+                    divisiones dentro de una empresa que se enfocan en un conjunto específico de
+                    productos, servicios o mercados. <b class="text-primary">Las líneas de negocio
+                    permiten a las empresas diversificar sus operaciones, atender a diferentes
+                    segmentos de clientes, y maximizar sus oportunidades de ingresos y
+                        crecimiento.</b> Las líneas de negocio pueden variar según el tipo de
+                    empresa, la industria, el mercado, y las necesidades y preferencias de los
+                    clientes. </p>
+            </field>
+        </record>
+
+        <record id="opportunity_source_action" model="ir.actions.act_window">
+            <field name="name">Fuente</field>
+            <field name="res_model">opportunity.source</field>
+            <field name="view_mode">list</field>
+            <field name="domain">[]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No se ha encontrado ninguna fuente.
+                </p>
+                <p> Las <b class="text-primary">Fuentes</b> son los orígenes o canales a través de
+                    los cuales se generan las oportunidades de ventas. <b class="text-primary">Las
+                    fuentes pueden incluir referencias, campañas de marketing, redes sociales,
+                        sitios web, eventos, llamadas en frío, correos electrónicos, y otros canales
+                    que ayudan a identificar y captar clientes potenciales.</b> Gestionar las
+                    fuentes de manera efectiva permite a las empresas optimizar sus esfuerzos de
+                    ventas y marketing, y maximizar sus oportunidades de ingresos y crecimiento. </p>
+            </field>
+        </record>
+
+        <record id="opportunity_enterprise_action" model="ir.actions.act_window">
+            <field name="name">Empresa</field>
+            <field name="res_model">opportunity.enterprise</field>
+            <field name="view_mode">list</field>
+            <field name="domain">[]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No se ha encontrado ninguna empresa.
+                </p>
+                <p> Las <b class="text-primary">Empresas</b> son las organizaciones o entidades que
+                    ofrecen productos o servicios a los clientes. <b class="text-primary">Las
+                    empresas pueden ser de diferentes tamaños, estructuras y sectores, y pueden
+                    operar en mercados locales, nacionales o internacionales.</b> Gestionar las
+                    empresas de manera efectiva permite a las organizaciones optimizar sus
+                    operaciones, maximizar sus oportunidades de ingresos y crecimiento, y mejorar su
+                    competitividad en el mercado. </p>
+            </field>
+        </record>
+
+        <record id="opportunity_type_action" model="ir.actions.act_window">
+            <field name="name">Tipos de oportunidad</field>
+            <field name="res_model">opportunity.type</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[]</field>
+            <field name="context">{'group_by': 'sector_id'}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No se ha encontrado ningún tipo de oportunidad.
+                </p>
+                <p> Los <b class="text-primary">Tipos de Oportunidad</b> son las diferentes
+                    categorías o clasificaciones que se utilizan para organizar y gestionar las
+                    oportunidades de ventas. <b class="text-primary">Los tipos de oportunidad
+                    permiten a las empresas identificar y priorizar las oportunidades de ventas
+                        según su importancia, urgencia, o potencial de ingresos.</b> Gestionar los
+                    tipos de oportunidad de manera efectiva permite a las empresas optimizar sus
+                    esfuerzos de ventas y maximizar sus oportunidades de ingresos y crecimiento. </p>
+            </field>
+        </record>
+
+        <record id="opportunity_document_action" model="ir.actions.act_window">
+            <field name="name">Documentos</field>
+            <field name="res_model">opportunity.document</field>
+            <field name="view_mode">list</field>
+            <field name="domain">[]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No se ha encontrado ningún documento.
+                </p>
+                <p> Los <b class="text-primary">Documentos</b> son los archivos o registros que se
+                    utilizan para respaldar y gestionar las oportunidades de ventas. <b
+                        class="text-primary">Los documentos pueden incluir contratos, propuestas,
+                    informes, y otros archivos relevantes para el proceso de ventas.</b> Gestionar
+                    los documentos de manera efectiva permite a las empresas mantener un registro
+                    organizado y accesible de la información clave relacionada con las oportunidades
+                    de ventas. </p>
+            </field>
+        </record>
+
+        <!--<record
+        id="opportunity_assigned_to_action" model="ir.actions.act_window">
+            <field name="name">Asignado a</field>
+            <field name="res_model">opportunity.team.assignment.line</field>
+            <field name="view_mode">list</field>
+            <field name="domain">[]</field>
+        </record>-->
+
+        <record id="action_opportunity_dashboard" model="ir.actions.client">
+            <field name="name">Dashboard</field>
+            <field name="tag">opportunities_dashboard</field>
+        </record>
+
+        <record id="action_opportunity_report" model="ir.actions.server">
+            <field name="name">Descargar reporte</field>
+            <field name="model_id" ref="opportunities.model_opportunity"/>
+            <field name="state">code</field>
+            <field name="code">action = model.action_export_xlsx()</field>
+
+            <field name="binding_model_id" eval="False"/>
+            <field name="group_ids"
+                eval="[(4, ref('opportunities.group_opportunity_dowload_report'))]"/>
+        </record>
+
+        <menuitem
+            id="menu_opportunity_root"
+            name="CRM"
+            sequence="25"
+            web_icon="opportunities,static/description/icon.png"
+            groups="opportunities.group_consult_opportunities"
+        />
+
+        <!--<menuitem
+            id="menu_opportunity_dashboard"
+            name="Dashboard"
+            parent="menu_opportunity_root"
+            action="opportunities.action_opportunity_dashboard"
+            sequence="1"
+        />-->
+
+        <menuitem
+            id="menu_opportunities"
+            name="Oportunidades"
+            parent="menu_opportunity_root"
+            action="opportunities.action_menu_opportunity"
+            sequence="2"
+        />
+
+        <menuitem
+            id="menu_opportunity_report"
+            name="Informes"
+            parent="menu_opportunity_root"
+            sequence="3"
+            groups="opportunities.group_opportunity_dowload_report"
+        />
+
+        <menuitem
+            id="menu_download_report_opportunity"
+            name="Descargar reporte"
+            parent="opportunities.menu_opportunity_report"
+            sequence="1"
+            action="opportunities.action_opportunity_report"
+            groups="opportunities.group_opportunity_dowload_report"
+        />
+
+
+        <menuitem
+            id="menu_opportunity_partners"
+            name="Clientes"
+            parent="menu_opportunity_root"
+            sequence="4"
+            action="opportunities.action_view_partner"
+        />
+
+        <menuitem
+            id="menu_opportunity_configuration"
+            name="Configuración"
+            parent="opportunities.menu_opportunity_root"
+            sequence="99"
+            groups="opportunities.group_root_opportunities"
+        />
+
+        <menuitem
+            id="menu_opportunity_source"
+            name="Fuente"
+            parent="opportunities.menu_opportunity_configuration"
+            action="opportunities.opportunity_source_action"
+            sequence="1"
+        />
+
+        <menuitem
+            id="menu_opportunity_enterprise"
+            name="Empresa"
+            parent="opportunities.menu_opportunity_configuration"
+            action="opportunities.opportunity_enterprise_action"
+            sequence="2"
+        />
+
+        <menuitem
+            id="menu_opportunity_team"
+            name="Equipos"
+            parent="opportunities.menu_opportunity_configuration"
+            action="opportunities.opportunity_team_action"
+            sequence="2"
+        />
+
+        <menuitem
+            id="menu_opportunity_team_member"
+            name="Integrantes"
+            parent="opportunities.menu_opportunity_configuration"
+            action="opportunities.opportunity_team_member_action"
+            sequence="4"
+        />
+
+        <menuitem
+            id="menu_opportunity_business_line"
+            name="Línea de negocio"
+            parent="opportunities.menu_opportunity_configuration"
+            action="opportunities.opportunity_type_business_line_action"
+            sequence="5"
+        />
+
+        <menuitem
+            id="menu_opportunity_type_activity"
+            name="Tipo de actividad"
+            parent="opportunities.menu_opportunity_configuration"
+            sequence="6"
+            action="opportunities.opportunity_activity_action"
+        />
+
+        <!--<menuitem
+            id="menu_opportunity_type_document"
+            name="Tipo de documento"
+            parent="opportunities.menu_opportunity_configuration"
+            action="opportunities.opportunity_type_document_action"
+            sequence="7"
+        />-->
+
+        <menuitem
+            id="menu_opportunity_type"
+            name="Tipos de oportunidad"
+            parent="opportunities.menu_opportunity_configuration"
+            action="opportunities.opportunity_type_action"
+            sequence="8"
+        />
+
+        <!-- <menuitem
+            id="menu_opportunity_assigned_to"
+            name="Asignado a"
+            parent="opportunities.menu_opportunity_configuration"
+            action="opportunities.opportunity_assigned_to_action"
+            sequence="9"
+        /> -->
+
+        <!--<menuitem
+            id="menu_opportunity_document"
+            name="Documentos"
+            parent="opportunities.menu_opportunity_configuration"
+            action="opportunities.opportunity_document_action"
+            sequence="9"
+        />-->
+
+    </data>
+</odoo>

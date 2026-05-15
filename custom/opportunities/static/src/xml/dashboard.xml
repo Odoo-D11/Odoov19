@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+
+    <t t-name="OpportunitiesDashboardTemplate">
+        <div class="purchase-dashboard h-100">
+            <div class="dashboard-header bg-primary text-white py-3 px-4 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+                <div>
+                    <h1 class="h3 mb-1">Panel de Compras</h1>
+                    <p class="mb-0 opacity-75">Visión integral del rendimiento y las necesidades del equipo de compras.</p>
+                </div>
+                <div class="d-flex gap-2 flex-wrap">
+                    <button class="btn btn-light text-primary">
+                        <i class="fa fa-plus-circle me-2" role="img" aria-hidden="true"></i>Crear solicitud de cotización
+                    </button>
+                    <button class="btn btn-outline-light">
+                        <i class="fa fa-download me-2" role="img" aria-hidden="true"></i>Exportar Reporte
+                    </button>
+                </div>
+            </div>
+
+            <div class="dashboard-scroll flex-grow-1">
+                <div class="container-fluid">
+                    <div class="row g-3 mb-3">
+                        <t t-foreach="state.kpis" t-as="kpi" t-key="kpi.id">
+                            <div class="col-6 col-xl-3">
+                                <div class="card h-100 shadow-sm kpi-card border-0">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <div>
+                                                <p class="kpi-label text-uppercase fw-semibold mb-1" t-esc="kpi.label"/>
+                                                <h3 class="kpi-value mb-0" t-esc="kpi.value"/>
+                                            </div>
+                                            <span class="badge rounded-pill" t-attf-class="badge rounded-pill bg-opacity-10 text-{{kpi.trend_color}} bg-{{kpi.trend_color}}">
+                                                <t t-esc="kpi.trend"/>
+                                            </span>
+                                        </div>
+                                        <p class="kpi-subtitle text-muted mb-0" t-esc="kpi.subtitle"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-lg-4">
+                            <div class="card shadow-sm h-100">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5 class="card-title mb-0">Ejecución mensual de compras</h5>
+                                        <span class="badge bg-primary-subtle text-primary">Meta: 85% cumplida</span>
+                                    </div>
+                                    <div class="chart-wrapper">
+                                        <canvas id="monthlySpendChart" role="img" aria-label="Gráfica de ejecución mensual"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="card shadow-sm h-100">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5 class="card-title mb-0">Distribución por categoría</h5>
+                                        <span class="badge bg-success-subtle text-success">4 categorías</span>
+                                    </div>
+                                    <div class="chart-wrapper">
+                                        <canvas id="categorySplitChart" role="img" aria-label="Gráfica de distribución por categoría"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="card shadow-sm h-100">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5 class="card-title mb-0">Tiempo medio de entrega</h5>
+                                        <span class="badge bg-info-subtle text-info">Meta: 9 días</span>
+                                    </div>
+                                    <div class="chart-wrapper">
+                                        <canvas id="leadTimeChart" role="img" aria-label="Gráfica de tiempos de entrega"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-xl-6">
+                            <div class="card shadow-sm h-100">
+                                <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title mb-0">Cotizaciones recientes</h5>
+                                    <span class="text-muted small">Actualizado hace 5 minutos</span>
+                                </div>
+                                <div class="card-body pt-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle mb-0">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Proveedor</th>
+                                                    <th>Producto</th>
+                                                    <th class="text-end">Monto</th>
+                                                    <th class="text-end">Estado</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <t t-foreach="state.quotes" t-as="quote" t-key="quote.id">
+                                                    <tr>
+                                                        <td class="fw-semibold" t-esc="quote.vendor"/>
+                                                        <td t-esc="quote.product"/>
+                                                        <td class="text-end" t-esc="quote.amount"/>
+                                                        <td class="text-end">
+                                                            <span class="badge" t-attf-class="badge bg-{{quote.status_color}}-subtle text-{{quote.status_color}}">
+                                                                <t t-esc="quote.status"/>
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-6">
+                            <div class="card shadow-sm h-100">
+                                <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
+                                    <h5 class="card-title mb-0">Solicitudes de Cotización pendientes</h5>
+                                    <a href="#" class="text-decoration-none small">Ver todas</a>
+                                </div>
+                                <div class="card-body pt-0">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle mb-0">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>RFQ</th>
+                                                    <th>Responsable</th>
+                                                    <th>Fecha límite</th>
+                                                    <th class="text-end">Prioridad</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <t t-foreach="state.rfqs" t-as="rfq" t-key="rfq.id">
+                                                    <tr>
+                                                        <td class="fw-semibold" t-esc="rfq.reference"/>
+                                                        <td t-esc="rfq.owner"/>
+                                                        <td t-esc="rfq.deadline"/>
+                                                        <td class="text-end">
+                                                            <span class="badge" t-attf-class="badge bg-{{rfq.priority_color}}-subtle text-{{rfq.priority_color}}">
+                                                                <t t-esc="rfq.priority"/>
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="card shadow-sm">
+                                <div class="card-body d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3">
+                                    <div>
+                                        <h5 class="card-title mb-1">Alertas operativas</h5>
+                                        <p class="mb-0 text-muted">3 pedidos requieren aprobación urgente y 2 proveedores superaron el tiempo objetivo.</p>
+                                    </div>
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <button class="btn btn-outline-primary">
+                                            <i class="fa fa-bell me-2" role="img" aria-hidden="true"></i>Revisar aprobaciones
+                                        </button>
+                                        <button class="btn btn-primary text-white">
+                                            <i class="fa fa-phone me-2" role="img" aria-hidden="true"></i>Contactar proveedores
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+    <data>
+
+        <record id="view_present_lead_wizard" model="ir.ui.view">
+            <field name="name">view.present.lead.wizard</field>
+            <field name="model">present.lead</field>
+            <field name="arch" type="xml">
+                <form string="Presentar oportunidad">
+                    <field name="rta" invisible="1"/>
+                    <field name="next_step" invisible="1"/>
+                    <sheet>
+                        <separator string="Presentar oportunidad"
+                            invisible="rta == 'no' and next_step"/>
+                        <separator string="No presentar oportunidad" invisible="not next_step"/>
+                        <p class="oe_grey" invisible="rta == 'no'and next_step"> La presentación de
+                            una oportunidad en un CRM es un proceso que permite formalizar y
+                            detallar las propuestas de valor para un cliente específico. Es crucial
+                            para comunicar de manera precisa los términos y condiciones ofrecidos, y
+                            asegurar que se registre correctamente toda la información relevante
+                            para la negociación. A continuación, se solicita si se desea presentar o
+                            no la oportunidad registro <b class="text-primary">
+                                <field name="lead_id" options="{'no_open': True, 'no_create': True}"
+                                    style="margin-bottom: 0px !important;"/>
+                            </b>
+                        </p>
+                        <p class="oe_grey" invisible="not next_step"> No presentar una oportunidad
+                            en el CRM implica que esta ha sido descartada o pospuesta debido a
+                            problemas o inconvenientes con la propuesta comercial. Por favor,
+                            indique a continuación el motivo por el cual no se presentará la
+                            oportunidad <b class="text-primary">
+                                <field name="lead_id" readonly="1"
+                                    options="{'no_create': True, 'no_open': True}"
+                                    style="margin-bottom: 0px !important; text-decoration: underline"/>
+                            </b>
+                        </p>
+                        <group>
+                            <field name="rta" invisible="next_step"/>
+                            <field name="reason_id" options="{'no_create': True, 'no_open': True}"
+                                invisible="not next_step"
+                                placeholder="Ej. Desierto el proceso, Por incumbencia, etc..."/>
+                        </group>
+                        <field name="observation"
+                            placeholder="Escriba el motivo por el cual no se presentará la oportunidad..."
+                            invisible="not next_step"/>
+                    </sheet>
+                    <footer>
+                        <button name="action_next_step" string="Volver" type="object"
+                            invisible="not next_step" class="btn-primary"/>
+                        <button name="action_next_step" string="Siguiente" type="object"
+                            invisible="rta in ['yes', False] or next_step" class="btn-primary"/>
+                        <button name="action_present_lead" string="Guardar" type="object"
+                            invisible="rta == 'no' and not next_step" class="btn-primary"/>
+                        <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

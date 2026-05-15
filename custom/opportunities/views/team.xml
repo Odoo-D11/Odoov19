@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="opportunity_team_view_list" model="ir.ui.view">
+            <field name="name">opportunity.team.list</field>
+            <field name="model">opportunity.team</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="opportunity_team_view_form" model="ir.ui.view">
+            <field name="name">opportunity.team.form</field>
+            <field name="model">opportunity.team</field>
+            <field name="arch" type="xml">
+                <form string="Equipos" duplicate="false">
+                    <sheet>
+                        <b style="font-weight: 500;">Nombre</b>
+                        <div class="form-title-responsive">
+                            <h1>
+                                <field name="name" class="text-primary"
+                                    placeholder="Ej. Comercial, Preventa, etc..."/>
+                            </h1>
+                        </div>
+                        <separator string="Descripción" invisible="not name"/>
+                        <p invisible="name != 'Comercial'"> En CRM, <b class="text-primary">
+                            comercial</b> abarca todas las actividades relacionadas con la <b
+                                class="text-primary">gestión de ventas</b> y la <b
+                                class="text-primary">interacción
+                                con los clientes</b>. Esto incluye el seguimiento de <b
+                                class="text-primary">oportunidades
+                                de negocio</b>, el mantenimiento de <b class="text-primary">relaciones
+                            con clientes</b>, y la gestión de las actividades diarias de ventas.
+                            Además, se enfoca en analizar el <b class="text-primary">rendimiento de
+                            ventas
+                            </b>
+                            para identificar tendencias y oportunidades, y coordinar esfuerzos de <b
+                                class="text-primary">marketing
+                            </b> para generar y convertir <b
+                                class="text-primary">leads</b> en clientes. En esencia, el aspecto <b
+                                class="text-primary">comercial</b> del CRM se centra en optimizar el
+                            proceso de ventas y mejorar la relación con los clientes para lograr una
+                            gestión más efectiva y organizada. </p>
+                        <p invisible="name != 'Preventa'"> En CRM, la <b class="text-primary">
+                            preventa</b> abarca las actividades realizadas antes de cerrar una
+                            venta. Implica preparar y optimizar las <b class="text-primary">oportunidades
+                            de
+                                negocio</b>, comenzando con la identificación de <b
+                                class="text-primary">prospectos</b> y la evaluación de su potencial.
+                            Se enfoca en responder a <b class="text-primary">consultas</b>, realizar <b
+                                class="text-primary">presentaciones de productos</b>, y desarrollar <b
+                                class="text-primary">propuestas
+                            </b> adaptadas a las necesidades
+                            del cliente. El objetivo es construir una relación sólida con los
+                            prospectos, comprender sus necesidades y preparar el camino para una
+                            venta exitosa. </p>
+                        <p invisible="name != 'Licitaciones'"> En CRM, las <b class="text-primary">
+                            licitaciones</b> son procesos competitivos en los que las empresas
+                            presentan <b class="text-primary">propuestas</b> para la <b
+                                class="text-primary">adjudicación de contratos
+                            </b> públicos o
+                            privados. Estos procesos requieren una preparación cuidadosa y
+                            detallada, ya que las empresas deben cumplir con <b class="text-primary">requisitos
+                            legales</b>, <b class="text-primary">técnicos</b> y <b
+                                class="text-primary">financieros</b> para ser consideradas. La
+                            gestión de <b class="text-primary">licitaciones
+                            </b> implica la identificación
+                            de <b class="text-primary">oportunidades</b>, la preparación de <b
+                                class="text-primary">propuestas</b> competitivas, y la presentación
+                            de <b class="text-primary">ofertas
+                            </b> que cumplan con los requisitos
+                            del cliente. El objetivo es ganar contratos y expandir la base de
+                            clientes a través de procesos transparentes y equitativos. </p>
+                        <p invisible="name != 'Gerencia'"> En CRM, la <b class="text-primary">
+                            gerencia</b> abarca las actividades relacionadas con la <b
+                                class="text-primary">gestión de equipos</b> y la <b
+                                class="text-primary">supervisión de operaciones
+                            </b>
+                            comerciales. Implica coordinar y dirigir las actividades diarias de los
+                            equipos de <b
+                                class="text-primary">comercial</b>, <b
+                                class="text-primary">preventa</b>, y <b
+                                class="text-primary">licitaciones</b> para garantizar el
+                            cumplimiento de los objetivos y metas establecidos. La <b
+                                class="text-primary">gerencia</b> se enfoca en optimizar los
+                            procesos comerciales, mejorar la eficiencia operativa y fomentar un
+                            ambiente de trabajo colaborativo y productivo. Además de supervisar las
+                            operaciones diarias, la <b class="text-primary">
+                                gerencia</b> se encarga de analizar el rendimiento de los equipos,
+                            identificar áreas de mejora y desarrollar estrategias para alcanzar los
+                            objetivos de ventas y crecimiento. </p>
+                        <p invisible="name != 'Financiero'"> En CRM, el aspecto <b
+                                class="text-primary">financiero</b> se refiere a la gestión de los
+                            recursos económicos y la evaluación del rendimiento financiero de las
+                            operaciones comerciales. Implica el seguimiento de los ingresos y gastos
+                            asociados a las <b class="text-primary">oportunidades de negocio</b>, la
+                            elaboración de <b class="text-primary">presupuestos</b>, y la proyección
+                            de <b class="text-primary">resultados financieros</b> para evaluar la
+                            viabilidad de las <b class="text-primary">inversiones</b> y decisiones
+                            comerciales. La gestión <b class="text-primary">financiera</b> en CRM
+                            también incluye el análisis de <b class="text-primary">métricas</b> y <b
+                                class="text-primary">KPIs</b> para medir el rendimiento de las
+                            operaciones y la identificación de oportunidades de mejora. El objetivo
+                            es optimizar la rentabilidad y asegurar la sostenibilidad financiera de
+                            la empresa a largo plazo. </p>
+                        <group invisible="not name">
+                            <group>
+                                <field name="leader_id"
+                                    options="{'no_open': True, 'no_create': True}"
+                                    placeholder="Ej. Juan Perez..."/>
+                            </group>
+                        </group>
+                        <separator string="Integrantes" invisible="not name"/>
+                        <field name="members_ids" mode="kanban" invisible="not name">
+                            <kanban class="o_kanban_dashboard res_partner_kanban" sample="1">
+                                <field name="employee_id"/>
+                                <field name="email"/>
+                                <templates>
+                                    <t t-name="kanban-box">
+                                        <t t-set="people"
+                                            t-value="'/contacts_management/static/src/img/people.jpg'"/>
+                                        <div
+                                            class="oe_kanban_global_click o_res_partner_kanban_main">
+                                            <img t-att-src="people" alt="Empleado"/>
+                                            <div class="o_content_center col-12 p-1">
+                                                <div class="oe_title_kanban">
+                                                    <strong t-esc="record.employee_id.value"/>
+                                                </div>
+                                                <div>
+                                                    <em>
+                                                        <t t-esc="record.email.raw_value"/>
+                                                    </em>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </templates>
+                            </kanban>
+                            <form>
+                                <field name="team_id" invisible="1"/>
+                                <sheet>
+                                    <b style="font-weight: 500;">
+                                        Nombre
+                                    </b>
+                                    <div class="form-title-responsive">
+                                        <h1>
+                                            <field name="employee_id" class="text-primary"
+                                                options="{'no_create': True, 'no_open': True}"
+                                                placeholder="Ej. Juan Perez"/>
+                                        </h1>
+                                        <div invisible="not employee_id">
+                                            <field name="email"/>
+                                        </div>
+                                    </div>
+                                </sheet>
+                            </form>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

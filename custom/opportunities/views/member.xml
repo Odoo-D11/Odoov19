@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="opportunity_team_member_view_list" model="ir.ui.view">
+            <field name="name">opportunity.team.member.list</field>
+            <field name="model">opportunity.team.member</field>
+            <field name="arch" type="xml">
+                <list string="integrantes" duplicate="false" sample="1">
+                    <field name="employee_id" options="{'no_create': True, 'no_open': True}"
+                        string="Nombre" placeholder="Ej. Juan Perez, Maria Lopez..."
+                        class="text-primary"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="opportunity_team_member_view_form" model="ir.ui.view">
+            <field name="name">opportunity.team.member.form</field>
+            <field name="model">opportunity.team.member</field>
+            <field name="arch" type="xml">
+                <form string="integrantes" duplicate="false">
+                    <sheet>
+                        <b style="font-weight: 500;">Nombre</b>
+                        <div class="form-title-responsive">
+                            <h1>
+                                <field name="employee_id" class="text-primary"
+                                    placeholder="Ej. Juan Perez, Maria Lopez..."
+                                    options="{'no_create': True, 'no_open': True}"/>
+                            </h1>
+                            <div>
+                                <field name="team_id" placeholder="Ej. Preventa, Comercial, etc..."
+                                    options="{'no_create': True, 'no_open': True}"/>
+                            </div>
+                        </div>
+                        <separator string="Clientes"/>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

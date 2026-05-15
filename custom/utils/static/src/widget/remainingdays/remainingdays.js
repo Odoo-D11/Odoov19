@@ -1,42 +1,10 @@
 /** @odoo-module **/
 
 import { registry } from '@web/core/registry';
-import { DateTimeField } from "@web/views/fields/datetime/datetime_field";
-import { onMounted, onPatched } from '@odoo/owl';
+import { DateTimeField, dateField } from "@web/views/fields/datetime/datetime_field";
 
 class RemainDaysDatetime extends DateTimeField {
     static template = "WidgetRemainingDaysTemplate";
-
-    setup() {
-        super.setup();
-
-        // Validar si `name` está definido
-        if (!this.props?.name) {
-            return;
-        }
-
-        // Establecer el placeholder al montar y actualizar el componente
-        onMounted(() => {
-            this.setPlaceholderDirectly();
-        });
-
-        onPatched(() => {
-            this.setPlaceholderDirectly();
-        });
-    }
-
-    setPlaceholderDirectly() {
-        const inputElements = document.querySelectorAll('input[type="text"][data-field]');
-        inputElements.forEach(inputElement => {
-            if (inputElement && inputElement.getAttribute('data-field') === this.props.name) {
-                const randomDate = new Date();
-                randomDate.setDate(randomDate.getDate() + Math.floor(Math.random() * 365)); // Fecha al azar dentro del próximo año
-                const randomDateString = randomDate.toISOString().split('T')[0];
-
-                inputElement.setAttribute('placeholder', `Ej. ${randomDateString}`);
-            }
-        });
-    }
 
     getRemainingDays() {
         if (!this.props?.record?.data || !this.props?.name) {
@@ -124,7 +92,7 @@ class RemainDaysDatetime extends DateTimeField {
 
 }
 
-RemainDaysDatetime.supportedTypes = ['date'];
-
-// Añadir el widget a la categoría de campos
-registry.category('fields').add('RemainingDays', { component: RemainDaysDatetime });
+registry.category('fields').add('RemainingDays', {
+    ...dateField,
+    component: RemainDaysDatetime,
+});

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="opportunity_document_view_list" model="ir.ui.view">
+            <field name="name">opportunity.document.list</field>
+            <field name="model">opportunity.document</field>
+            <field name="arch" type="xml">
+                <list string="Documentos de Oportunidad" editable="bottom" sample="1">
+                    <field name="type_document_id" options="{'no_create': True, 'no_open': True}"
+                        placeholder="Ej. Oferta, MVF - Valorización, etc."/>
+                    <field name="link" placeholder="Ej. https://www.google.com/"/>
+                    <field name="lead_id" options="{'no_create': True, 'no_open': True}"
+                        placeholder="Ej. CRM-2025-0001, EDM-2025-0001, PIP-2025-0001"/>
+                </list>
+            </field>
+        </record>
+    </data>
+</odoo> 

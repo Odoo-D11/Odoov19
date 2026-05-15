@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+
+    <t t-inherit="web.ListView" t-inherit-mode="extension" t-name="OpportunityListView">
+        <!-- Añadimos una condición extra para que SOLO se muestre el botón
+             si NO es el modelo 'opportunity' (o tu modelo) -->
+        <xpath expr="//button[contains(@class,'o_list_button_add')]" position="attributes">
+            <attribute name="t-if">
+                props.resModel !== 'opportunity'
+            </attribute>
+        </xpath>
+    </t>
+
+    <t t-name="OpportunityDropdownButton">
+        <div class="btn-group"
+            t-if="!editedRecord and activeActions.create and props.showButtons">
+            <button type="button" class="btn btn-primary" t-on-click="actionCreateNewLead">
+                Nuevo
+            </button>
+            <button type="button"
+                class="btn btn-primary o-dropdown dropdown-toggle dropdown-toggle-anim"
+                data-bs-toggle="dropdown">
+                <i class="fa fa-caret-down dropdown-icon"/>
+            </button>
+            <ul class="dropdown-menu">
+                <li>
+                    <a class="dropdown-item d-flex align-items-center cursor-pointer"
+                        t-on-click="actionCreateNewActivity">
+                        <i class="fa fa-file-text-o me-2"/>
+                        <span style="font-weight: 500;">Actividades</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </t>
+
+    <t t-name="LeaderPreSaleListController" t-inherit="web.ListView">
+        <xpath expr="//t[contains(@t-component,'props.Renderer')]" position="before">
+            <div class="o_presale_sidebar"
+                t-att-class="state.hasPermission ? '' : 'd-none'">
+                <div t-if="state.loading" class="o-loading-overlay">
+                    <div class="spinner"></div>
+                    <span class="loading-text">Cargando datos...</span>
+                </div>
+                <div t-if="!state.loading">
+                    <div
+                        class="toggle-archived-container mb-2 d-flex align-items-center justify-content-between">
+                        <label class="toggle-label mb-0">Mostrar todos</label>
+                        <button type="button"
+                            class="toggle-archived-btn btn-unstyled"
+                            t-on-click="() => this.toggleArchived()"
+                            t-att-title="state.showArchived ? 'Mostrar solo activos' : 'Mostrar todos'">
+                            <i
+                                t-att-class="'fa toggle-icon ' + (state.showArchived ? 'fa-toggle-on active' : 'fa-toggle-off')"/>
+                        </button>
+                    </div>
+                    <div class="sidebar-header">
+                        <span>PERSONAL ASIGNADO</span>
+                    </div>
+                    <div class="sidebar-content">
+                        <t t-if="state.presales.length">
+                            <t t-foreach="state.presales" t-as="presale" t-key="presale.name">
+                                <div
+                                    t-att-class="
+      'sidebar-item cursor-pointer ' +
+      (state.selectedPresaleId === presale.id ? 'is-selected' : '')
+    "
+                                    t-on-click="() => this.filterByPersonal(presale)"
+                                >
+                                    <div class="avatar"
+                                        t-att-style="'background-color:' + presale.color">
+                                        <t t-esc="presale.name[0].toUpperCase()"/>
+                                    </div>
+                                    <div class="info-container">
+                                        <span class="name" t-att-title="presale.name">
+                                            <t t-esc="presale.name"/>
+                                        </span>
+                                        <span class="details">
+                                            <t t-esc="presale.count"/>
+                                            <t t-if="presale.count == 1"> Oportunidad asignada</t>
+                                            <t t-if="presale.count != 1"> Oportunidades
+                                                asignadas</t>
+                                        </span>
+                                    </div>
+                                </div>
+                            </t>
+                        </t>
+                        <t t-else="">
+                            <div class="no-data">No hay datos disponibles</div>
+                        </t>
+                    </div>
+                    <div class="sidebar-statuses mt-3">
+                        <div class="statuses-header">
+                            <span>ESTADOS</span>
+                        </div>
+                        <div class="statuses-content">
+                            <t t-if="state.statuses.length">
+                                <t t-foreach="state.statuses" t-as="status" t-key="status.name">
+                                    <div
+                                        t-att-class="
+      'status-item cursor-pointer ' +
+      (state.selectedStatusName === status.name ? 'is-selected' : '')
+    "
+                                        t-on-click="() => this.filterByStatus(status)"
+                                    >
+                                        <div class="status-avatar"
+                                            t-att-style="'background-color:' + status.color">
+                                            <i t-att-class="'status-icon ' + status.icon"></i>
+                                        </div>
+                                        <div class="status-info">
+                                            <span class="status-name" t-att-title="status.name">
+                                                <t t-esc="status.name"/>
+                                            </span>
+                                            <span class="status-details">
+                                                <t t-esc="status.count"/>
+                                                <t t-if="status.count == 1"> Oportunidad</t>
+                                                <t t-if="status.count != 1"> Oportunidades</t>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </t>
+                            </t>
+                            <t t-else="">
+                                <div class="no-statuses">No hay datos disponibles</div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+
+
+        <xpath expr="//Layout" position="attributes">
+            <attribute name="className">"o_content o_component_with_search_panel"</attribute>
+        </xpath>
+    </t>
+
+</templates>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_upload_offer_wizard" model="ir.ui.view">
+            <field name="name">view.upload.offer.wizard</field>
+            <field name="model">upload.offer</field>
+            <field name="arch" type="xml">
+                <form string="Cargar oferta">
+                    <field name="edm" invisible="1"/>
+                    <sheet>
+                        <separator string="Cargar oferta"/>
+                        <p class="oe_grey"> La carga de una oferta en un CRM es un proceso que
+                            permite formalizar y detallar las propuestas de valor para una
+                            oportunidad específica. Es crucial para comunicar de manera precisa los
+                            términos y condiciones ofrecidos, y asegurar que se registre
+                            correctamente toda la información relevante para la negociación. A
+                            continuación, se solicita el enlace de la oferta correspondiente al
+                            registro <b class="text-primary">
+                                <field name="lead_id" options="{'no_open': True, 'no_create': True}"
+                                    style="margin-bottom: 0px !important;"/>
+                            </b>
+                        </p>
+                        <group>
+                            <div class="o_row" invisible="next_step">
+                                <i class="fa fa-folder me-2" title="Enlace"/>
+                                <field name="link" placeholder="Ej. https://onedrive.live.com/..."/>
+                            </div>
+                            <label for="value" invisible="not next_step" string="Valor"/>
+                            <div class="o_row" invisible="not next_step">
+                                <i class="fa fa-dollar me-2" title="Valor"/>
+                                <field name="value" placeholder="Ej. 1000000000"/>
+                            </div>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="action_next_step" string="Siguiente" type="object"
+                            invisible="not edm or next_step" class="btn-primary"/>
+                        <button name="action_next_step" string="Volver" type="object"
+                            invisible="not edm or not next_step" class="btn-primary"/>
+                        <button name="action_upload_offer" string="Guardar" type="object"
+                            invisible="edm and not next_step" class="btn-primary"/>
+                        <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

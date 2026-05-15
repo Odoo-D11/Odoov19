@@ -1,0 +1,556 @@
+<odoo>
+  <data>
+
+    <record id="opportunity_view_form" model="ir.ui.view">
+      <field name="name">opportunity.form</field>
+      <field name="model">opportunity</field>
+      <field name="arch" type="xml">
+        <form string="Lead" duplicate="false">
+          <field name="paused" invisible="1" string="Pausada"/>
+          <field name="assigned_pre_sales" invisible="1" string="Equipo preventa asignado"/>
+          <field name="lead_ids" invisible="1" string="Oportunidad asociada"/>
+          <field name="type" invisible="1" string="Tipo" readonly="1" force_save="1"/>
+          <field name="sheet" invisible="1" string="Pliego"/>
+          <field name="sector_id" invisible="1" string="Sector" readonly="1" force_save="1"
+            options="{'no_create': True, 'no_open': True}"/>
+          <field name="link_document" invisible="1" string="Documentación"/>
+          <field name="timesheet_ids" invisible="1" string="Tiempos"/>
+          <field name="currency_id" invisible="1" options="{'no_create': True, 'no_open': True}"/>
+          <header>
+            <button type="object" name="action_record_timesheet" title="Tiempos"
+              icon="fa-clock-o" class="btn btn-primary" invisible="not timesheet_ids"
+              groups="opportunities.group_opportunity_consult_timesheet"/>
+            <button name="action_upload_documentation" type="object"
+              invisible="stage != 'draft' or not id" class="btn btn-primary"
+              string="Cargar documentación" groups="opportunities.group_create_opportunities"/>
+            <button name="action_set_pre_sale_required" type="object"
+              invisible="stage != 'open' or 'pipeline' not in type or not id or link_document"
+              class="btn btn-primary" string="Requiere equipo preventa"
+              groups="opportunities.group_create_opportunities"/>
+            <button name="action_change_to_sheet" type="object"
+              invisible="sector_id != 2 or type in ['study', 'pipeline'] or not id or sheet or stage in ['cancelled', 'won', 'lost']"
+              class="btn btn-primary" string="Cambiar a pliego"
+              groups="opportunities.group_create_opportunities"/>
+            <button name="action_assing_pre_sale_team" type="object"
+              invisible="stage != 'in_pre_sale' or assigned_pre_sales"
+              class="btn btn-primary" string="Establecer equipo preventa"
+              groups="opportunities.group_leader_pre_sales_opportunities,opportunities.group_manager_opportunities"/>
+            <button name="action_add_financial_assessment" type="object"
+              invisible="stage not in ['in_pre_sale', 'rejected_mvf'] or not assigned_pre_sales or 'study' in type or ['paused', 'cancelled', 'won', 'lost'] in stage"
+              class="btn btn-primary" string="Adjuntar valoración financiera"
+              groups="opportunities.group_pre_sales_opportunities,opportunities.group_manager_opportunities"/>
+            <button name="action_approve_financial_assessment" type="object"
+              invisible="stage not in ['pte_approval_pre_sale_leader', 'pte_approval_manager']"
+              class="btn btn-primary" string="Aprobar valoración financiera"
+              groups="opportunities.group_leader_pre_sales_opportunities,opportunities.group_manager_opportunities,opportunities.group_financial_opportunities"/>
+            <button name="action_add_financial_assessment" type="object" icon="fa-refresh"
+              groups="opportunities.group_pre_sales_opportunities,opportunities.group_manager_opportunities"
+              invisible="stage != 'presented' or 'opportunity' not in type" class="btn btn-primary"
+              string="Actualizar valoración financiera"/>
+            <button name="action_upload_offer" type="object"
+              invisible="stage != 'pte_upload_offer' or not id"
+              groups="opportunities.group_pre_sales_opportunities,opportunities.group_manager_opportunities"
+              class="btn btn-primary" string="Cargar oferta"/>
+            <button name="action_upload_offer" type="object"
+              icon="fa-refresh"
+              groups="opportunities.group_pre_sales_opportunities,opportunities.group_manager_opportunities"
+              invisible="'study' not in type or stage != 'presented' or lead_ids"
+              class="btn btn-primary" string="Actualizar oferta"/>
+            <button name="action_create_opportunity" type="object"
+              invisible="'study' not in type or stage != 'presented' or lead_ids"
+              class="btn btn-primary"
+              string="Crear oportunidad" groups="opportunities.group_create_opportunities"/>
+            <button name="action_present_lead" type="object"
+              invisible="stage != 'pte_present'" class="btn btn-primary"
+              string="Presentar" groups="opportunities.group_create_opportunities"/>
+            <button name="action_pause_opportunity" type="object"
+              groups="opportunities.group_pre_sales_opportunities,opportunities.group_manager_opportunities"
+              invisible="stage not in ['in_pre_sale', 'pte_upload_offer'] or 'paused' in stage or not assigned_pre_sales"
+              class="btn btn-primary" string="Pausar"/>
+            <button name="action_resume_opportunity" type="object"
+              groups="opportunities.group_pre_sales_opportunities,opportunities.group_manager_opportunities"
+              invisible="stage not in ['paused']" class="btn btn-primary" string="Reanudar"/>
+            <button name="action_return_to_pre_sale" type="object"
+              invisible="stage != 'open' or 'Nuevo' in reference or not id or not link_document"
+              class="btn btn-primary"
+              string="Devolver a preventa" groups="opportunities.group_create_opportunities"/>
+            <button name="action_return_to_commercial" type="object"
+              invisible="'in_pre_sale' not in stage or 'paused' in stage"
+              class="btn btn-primary" string="Devolver"
+              groups="opportunities.group_pre_sales_opportunities,opportunities.group_manager_opportunities"/>
+            <button name="action_marked_as_won" type="object"
+              invisible="stage != 'presented' or 'opportunity' not in type"
+              class="btn btn-secondary"
+              string="Ganado" groups="opportunities.group_create_opportunities"/>
+            <button name="action_convert_pipeline_to" type="object" class="btn btn-primary"
+              invisible="'presented' not in stage or type != 'pipeline' or not id or lead_id or lead_ids"
+              string="Convertir a" groups="opportunities.group_create_opportunities"/>
+            <button name="action_cancel_opportunity" type="object"
+              invisible="stage in ['draft','paused','presented', 'not_presented', 'pte_present', 'won', 'lost', 'cancelled'] or not id"
+              class="btn btn-secondary" string="Cancelar"
+              groups="opportunities.group_create_opportunities"/>
+            <!--<button
+            name="action_view_pre_sale_state" type="object"
+              title="Ver etapa de preventa"
+              icon="fa-refresh" class="btn btn-primary"/>-->
+            <field name="stage" widget="statusbar" options="{'clickable': False}"
+              statusbar_visible="draft,in_pre_sale,presented"
+              invisible="stage in ['pte_upload_offer'] or 'pipeline' in type"/>
+            <field name="stage" widget="statusbar" options="{'clickable': False}"
+              statusbar_visible="draft,pte_upload_offer,presented"
+              invisible="stage not in ['pte_upload_offer'] or 'pipeline' in type"/>
+            <field name="stage" widget="statusbar" options="{'clickable': False}"
+              statusbar_visible="open,presented"
+              invisible="'pipeline' not in type"/>
+          </header>
+          <div class="alert alert-danger" role="alert" invisible="not lead_ids or not paused">
+            <i class="fa fa-info-circle me-1" title="Información"/> 
+            <span>
+              <span
+                invisible="type != 'pipeline'">El <b class="text-primary">Pipeline</b></span>
+              <span
+                invisible="type != 'opportunity'">La <b class="text-primary">Oportunidad</b></span>
+              <span
+                invisible="type != 'study'">El <b class="text-primary">Estudio de mercado</b></span>
+            </span> <field
+              name="reference" class="text-primary ms-1 me-1"/> se encuentra <span
+              invisible="type != 'opportunity'">pausada</span> <span
+              invisible="type not in ['study', 'pipeline']">pausado</span>. <span
+              groups="opportunities.group_pre_sales_opportunities"> Para reanudarla, haga clic en el
+            botón <b>
+                "Reanudar"</b> en la parte superior izquierda.</span>
+          </div>
+          <div class="alert alert-info" role="alert" invisible="reference == 'Nuevo' or paused">
+            <i class="fa fa-info-circle me-1" title="Información"/>
+            <span invisible="lead_ids or lead_id">
+              <span invisible="sheet">
+                <span
+                  invisible="type != 'pipeline'">El <b class="text-primary">Pipeline</b></span>
+                <span
+                  invisible="type != 'opportunity'">La <b class="text-primary">Oportunidad</b></span>
+                <span
+                  invisible="type != 'study'">El <b class="text-primary">Estudio de mercado</b></span>
+              </span>
+            <span
+                invisible="not sheet">
+                <span>El <b class="text-primary">Pliego</b></span>
+              </span> tiene
+              asignado la referencia <b>
+                <field name="reference" class="text-primary"/>
+              </b>. Esta referencia es
+              importante para identificar y rastrear el registro a lo largo de su ciclo de vida. </span>
+            <span invisible="not lead_id">
+              <span
+                invisible="type != 'pipeline'">El <b class="text-primary">Pipeline</b></span>
+                <span
+                invisible="type != 'opportunity'">La <b class="text-primary">Oportunidad</b></span>
+                <span
+                invisible="type != 'study'">El <b class="text-primary">Estudio de mercado</b></span>
+              con referencia <b
+                class="text-primary">
+                <field
+                  name="reference" class="text-primary"/>
+              </b>, se generó a partir de
+              un registro anterior. Puede consultarlo haciendo clic en el botón<b>
+                <button name="action_view_opportunity" type="object"
+                  class="button_badge ms-1 me-1"
+                  string="Ver oportunidad">aquí</button>
+              </b>para realizar un
+              seguimiento detallado. </span>
+            <span invisible="not lead_ids"> Se creó un nuevo registro a partir de <span
+                invisible="type != 'pipeline'">este <b class="text-primary">Pipeline </b> con
+              referencia </span>
+                <span
+                invisible="type != 'opportunity'">esta <b class="text-primary">Oportunidad </b></span>
+                <span
+                invisible="type != 'study'">este <b class="text-primary">Estudio de mercado </b> con
+              referencia </span>
+                <b
+                class="text-primary">
+                <field
+                  name="reference" class="text-primary"/>
+              </b>. Puede consultarla
+              haciendo clic<b>
+                <button name="action_view_opportunity" type="object"
+                  class="button_badge me-1 ms-1"
+                  string="Ver oportunidad">aqui</button>
+              </b>para realizar un
+              seguimiento detallado. </span>
+            <br/>
+            <ul invisible="not link_document and type == 'pipeline'"
+              class="mb-0">
+              <li> Estado preventa:<b class="text-primary">
+                  <field name="stage_pre_sale" class="text-primary ms-1"/>
+                </b>
+              </li>
+            </ul>
+          </div>
+
+          <sheet>
+            <span style="font-weight: 500; color: #212529;">
+              Asunto
+            </span>
+            <div class="form-title-responsive text-truncate">
+              <h1>
+                <field name="name" class="text-primary"
+                  placeholder="Ej. Consultoría tecnológica para implementación de software ERP"/>
+              </h1>
+              <div>
+                <field name="category_id" class="text-primary" required="1"
+                  options="{'no_create': True, 'no_open': True}"
+                  placeholder="¿A qué categoría pertenece este registro? Ej. Banca, Oil and gas, Telco, Salud, etc..."/>
+              </div>
+            </div>
+            <group>
+              <group>
+                <field name="partner_id" options="{'no_create': True, 'no_open': True}"
+                  class="text-primary"
+                  placeholder="Ej. ICBF - Instituto Colombiano de Bienestar Familiar..."
+                  domain="[('is_business', '=', True), ('name', 'not in', ['Tsg The It Experts', 'Tsg The It Experts Sas'])]"/>
+              </group>
+              <group>
+                <field name="type_opportunity_id" class="text-primary"
+                  options="{'no_create': True, 'no_open': True}"
+                  invisible="type == 'pipeline'" required="1"
+                  domain="[('sector_id', '=', sector_id), ('name', 'not in', ['Pipeline'])]"
+                  placeholder="Ej. Estudio de mercado, Pipeline, etc..."/>
+                <field name="type_opportunity_id" class="text-primary"
+                  options="{'no_create': True, 'no_open': True}"
+                  invisible="'pipeline' not in type" required="1"
+                  domain="[('name', '=', 'Pipeline')]"
+                  placeholder="Ej. Estudio de mercado, Pipeline, etc..."/>
+              </group>
+            </group>
+            <notebook>
+              <page string="Descripción">
+                <field name="description"
+                  placeholder="Ej. Cliente interesado en servicios de consultoría tecnológica. Ha solicitado información sobre precios y tiempo de implementación para soluciones de software ERP. La reunión inicial se programó para el 15 de febrero, donde se discutirá el alcance del proyecto, los requisitos específicos del cliente y posibles personalizaciones. Notar que el cliente está evaluando opciones con otras dos empresas competidoras, por lo que debemos destacar nuestras ventajas en soporte técnico y flexibilidad. También mencionó que su prioridad es reducir los costos operativos en un 20% durante el próximo año fiscal."/>
+              </page>
+              <page string="Seguimiento">
+                <separator string="Información financiera"/>
+                <p class="text-muted"> La información financiera es un aspecto crítico en la gestión de
+                  oportunidades de negocio. Esta información incluye la empresa responsable de la
+                  ejecución del proyecto. Estos datos son fundamentales para evaluar la viabilidad
+                  de la oportunidad y tomar decisiones informadas sobre su gestión y seguimiento. </p>
+                <group>
+                  <group>
+                    <field name="budget" class="text-primary"
+                      placeholder="Ej. 1000000, 2000000, etc..."/>
+                    <field name="percentage_id" string="Prob. de exito"
+                      options="{'no_open': True, 'no_create': True}"
+                      class="text-primary" invisible="type in ['study', 'pipeline']"
+                      placeholder="Ej. 10%, 20%, etc..."/>
+                    <field name="source_id" string="Fuente"
+                      options="{'no_open': True, 'no_create': True}"
+                      class="text-primary" invisible="'study' not in type"
+                      required="'study' in type"
+                      placeholder="Ej. Secopp - II, Camara de comercio, Relación comercial, etc..."/>
+                  </group>
+                  <group>
+                    <label for="enterprise_id" string="Empresa"/>
+                    <div class="o_row">
+                      <field name="enterprise_id" class="text-primary"
+                        options="{'no_open': True, 'no_create': True}"
+                        placeholder="Ej. Tsg The It Experts, Kreivo, etc..."/>
+                      <span
+                        invisible="not require_associative_figure"
+                        class="text-success">- ( Participación: <field
+                          name="percentage_enterprise"
+                          class="oe_inline"/> )</span>
+                    </div>
+                    <!--<label
+                      for="expected_income" string="Ingreso esperado"/>
+                    <div class="o_row">
+                      <i class="fa fa-dollar me-1" title="Ingreso esperado"/>
+                      <field name="expected_income" class="text-primary"/>
+                    </div>-->
+                  </group>
+                </group>
+                <separator string="Línea de negocio" invisible="type in ['pipeline']"/>
+                <p class="text-muted" invisible="type in ['pipeline']"> La línea de negocio es
+                  un aspecto clave en la gestión de
+                  oportunidades de negocio. Define el área de actividad y el sector
+                  económico en el que se desarrolla la oportunidad, permitiendo
+                  identificar el mercado objetivo y las estrategias de
+                  comercialización más adecuadas para su gestión y seguimiento. </p>
+                <field name="business_line_ids" invisible="type in ['pipeline']"
+                  readonly="type in ['pipeline']">
+                  <list string="Línea de negocio" editable="bottom"
+                    class="table_opportunity_business_line">
+                    <field name="type_business_line_id" string="Nombre"
+                      options="{'no_open': True, 'no_create': True}"
+                      placeholder="Ej. Ciberseguridad, Infraestructura, etc..."/>
+                    <field name="percentage_id" string="Porcentaje"
+                      options="{'no_open': True, 'no_create': True}"
+                      placeholder="Ej. 10%, 20%, etc..."/>
+                  </list>
+                </field>
+                <separator string="Fecha de Observaciones" invisible="type in ['study', 'pipeline']"/>
+                <p class="text-muted" invisible="type in ['study', 'pipeline']">
+                  La fecha de observaciones es el plazo establecido para la
+                  presentación de observaciones o comentarios sobre la propuesta comercial. Esta
+                  fecha es crítica para la evaluación y revisión de la propuesta, ya que permite a
+                  las partes interesadas realizar ajustes y mejoras antes de la fecha límite de
+                  entrega.
+                </p>
+                <group invisible="type in ['study', 'pipeline']">
+                  <group>
+                    <field name="pre_sheet_date" string="Pre-pliego" widget="RemainingDays"
+                      placeholder="Ej. 2025-10-15"/>
+                  </group>
+                  <group>
+                    <field name="sheet_date" string="Pliego" widget="RemainingDays"
+                      placeholder="Ej. 2025-10-20"/>
+                  </group>
+                </group>
+                <separator string="Fechas de entrega"
+                  invisible="not link_document and type == 'pipeline'"/>
+                <p class="text-muted" invisible="not link_document and type == 'pipeline'">
+                  Las fechas de entrega son los plazos establecidos para la finalización de una
+                  tarea o proyecto. Estas fechas son críticas para la planificación y ejecución de
+                  actividades, ya que permiten establecer un marco temporal para la realización de
+                  tareas y la consecución de objetivos.
+                </p>
+                <group invisible="not link_document and type == 'pipeline'">
+                  <group>
+                    <field name="deadline_pre_sale" string="Pre-venta" widget="RemainingDays"
+                      placeholder="Ej. 2025-10-25"/>
+                    <field name="deadline_adjudication" string="Adjudicación" widget="RemainingDays"
+                      placeholder="Ej. 2025-10-27" invisible="type in ['study', 'pipeline']"/>
+                    <label for="date_observation" string="Observaciones"
+                      invisible="'study' not in type"/>
+                    <div class="o_row w-100" invisible="'study' not in type">
+                      <field name="require_date_observation"/>
+                      <span invisible="require_date_observation" class="text-danger">
+                        <i class="fa fa-ban me-1 text-danger" title="Advertencia"/> No se requiere
+                        esta fecha. </span>
+                      <field name="date_observation" string="Observaciones" widget="RemainingDays"
+                        invisible="not require_date_observation"
+                        required="require_date_observation"
+                        placeholder="Ej. 2025-12-01"/>
+                    </div>
+                  </group>
+                  <group>
+                    <field name="deadline_offer" string="Oferta" widget="RemainingDays"
+                      placeholder="Ej. 2025-10-30"/>
+                  </group>
+                </group>
+                <separator string="Condiciones y relaciones"
+                  invisible="type in ['study', 'pipeline']"/>
+                <p class="text-muted" invisible="type in ['study', 'pipeline']">
+                  Las condiciones y relaciones son aspectos clave en la gestión de
+                  oportunidades. Definen términos, expectativas y
+                  responsabilidades entre las partes, estableciendo acuerdos
+                  claros y equitativos para garantizar el éxito y sostenibilidad.
+                </p>
+                <group invisible="type in ['study', 'pipeline']">
+                  <group>
+                    <div class="o_checkbox_container">
+                      <div class="o_checkbox_title_container">
+                        <field name="require_associative_figure"/>
+                        <div class="o_title_with_border">
+                          <label for="associative_figure_id"/>
+                          <p invisible="not require_associative_figure">
+                            <span class="text-muted">
+                              Seleccione la opción correspondiente
+                              para establecer la participación y
+                              asignar las empresas responsables en
+                              esta oportunidad.
+                            </span>
+                            <field name="associative_figure_id" class="text-primary w-auto ms-1"
+                              required="require_associative_figure"
+                              options="{'no_open': True, 'no_create': True}"
+                              placeholder="Ej. Unión temporal, Consorcio, etc..."/>
+                          </p>
+                          <p class="text-danger" invisible="require_associative_figure">
+                            <i class="fa fa-ban me-1 text-danger" title="Advertencia"/> No se
+                            requiere la participación de empresas asociadas, dado que esta
+                            oportunidad puede gestionarse de forma independiente. </p>
+                          <div class="o_button_row" invisible="not require_associative_figure">
+                            <button invisible="not associative_figure_id"
+                              name="action_view_associative_figure" type="object"
+                              class="btn btn-primary o_participation_button"
+                              string="Establecer Participación">
+                              <i class="fa fa-arrow-right" title="Consultar participacion"/>
+                              Consultar participación</button>
+                          </div>
+                          <div class="text-muted text-danger mt16"
+                            invisible="associative_figure_line_ids or not require_associative_figure or not associative_figure_id">
+                            <p>
+                              <i class="fa fa-exclamation-triangle me-1" title="Aviso"/> No se ha
+                              registrado ninguna empresa que participe en esta oportunidad. Para
+                              continuar, haz clic en el botón <b>"Consultar participación"</b> y
+                              añade las empresas necesarias. </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </group>
+                  <group>
+                    <field name="source_id" string="Fuente"
+                      options="{'no_open': True, 'no_create': True}"
+                      class="text-primary"
+                      placeholder="Ej. Secopp - II, Camara de comercio, Relación comercial, etc..."/>
+                  </group>
+                </group>
+              </page>
+              <page string="Eq. de trabajo">
+                <separator string="Roles y responsabilidades"/>
+                <p>
+                  <span class="text-muted">
+                    Los roles y responsabilidades son aspectos fundamentales en la
+                    gestión de oportunidades de negocio. Definen las funciones y
+                    tareas de cada miembro del equipo, estableciendo un marco de
+                    trabajo claro y eficiente para la consecución de objetivos y
+                    metas. En esta sección, puedes asignar roles y responsabilidades
+                    a los miembros del equipo, definir el porcentaje de
+                    participación de cada uno y establecer una comunicación efectiva
+                    para coordinar las actividades y maximizar el rendimiento.</span>
+                  <button type="object" name="action_record_activities"
+                    class="button_badge ms-1 me-1">
+                    <i class="fa fa-info-circle me-1" title="Información"/>
+                    <span style="font-weight: normal;">Registrar actividad</span>
+                  </button>
+                </p>
+                <field name="assignment_ids">
+                  <list string="Asignacion" class="table_opportunity_assignment">
+                    <field name="member_id" string="Nombre" column_invisible="1"
+                      options="{'no_open': True, 'no_create': True}"
+                      placeholder="Ej. Juan Perez, Maria Lopez, etc..."/>
+                    <field name="description" string="Nombre"
+                      placeholder="Ej. Juan Perez, Maria Lopez, etc..."
+                      options="{'no_open': True, 'no_create': True}"/>
+                  </list>
+                </field>
+              </page>
+              <page string="Documentación" invisible="not link_document">
+                <separator string="Gestión de archivos"/>
+                <p>
+                  <span class="text-muted">La documentación es un aspecto crítico en la gestión de
+                    oportunidades de negocio. Los documentos son fundamentales para la comunicación,
+                    el seguimiento y la toma de decisiones informadas sobre la oportunidad. En esta
+                    sección, puedes adjuntar y gestionar los documentos relacionados con la
+                    oportunidad.</span>
+                  <button name="action_open_documentation" type="object"
+                    invisible="not link_document"
+                    class="button_badge ms-1 me-1">
+                    <i class="fa fa-info-circle me-1" title="Información"/>
+                    <span style="font-weight: normal;">Documentación</span>
+                  </button>
+                </p>
+                <field name="document_ids">
+                  <list string="Documentos" editable="bottom" create="false"
+                    class="table_opportunity_documentation">
+                    <field name="resume" string="Nombre"
+                      placeholder="Ej. Calificación, MVF - Valoración Financiera, etc.."/>
+                    <button name="action_open_document" type="object"
+                      invisible="'http' in link"
+                      title="Abrir documento" icon="fa-remove" class="btn btn-danger"/>
+                    <button name="action_open_document" type="object"
+                      invisible="'http' not in link"
+                      title="Abrir documento" icon="fa-folder" class="btn btn-secondary"/>
+                  </list>
+                </field>
+              </page>
+              <page string="Registro de cierre" groups="opportunities.group_manager_opportunities"
+                invisible="not history_ids">
+                <separator string="Registro de cambios"/>
+                <p class="text-muted">
+                  El historial de cambios es un aspecto fundamental en la gestión de
+                  oportunidades de negocio. Este historial permite realizar un seguimiento
+                  detallado de las modificaciones y actualizaciones realizadas en la
+                  oportunidad, proporcionando un registro claro y transparente de las
+                  actividades y decisiones tomadas a lo largo del proceso. En esta sección,
+                  puedes consultar y gestionar el historial de cambios, asegurando una
+                  comunicación efectiva y una gestión adecuada de la información.
+                </p>
+                <field name="history_ids">
+                  <list string="Historial" editable="bottom" create="false">
+                    <field name="date" string="Fecha" placeholder="Ej. 2025-10-15"/>
+                    <field name="member_id" string="Responsable"
+                      options="{'no_open': True, 'no_create': True}"
+                      placeholder="Ej. Juan Perez, Maria Lopez, etc..."/>
+                    <field name="reason_id" string="Motivo"
+                      options="{'no_open': True, 'no_create': True}"
+                      placeholder="Ej. Reunión con el cliente, revisión de documentos, etc..."/>
+                    <field name="description" string="Observacion"
+                      placeholder="Ej. Reunión con el cliente, revisión de documentos, etc..."/>
+                  </list>
+                </field>
+              </page>
+            </notebook>
+          </sheet>
+          <chatter/>
+        </form>
+      </field>
+    </record>
+
+    <record id="opportunity_view_list" model="ir.ui.view">
+      <field name="name">opportunity.list</field>
+      <field name="model">opportunity</field>
+      <field name="arch" type="xml">
+        <list duplicate="false" class="o_list_opportunity_view"
+          js_class="opportunity_button_list">
+          <field name="reference" class="text-primary"/>
+          <field name="name"/>
+          <field name="partner_id" options="{'no_create': True, 'no_open': True}"
+            placeholder="Ej. ICBF - Instituto Colombiano de Bienestar Familiar..."/>
+          <field name="stage" string="Estado"/>
+        </list>
+      </field>
+    </record>
+
+    <record id="opportunity_view_search" model="ir.ui.view">
+      <field name="name">opportunity.search</field>
+      <field name="model">opportunity</field>
+      <field name="arch" type="xml">
+        <search>
+          <field name="reference"
+            filter_domain="[('reference', 'ilike', self), ('active', 'in', [True, False])]"/>
+          <field name="name"
+            filter_domain="[('name', 'ilike', self), ('active', 'in', [True, False])]"/>
+          <field name="partner_id" options="{'no_create': True, 'no_open': True}"
+            filter_domain="[('partner_id.name', 'ilike', self), ('active', 'in', [True, False])]"/>
+          <field name="type_opportunity_id" string="Tipo de oportunidad"
+            filter_domain="[('type_opportunity_id.name', 'ilike', self), ('active', 'in', [True, False])]"/>
+          <field name="category_id" string="Categoría"
+            filter_domain="[('category_id.name', 'ilike', self), ('active', 'in', [True, False])]"/>
+          <field name="enterprise_id" string="Empresa"
+            filter_domain="[('enterprise_id.name', 'ilike', self), ('active', 'in', [True, False])]"/>
+          <field name="source_id" string="Fuente"
+            filter_domain="[('source_id.name', 'ilike', self), ('active', 'in', [True, False])]"/>
+          <field name="assignment_ids" string="Eq. de trabajo"
+            filter_domain="[('assignment_ids.member_id.employee_id.name', 'ilike', self), ('active', 'in', [True, False])]"/>
+          <filter name="assigned_to_me" string="Mis oportunidades"
+            domain="[('assignment_ids.member_id.employee_id.user_id', '=', uid)]"/>
+          <separator/>
+          <filter name="all_records" string="Todos los registros"
+            domain="[('active', 'in', [True, False])]"/>
+          <separator/>
+          <filter name="pipeline" string="Pipeline"
+            domain="[('reference', 'ilike', 'PIP'), ('active', 'in', [True, False])]"/>
+          <filter name="opportunity" string="Oportunidad"
+            domain="[('reference', 'ilike', 'CRM'), ('active', 'in', [True, False])]"/>
+          <filter name="EDM" string="Estudio de mercado"
+            domain="[('reference', 'ilike', 'EDM'), ('active', 'in', [True, False])]"/>
+          <separator/>
+          <filter name="paused" string="Pausada"
+            domain="[('stage', 'in', ['paused'])]"/>
+          <filter name="presented" string="Presentadas"
+            domain="[('stage', 'in', ['presented']), ('active', 'in', [True, False])]"/>
+          <filter name="pte" string="Pendientes"
+            domain="[('stage', 'in', ['pte_upload_offer', 'pte_present', 'pte_approval_pre_sale_leader', 'pte_approval_manager']), ('active', 'in', [True, False])]"/>
+          <separator/>
+          <filter name="won" string="Ganadas"
+            domain="[('stage', 'in', ['won']), ('active', 'in', [True, False])]"/>
+          <filter name="lost" string="Perdidas"
+            domain="[('stage', 'in', ['lost']), ('active', 'in', [True, False])]"/>
+          <filter name="cancelled" string="Canceladas"
+            domain="[('stage', 'in', ['cancelled']), ('active', 'in', [True, False])]"/>
+        </search>
+      </field>
+    </record>
+
+
+  </data>
+</odoo>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+    <data>
+
+        <record id="financial_assessment_form_view" model="ir.ui.view">
+            <field name="name">financial.assessment.form</field>
+            <field name="model">financial.assessment</field>
+            <field name="arch" type="xml">
+                <form string="Valoración financiera" duplicate="false" create="false">
+                    <sheet>
+                        <field name="partner_id" invisible="1"/>
+                        <separator string="Valoración financiera"/>
+                        <p> La valoración financiera en un CRM es
+                            un proceso que permite estimar y analizar los costos y beneficios
+                            asociados a una oportunidad o caso. Es fundamental para evaluar la
+                            viabilidad y rentabilidad de las acciones propuestas, garantizando
+                            decisiones informadas y estratégicas.
+                        </p>
+                        <field name="assessment"/>
+                    </sheet>
+                    <footer>
+                        <button name="action_view_history" string="Historial" type="object"
+                            class="btn-primary"/>
+                        <button name="action_open_link" string="Documentación" type="object"
+                            class="btn-primary"/>
+                        <button name="action_cancel" string="Descartar" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+        <!-- HISTORIAL MVF - VALORACION FINANCIERA-->
+
+        <record id="history_financial_assessment_list_view" model="ir.ui.view">
+            <field name="name">history.financial.assessment.list</field>
+            <field name="model">history.financial.assessment</field>
+            <field name="arch" type="xml">
+                <list string="Historial de valoraciones financieras" duplicate="false"
+                    create="false" sample="1">
+                    <field name="partner_id"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="history_financial_assessment_form_view" model="ir.ui.view">
+            <field name="name">history.financial.assessment.form</field>
+            <field name="model">history.financial.assessment</field>
+            <field name="arch" type="xml">
+                <form string="Historial de valoraciones financieras" create="false"
+                    duplicate="false" edit="false">
+                    <sheet>
+                        <separator string="Valoración financiera"/>
+                        <p> La valoración financiera en un CRM es
+                            un proceso que permite estimar y analizar los costos y beneficios
+                            asociados a una oportunidad o caso. Es fundamental para evaluar la
+                            viabilidad y rentabilidad de las acciones propuestas, garantizando
+                            decisiones informadas y estratégicas.
+                        </p>
+
+                        <field name="assessment"/>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

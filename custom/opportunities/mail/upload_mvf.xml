@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <template id="email_template_mvf_financial_assessment">
+            <field name="name">Notificación de carga de evaluación financiera</field>
+            <field name="model_id" ref="opportunities.model_opportunity"/>
+            <field name="subject">Evaluación Financiera Cargada</field>
+            <field name="email_from">odoo@tsg.net.co</field>
+            <field name="body_html" type="html">
+                <span style="font-family: Arial, sans-serif; color: #333333; font-size: 14px;"> Buen
+                    dia <t t-out="ctx.get('employee_name')"/>, <br/><br/> Se ha cargado la
+                    evaluación financiera para la oportunidad con referencia <b>
+                        <t t-out="object.reference"/>
+                    </b>. A continuación, le
+                    solicitamos revisar la evaluación financiera y tomar las acciones necesarias
+                    para avanzar en el proceso de la oportunidad. Para acceder a la evaluación
+                    financiera, por favor haga clic <a
+                        href="http://3.138.67.238/" style="color: #017e84; font-weight: bold;">aquí</a><br/><br/>
+                    Si tiene alguna pregunta o necesita más información, no dude en ponerse en
+                    contacto con el equipo de preventa. </span>
+            </field>
+            <field name="auto_delete" eval="True"/>
+        </template>
+
+    </data>
+</odoo>

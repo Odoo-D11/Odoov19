@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_form_convert_pipeline_to" model="ir.ui.view">
+            <field name="name">opportunity.convert.pipeline.to</field>
+            <field name="model">opportunity.pipeline.to</field>
+            <field name="arch" type="xml">
+                <form string="Pipeline">
+                    <sheet>
+                        <separator string="Convertir a"/>
+                        <p class="oe_grey">
+                            Seleccione una opción para convertir este pipeline en una oportunidad o
+                            en un estudio de mercado. Esto le permitirá gestionar y dar seguimiento
+                            de manera adecuada según el tipo de conversión elegida.
+                        </p>
+                        <group>
+                            <field name="type" string="Respuesta"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="action_convert" string="Guardar" type="object"
+                            class="btn-primary"/>
+                        <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                    </footer>
+
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

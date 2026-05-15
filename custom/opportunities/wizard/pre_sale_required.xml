@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_pre_sale_required_form" model="ir.ui.view">
+            <field name="name">pre.sale.required.form</field>
+            <field name="model">opportunity.pre.sale.required</field>
+            <field name="arch" type="xml">
+                <form string="Pre Sale Required">
+                    <field name="next_step" invisible="1"/>
+                    <sheet>
+                        <separator string="Preventa Requerida" invisible="next_step"/>
+                        <p class="oe_grey" invisible="next_step"> El equipo de preventa es
+                            responsable de brindar soporte técnico y asesoramiento especializado a
+                            los clientes, con el objetivo de identificar y satisfacer sus
+                            necesidades y expectativas. A continuación, seleccione si el <b
+                                class="text-primary">personal de preventa</b> es requerido para el
+                            pipeline <field
+                                name="lead_id"
+                                options="{'no_open': True, 'no_create': True}"
+                                class="text-primary"
+                                style="margin-bottom: 0px !important; font-weight: bold;"/>
+                        </p>
+                        <separator string="Documentación" invisible="not next_step"/>
+                        <p class="oe_grey" invisible="not next_step"> La documentación en un CRM es
+                            esencial para respaldar la información y acciones realizadas en una
+                            oportunidad o caso. Permite registrar y organizar la información
+                            relevante, facilitando la trazabilidad y el cumplimiento de los
+                            procesos. A continuación, ingrese el enlace de la carpeta que va a
+                            contener toda la documentación asociada.
+                        </p>
+                        <group>
+                            <field name="rta" invisible="next_step"/>
+                            <div class="o_row" invisible="not next_step">
+                                <i class="fa fa-folder me-2" title="Enlace de la carpeta"/>
+                                <field name="link" placeholder="Ej. https://onedrive.com/folder/..."/>
+                            </div>
+                        </group>
+                        <field name="reason"
+                            placeholder="Escriba el motivo por el cual se requiere o no el personal de preventa."
+                            invisible="not rta or next_step"/>
+                        <footer>
+                            <button string="Siguiente" type="object" name="action_next"
+                                class="btn-primary" invisible="next_step or rta != '1'"/>
+                            <button string="Volver" type="object" name="action_next"
+                                class="btn-primary" invisible="not next_step"/>
+                            <button string="Guardar" type="object" name="action_save"
+                                class="btn-primary" invisible="not (rta in ['2', False] or next_step)"/>
+                            <button string="Descartar" class="btn-secondary"
+                                special="cancel"/>
+                        </footer>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

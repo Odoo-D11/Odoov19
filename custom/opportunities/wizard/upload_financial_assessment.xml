@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+    <data>
+
+        <record id="upload_financial_assessment_wizard" model="ir.ui.view">
+            <field name="name">upload.financial.assessment.wizard</field>
+            <field name="model">upload.financial.assessment</field>
+            <field name="arch" type="xml">
+                <form string="Cargar valoración financiera">
+                    <field name="edit_financial_costs" invisible="1"/>
+                    <sheet>
+                        <field name="preview" invisible="1"/>
+                        <field name="attach_link" invisible="1"/>
+                        <field name="partner_id" invisible="1"/>
+                        <separator string="Valoración financiera"
+                            invisible="attach_link or edit_financial_costs"/>
+                        <p class="oe_grey" invisible="preview or attach_link"> La valoración
+                            financiera en un CRM es un proceso que permite estimar y analizar los
+                            costos y beneficios asociados a una oportunidad o caso. Es fundamental
+                            para evaluar la viabilidad y rentabilidad de las acciones propuestas,
+                            garantizando decisiones informadas y estratégicas. Para continuar,
+                            complete los campos de <b class="text-primary">Ingreso</b> y <b
+                                class="text-primary">
+                                Costo</b> correspondientes a la valoración financiera de la
+                            oportunidad <b
+                                class="text-primary">
+                                <field name="lead_id" options="{'no_open': True, 'no_create': True}"
+                                    class="text-truncate"
+                                    style="margin-bottom: 0px !important;"/>
+                            </b>
+                        </p>
+                        <separator string="Documentación" invisible="not attach_link"/>
+                        <p class="oe_grey" invisible="not attach_link"> A continuación, ingrese el
+                            enlace del documento que contiene la valoración financiera asociada a la
+                            oportunidad <b
+                                class="text-primary">
+                                <field name="lead_id" options="{'no_open': True, 'no_create': True}"
+                                    class="text-truncate"
+                                    style="margin-bottom: 0px !important;"/>
+                            </b>.
+                            Una vez guardado el enlace, se enviará un correo al líder de preventa
+                            para que realice las acciones correspondientes. </p>
+                        <separator string="Editar porcentaje" invisible="not edit_financial_costs"/>
+                        <p invisible="not edit_financial_costs"> Para cambiar los
+                            porcentajes de costos financieros en esta oportunidad, asegúrate de
+                            realizar los ajustes de manera precisa para reflejar correctamente los
+                            costos asociados. Este proceso te permite personalizar los valores
+                            específicamente para esta oportunidad, sin afectar otros registros ni
+                            configuraciones globales. Sigue los siguientes pasos detalladamente:
+                        </p>
+                        <ul
+                            invisible="not edit_financial_costs">
+                            <li> Localiza la fila correspondiente al item que deseas ajustar, <b
+                                    class="text-primary">por
+                                    ejemplo, seguro y pólizas, overhead,
+                                    etc... </b>
+                            </li>
+
+                            <li> Haz clic en la columna de <b class="text-primary">porcentaje</b> y
+                                escribe el nuevo valor que deseas asignar. <b class="text-primary">por
+                                ejemplo, 2, 1,5, etc...</b> Nota: Introduce el valor utilizando una
+                                coma (,) como separador decimal, por ejemplo: 2,5. <b
+                                    class="text-primary">No uses el
+                                    punto (.) para evitar errores de formato. </b></li>
+                            <li>
+                                Repite el proceso para todos los items que requieran un
+                                ajuste.
+                            </li>
+                            <li> Una vez realizados los cambios, asegúrate de guardar para que estos
+                                ajustes se <b class="text-primary">apliquen únicamente a esta
+                                oportunidad.</b> Recuerda que los cambios realizados aquí <b
+                                    class="text-primary">no
+                                    afectarán otras oportunidades</b> ni los valores globales. </li>
+                        </ul>
+                        <group invisible="preview or edit_financial_costs">
+                            <group>
+                                <label for="income"/>
+                                <div class="o_row">
+                                    <i class="fa fa-dollar me-2" title="Ingreso"/>
+                                    <field name="income" placeholder="Ej. (1000, 2000, etc...)"/>
+                                </div>
+                            </group>
+                            <group>
+                                <label for="cost"/>
+                                <div class="o_row">
+                                    <i class="fa fa-dollar me-2" title="Costo"/>
+                                    <field name="cost" placeholder="Ej. (1000, 2000, etc...)"/>
+                                </div>
+                            </group>
+                        </group>
+                        <field name="financial_assessment"
+                            invisible="not preview or attach_link or edit_financial_costs"/>
+                        <group invisible="not attach_link">
+                            <div class="o_row">
+                                <i class="fa fa-folder me-2" title="Enlace"/>
+                                <field name="link" placeholder="Ej. https://onedrive.com/..."/>
+                            </div>
+                        </group>
+                        <field name="edit_financial_assessment_line_ids"
+                            invisible="not edit_financial_costs">
+                            <list editable="bottom" class="o_edit_financial_assessment_line"
+                                create="false" delete="false">
+                                <field name="financial_costs_id"
+                                    options="{'no_open': True, 'no_create': True}"/>
+                                <field name="percentage"/>
+                            </list>
+                        </field>
+                    </sheet>
+                    <footer>
+                        <button name="action_preview_financial_assessment" string="Siguiente"
+                            type="object" class="btn-primary" invisible="preview"/>
+                        <button name="action_preview_financial_assessment" string="Volver"
+                            type="object" class="btn-primary"
+                            invisible="not preview or attach_link or edit_financial_costs"/>
+                        <button name="action_edit_financial_costs" string="Editar"
+                            type="object" class="btn-primary"
+                            invisible="not preview or edit_financial_costs or attach_link"/>
+                        <button name="action_edit_financial_costs" string="Volver"
+                            type="object" class="btn-primary" invisible="not edit_financial_costs"/>
+                        <button name="action_save_edit_financial_costs" string="Guardar"
+                            type="object" class="btn-primary"
+                            invisible="not edit_financial_costs"/>
+                        <button name="action_attach_link_financial_assessment" string="Siguiente"
+                            type="object" class="btn-primary"
+                            invisible="not preview or attach_link or edit_financial_costs"/>
+                        <button name="action_attach_link_financial_assessment" string="Volver"
+                            type="object" class="btn-primary" invisible="not attach_link"/>
+                        <button name="action_upload_financial_assessment" string="Guardar"
+                            type="object" class="btn-primary" invisible="not attach_link"/>
+                        <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

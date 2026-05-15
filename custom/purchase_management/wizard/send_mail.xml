@@ -85,7 +85,7 @@
                                             <label for="bugeted"
                                                 string="Presupuesto"/>
                                             <p invisible="not bugeted">
-                                                <span class="oe_grey">
+                                                <span class="text-muted">
                                                     La solicitud se encuentra dentro del presupuesto
                                                     aprobado y cumple con las políticas internas de
                                                     la compañía.

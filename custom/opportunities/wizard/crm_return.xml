@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<odoo>
+    <data>
+
+        <record id="opportunity_return_wizard" model="ir.ui.view">
+            <field name="name">opportunity.return.wizard</field>
+            <field name="model">opportunity.return</field>
+            <field name="arch" type="xml">
+                <form string="Devolver Oportunidad">
+                    <sheet>
+                        <separator string="Devolver"/>
+                        <p class="oe_grey">
+                            Si se detecta una inconsistencia en la información, el equipo de
+                            preventa puede devolver la oportunidad al equipo comercial para su
+                            revisión y corrección. Al devolver la oportunidad, se recomienda agregar
+                            un comentario detallando el motivo para facilitar su corrección
+                            adecuada.
+                        </p>
+                        <group>
+                            <field name="reason_id" options="{'no_create': True, 'no_open': True}"
+                                placeholder="Ej. No viable, etc..."/>
+                        </group>
+                        <field name="observation"
+                            placeholder="Ej. Información incompleta, error en la descripción, etc..."/>
+                    </sheet>
+                    <footer>
+                        <button name="return_lead" string="Guardar" type="object"
+                            class="btn-primary"/>
+                        <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

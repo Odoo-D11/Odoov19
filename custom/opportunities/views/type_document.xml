@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="opportunity_type_document_view_list" model="ir.ui.view">
+            <field name="name">opportunity.type.document.list</field>
+            <field name="model">opportunity.type.document</field>
+            <field name="arch" type="xml">
+                <list editable="bottom" duplicate="false">
+                    <field name="name" placeholder="Ej. MVF - Valoración Financiera, Oferta, etc..."/>
+                </list>
+            </field>
+        </record>
+
+    </data>
+</odoo>

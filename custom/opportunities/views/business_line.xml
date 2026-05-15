@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="view_opportunity_type_business_line_list" model="ir.ui.view">
+            <field name="name">opportunity.business.line.list</field>
+            <field name="model">opportunity.type.business.line</field>
+            <field name="arch" type="xml">
+                <list string="Business Line" sample="1" duplicate="false" editable="bottom">
+                    <field name="name" placeholder="Ej. Ciberseguridad, Infraestructura, etc."/>
+                </list>
+            </field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="opportunity_team_assignment_view_form" model="ir.ui.view">
+            <field name="name">opportunity.team.assignment.form</field>
+            <field name="model">opportunity.team.assignment</field>
+            <field name="arch" type="xml">
+                <form string="Participant" duplicate="false" create="false" delete="false">
+                    <sheet>
+                        <separator string="Participación"/>
+                        <p class="oe_grey"> Utiliza esta interfaz para asignar tu rol y definir el
+                            porcentaje de participación que deseas aportar en la oportunidad <field
+                                name="lead_id" class="text-primary"
+                                options="{'no_create': True, 'no_open': True}"
+                                style="margin-bottom: 0 !important; font-weight: bold;"/>. Puedes
+                            optar por participar como preventa, comercial, etc... y asignar un
+                            porcentaje de participación según prefieras. Ingresa un valor que
+                            refleje con precisión tu contribución. </p>
+                        <group>
+                            <field name="member_id" options="{'no_create': True, 'no_open': True}"
+                                placeholder="Ej. Juan Perez, Maria Lopez..." class="text-primary"
+                                string="Nombre"/>
+                        </group>
+                        <field name="team_assignment_ids" invisible="not member_id"
+                            context="{'default_member_id': member_id}" nolabel="1">
+                            <list string="Participación" editable="bottom"
+                                class="participant_line_ids">
+                                <field name="member_id" placeholder="Ej. Juan Perez, Maria Lopez..."
+                                    column_invisible="1" string="Nombre" class="text-primary"
+                                    options="{'no_create': True, 'no_open': True}"/>
+                                <field name="team_id" options="{'no_create': True, 'no_open': True}"
+                                    placeholder="Ej. Comercial, Preventa, etc..."
+                                    class="text-primary"/>
+                                <field name="role_id" options="{'no_create': True, 'no_open': True}"
+                                    placeholder="Ej. Principal, Apoyo, etc..."/>
+                                <field name="percentage_id" placeholder="Ej. 50%, 25%, etc..."
+                                    options="{'no_create': True, 'no_open': True}"/>
+                            </list>
+                        </field>
+                        <separator string="Responsable del lead" invisible="not member_id"/>
+                        <p class="oe_grey" invisible="not member_id">
+                            Marque esta casilla para designar a la persona seleccionada como
+                            responsable principal del seguimiento y la gestión de este lead.
+                            Solo se permite un responsable por oportunidad.
+                            Evite marcar esta casilla en más de una persona para mantener un flujo
+                            de trabajo ordenado y sin duplicidades.
+                        </p>
+                        <group invisible="not member_id">
+                            <field name="rta"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>
