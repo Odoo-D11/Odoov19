@@ -73,6 +73,7 @@ class RequestQuotation(models.Model):
     reference = fields.Char(string="Referencia", required=True, copy=False,
                             readonly=True, index=True, default=lambda self: _('Nueva'))
     """DATE"""
+    create_date = fields.Date(string="Fecha de creación", readonly=True)
     deadline = fields.Date(string="Fecha límite", required=True)
     close_date = fields.Date(string="Fecha de cierre", readonly=True)
     days_remaining = fields.Integer(

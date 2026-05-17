@@ -74,11 +74,6 @@
                                     required="is_employee == True"/>
                                 <field name="phone" placeholder="Ej. 310 123 4567.."
                                     widget="CodeCountryPhone"/>
-                                <field name="title"
-                                    placeholder="Ej. ''Sr.'', ''Sra.'', ''Srita.''..."
-                                    required="is_employee == True" invisible="is_employee != True"
-                                    options="{'no_open': True, 'no_create': True}"
-                                    class="text-primary"/>
                             </group>
                         </group>
                         <notebook invisible="is_business != True">
@@ -87,7 +82,6 @@
                                     context="{'default_parent_id': id, 'default_street': street, 'default_city_id': city_id, 'default_state_id': state_id, 'default_country_id': country_id, 'default_type': 'contacts_management','default_is_company': False, 'default_is_employee': True, 'default_is_business': False, 'default_company_type': 'person', 'default_identification_type_id': identification_type_id, 'default_vat': vat}">
                                     <kanban class="o_kanban_dashboard res_partner_kanban" sample="1">
                                         <field name="name"/>
-                                        <field name="title"/>
                                         <field name="parent_id"/>
                                         <field name="is_company"/>
                                         <field name="is_employee"/>
@@ -109,7 +103,7 @@
                                                 <div
                                                     class="oe_kanban_global_click o_res_partner_kanban_main">
                                                     <img t-att-src="people" alt="Empleado"
-                                                        invisible="title not in [ 1, 2, 3] or is_employee != True"/>
+                                                        invisible="is_employee != True"/>
                                                     <img t-att-src="company" alt="Empresa"
                                                         invisible="is_business != True"/>
                                                     <div class="o_content_center col-12 p-1">
@@ -208,11 +202,6 @@
                                                     <field name="phone"
                                                         placeholder="Ej. 310 123 4567.."
                                                         widget="CodeCountryPhone"/>
-                                                    <field name="title"
-                                                        placeholder="Ej. ''Sr.'', ''Sra.'', ''Srita.''..."
-                                                        required="is_employee == True"
-                                                        options="{'no_open': True, 'no_create': True}"
-                                                        class="text-primary"/>
                                                 </group>
                                             </group>
                                         </sheet>
@@ -247,7 +236,6 @@
                     <field name="parent_id"/>
                     <field name="is_business"/>
                     <field name="is_employee"/>
-                    <field name="title"/>
                     <templates>
                         <t t-name="card">
                             <t t-set="company"
@@ -256,7 +244,7 @@
                                 t-value="'/contacts_management/static/src/img/people.jpg'"/>
                             <div class="oe_kanban_global_click o_res_partner_kanban_main">
                                 <img t-att-src="people" alt="Empleado"
-                                    invisible="title not in [ 1, 2, 3] or is_employee != True"/>
+                                    invisible="is_employee != True"/>
                                 <img t-att-src="company" alt="Empresa"
                                     invisible="is_business != True"/>
                                 <div class="o_content_center col-12 p-1">

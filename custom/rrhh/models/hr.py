@@ -5,7 +5,9 @@ from odoo.exceptions import ValidationError, UserError, AccessError
 from markupsafe import Markup
 import re
 from ..utils.utils import (  # type: ignore
-    is_valid_url
+    is_valid_url,
+    convert_first_letter_to_uppercase
+
 )
 
 
@@ -127,8 +129,12 @@ class InheritHrEmployee(models.Model):
     wage = fields.Float(
         string='Salario', digits=(16, 0), groups='hr.group_hr_user,rrhh.group_creator_rrhh')
     """CHAR"""
+    job_title = fields.Char(
+        string='Cargo', groups='hr.group_hr_user,rrhh.group_creator_rrhh', store=True,)
+    private_street = fields.Char(
+        string='Dirección privada', groups='hr.group_hr_user,rrhh.group_creator_rrhh.group_creator_rrhh', store=True, )
     identification_id = fields.Char(
-        string='Nro. identificación', tracking=True, groups='hr.group_hr_user,rrhh.group_creator_rrhh',)
+        string='Nro. identificación', groups='hr.group_hr_user,rrhh.group_creator_rrhh',)
     bank_account_number = fields.Char(
         string='Cuenta bancaria', help='Número de cuenta bancaria del empleado', groups='hr.group_hr_user,rrhh.group_creator_rrhh',)
     private_phone = fields.Char(
@@ -177,13 +183,25 @@ class InheritHrEmployee(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
-            if 'name' in vals:
-                vals['name'] = vals['name'].title()
+            if vals.get('name'):
+                vals['name'] = ' '.join(vals['name'].split()).title()
+            if vals.get('job_title'):
+                vals['job_title'] = ' '.join(vals['job_title'].split()).title()
+            if vals.get('private_street'):
+                vals['private_street'] = convert_first_letter_to_uppercase(
+                    ' '.join(vals['private_street'].split()))
         return super(InheritHrEmployee, self).create(vals_list)
 
     def write(self, vals):
         if self.env.context.get('skip_age_correction'):
             return super(InheritHrEmployee, self).write(vals)
+        if 'name' in vals and vals['name']:
+            vals['name'] = ' '.join(vals['name'].split()).title()
+        if 'job_title' in vals and vals['job_title']:
+            vals['job_title'] = ' '.join(vals['job_title'].split()).title()
+        if 'private_street' in vals and vals['private_street']:
+            vals['private_street'] = convert_first_letter_to_uppercase(
+                ' '.join(vals['private_street'].split()))
         res = super(InheritHrEmployee, self).write(vals)
         for rec in self.filtered(lambda r: r.birthday):
             expected = f"{fields.Date.today().year - rec.birthday.year - ((fields.Date.today().month, fields.Date.today().day) < (rec.birthday.month, rec.birthday.day))} años"

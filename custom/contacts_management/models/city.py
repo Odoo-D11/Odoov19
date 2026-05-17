@@ -19,16 +19,6 @@ class ResCity(models.Model):
     """BOOLEAN"""
     active = fields.Boolean(string='Activo', default=True)
 
-    @staticmethod
-    def capitalize_parenthesis(text):
-        # Capitaliza la primera letra de cada palabra y también la primera letra dentro de paréntesis
-        # Capitaliza cada palabra normalmente
-        text = string.capwords(text)
-        # Capitaliza la primera letra después de un paréntesis de apertura
-        def repl(match):
-            return '(' + match.group(1).upper() + match.group(2)
-        return re.sub(r'\((\w)([^)]*)', repl, text)
-
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:

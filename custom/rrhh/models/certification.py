@@ -33,12 +33,17 @@ class HrCertification(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
-            vals['name'] = string.capwords(vals.get('name', ''))
+            if vals.get('name'):
+                vals['name'] = ' '.join(vals['name'].split()).title()
+            if vals.get('institution'):
+                vals['institution'] = ' '.join(vals['institution'].split()).title()
         return super(HrCertification, self).create(vals_list)
-    
+
     def write(self, vals):
-        if 'name' in vals:
-            vals['name'] = string.capwords(vals['name'])
+        if 'name' in vals and vals['name']:
+            vals['name'] = ' '.join(vals['name'].split()).title()
+        if 'institution' in vals and vals['institution']:
+            vals['institution'] = ' '.join(vals['institution'].split()).title()
         return super(HrCertification, self).write(vals)
 
     @api.constrains('date_start', 'date_end')

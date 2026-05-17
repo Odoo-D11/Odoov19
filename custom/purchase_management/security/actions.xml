@@ -293,7 +293,7 @@
             sequence="1"
             parent="purchase_management.menu_purchase_management_root"
             action="purchase_management.action_view_dashboard"
-            groups="purchase_management.group_purchase_user_management"
+            groups="purchase_management.group_purchase_user_management,purchase_management.group_purchase_sagrilaft_approval"
         />
 
         <menuitem

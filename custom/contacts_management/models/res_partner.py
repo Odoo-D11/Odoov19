@@ -15,7 +15,6 @@ class InheritedResPartner(models.Model):
     identification_type_id = fields.Many2one(
         'identification.type', string='Tipo de identificación', required=True)
     city_id = fields.Many2one('res.city', string='Ciudad', )
-    title = fields.Many2one('res.partner.title', string='Título')
     """CHAR"""
     normalized_name = fields.Char(
         string='Nombre normalizado', compute='_compute_normalized_name', index=True, store=True)

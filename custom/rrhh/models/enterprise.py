@@ -23,7 +23,7 @@ class HrEnterprise(models.Model):
         required_names = ["Tsg The It Experts Sas", "Novacom Net Sas",
                           "Knox It Sas", "Union Temporal Salud",
                           "Union Temporal Movilidad", "UT Tecnologias Integradas 2023",
-                          "It Busines Talent", "Kreivo Sas", "Ut Alcaldia De Bogota Mesa 2024",
+                          "It Busines Talent Sas", "Kreivo Sas", "Ut Alcaldia De Bogota Mesa 2024",
                           "Consorcio Llano Seguro 2024", "Union Temporal Scb 2024",
                           "Union Temporal Scj 2024", "Union Temporal Ciberseguridad 2024",
                           "Ut Gestion Integral Centros De Datos 2025"]

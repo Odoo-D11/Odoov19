@@ -84,6 +84,7 @@ def format_html_to_sentence_case(value):
     - Preserva listas, tablas y otros elementos HTML estructurales.
     - Elimina nodos vacíos como <p><br></p>.
     - Elimina estilos como negrilla, cursiva, subrayado, etc., sin unir palabras.
+    - Elimina espacios adicionales
     """
     if not value:
         return value
@@ -127,6 +128,11 @@ def format_html_to_sentence_case(value):
     for p in soup.find_all('p'):
         if not p.get_text(strip=True) and not p.find_all('img'):
             p.extract()
+
+    # Eliminar espacios adicionales en el HTML resultante
+    html_str = str(soup)
+    html_str = re.sub(r'\s+', ' ', html_str).strip()
+    soup = BeautifulSoup(html_str, 'html.parser')
 
     return str(soup)
 

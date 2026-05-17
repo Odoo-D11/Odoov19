@@ -5,7 +5,6 @@ from markupsafe import Markup
 import string
 from ..utils.utils import ( # type: ignore
     is_html_content_empty,
-    format_html_to_sentence_case,
     convert_first_letter_to_uppercase,
 )
 
@@ -32,19 +31,23 @@ class HrExperience(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
-            vals['position'] = string.capwords(vals.get('position', ''))
-            vals['enterprise'] = string.capwords(vals.get('enterprise', ''))
+            if vals.get('position'):
+                vals['position'] = ' '.join(vals['position'].split()).title()
+            if vals.get('enterprise'):
+                vals['enterprise'] = ' '.join(vals['enterprise'].split()).title()
             if vals.get('description'):
-                vals['description'] = format_html_to_sentence_case(vals['description'])
+                vals['description'] = convert_first_letter_to_uppercase(
+                    ' '.join(vals['description'].split()))
         return super(HrExperience, self).create(vals_list)
-    
+
     def write(self, vals):
-        if 'position' in vals:
-            vals['position'] = string.capwords(vals['position'])
-        if 'enterprise' in vals:
-            vals['enterprise'] = string.capwords(vals['enterprise'])
+        if 'position' in vals and vals['position']:
+            vals['position'] = ' '.join(vals['position'].split()).title()
+        if 'enterprise' in vals and vals['enterprise']:
+            vals['enterprise'] = ' '.join(vals['enterprise'].split()).title()
         if 'description' in vals and vals['description']:
-            vals['description'] = format_html_to_sentence_case(vals['description'])
+            vals['description'] = convert_first_letter_to_uppercase(
+                ' '.join(vals['description'].split()))
         return super(HrExperience, self).write(vals)
 
     @api.constrains('start_date', 'end_date')
