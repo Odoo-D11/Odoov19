@@ -46,7 +46,7 @@
                         <!--ADJUNTAR
                         FICHA TECNICA-->
                         <widget name="spec_launcher"
-                            invisible="state != 'draft'"/>
+                            invisible="not technical_spec_attachment_ids"/>
                         <button name="action_rfq_send" type="object"
                             groups="purchase_management.group_purchase_user_management,purchase_management.group_process_leader_purchase_management,purchase_management.group_project_leader_purchase_management"
                             string="Enviar correo" class="btn btn-primary"

@@ -3,7 +3,7 @@
     <data>
 
         <record id="action_menu_opportunity" model="ir.actions.act_window">
-            <field name="name">Oportunidades</field>
+            <field name="name">CRM</field>
             <field name="res_model">opportunity</field>
             <field name="view_mode">list,form</field>
             <field name="domain">[]</field>

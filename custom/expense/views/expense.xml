@@ -286,18 +286,14 @@
             <filter name="group_by_category" string="Categoría"
               domain="[('active', 'in', [True, False])]"
               context="{'group_by': 'category_id'}"/>
-            <separator/>
             <filter name="group_by_state" string="Estado" domain="[('active', 'in', [True, False])]"
               context="{'group_by': 'state'}"/>
-            <separator/>
             <filter name="group_by_enterprise" string="Empresa"
               domain="[('active', 'in', [True, False])]"
               context="{'group_by': 'enterprise_id'}"/>
-            <separator/>
             <filter name="group_by_display_user" string="Empleado"
               domain="[('active', 'in', [True, False])]"
               context="{'group_by': 'display_user'}"/>
-            <separator/>
             <filter name="group_by_project" string="Proyecto"
               domain="[('active', 'in', [True, False])]"
               context="{'group_by': 'project_id'}"/>

@@ -14,45 +14,7 @@ from ..utils.utils import (  # type: ignore
 """class InheritHrEmployeeBase(models.AbstractModel):
     _inherit = ['hr.employee.base']
 
-    def _inverse_work_contact_details(self):
-        employees_without_work_contact = self.env['hr.employee']
-        for employee in self:
-            if not employee.work_contact_id:
-                employees_without_work_contact += employee
-            else:
-                employee.work_contact_id.sudo().write({
-                    'email': employee.work_email,
-                    'phone': employee.mobile_phone,
-                })
-        if employees_without_work_contact:
-            employees_without_work_contact.sudo()._create_work_contacts()
-
-    def _create_work_contacts(self):
-        if any(employee.work_contact_id for employee in self):
-            raise UserError(
-                _('Algunos empleados ya tienen un contacto de trabajo asignado.'))
-        with self.env.cr.savepoint():
-            self = self.with_context(skip_vat_validation=True)
-            company = self.env['res.company'].search(
-                [('id', '=', self.env.user.company_id.id)]).partner_id
-            work_contacts = self.env['res.partner'].create([{
-                'email': employee.work_email,
-                'phone': employee.mobile_phone,
-                'name': employee.name,
-                'image_1920': employee.image_1920,
-                'company_id': employee.company_id.id,
-                'is_employee': True,
-                'identification_type_id': company.identification_type_id.id,
-                'vat': company.vat,
-                'parent_id': company.id,
-                'street': company.street,
-                'title': self.env['res.partner.title'].search([('name', '=', 'Sr.')], limit=1).id if employee.gender == 'male' else self.env['res.partner.title'].search([('name', '=', 'Sra.')], limit=1).id,
-                'state_id': company.state_id.id,
-                'city_id': company.city_id.id,
-                'country_id': company.country_id.id,
-            } for employee in self])
-            for employee, work_contact in zip(self, work_contacts):
-                employee.work_contact_id = work_contact"""
+    """
 
 
 class InheritHrEmployee(models.Model):
@@ -149,6 +111,45 @@ class InheritHrEmployee(models.Model):
         string='Carpeta', groups='hr.group_hr_user,rrhh.group_creator_rrhh',)
     """BOOLEAN"""
     requires_children = fields.Boolean(string='Requiere hijos', default=False)
+
+    def _inverse_work_contact_details(self):
+        employees_without_work_contact = self.env['hr.employee']
+        for employee in self:
+            if not employee.work_contact_id:
+                employees_without_work_contact += employee
+            else:
+                employee.work_contact_id.sudo().write({
+                    'email': employee.work_email,
+                    'phone': employee.mobile_phone,
+                })
+        if employees_without_work_contact:
+            employees_without_work_contact.sudo()._create_work_contacts()
+
+    def _create_work_contacts(self):
+        if any(employee.work_contact_id for employee in self):
+            raise UserError(
+                _('Algunos empleados ya tienen un contacto de trabajo asignado.'))
+        with self.env.cr.savepoint():
+            self = self.with_context(skip_vat_validation=True)
+            company = self.env['res.company'].search(
+                [('id', '=', self.env.user.company_id.id)]).partner_id
+            work_contacts = self.env['res.partner'].create([{
+                'email': employee.work_email,
+                'phone': employee.mobile_phone,
+                'name': employee.name,
+                'image_1920': employee.image_1920,
+                'company_id': employee.company_id.id,
+                'is_employee': True,
+                'identification_type_id': company.identification_type_id.id,
+                'vat': company.vat,
+                'parent_id': company.id,
+                'street': company.street,
+                'state_id': company.state_id.id,
+                'city_id': company.city_id.id,
+                'country_id': company.country_id.id,
+            } for employee in self])
+            for employee, work_contact in zip(self, work_contacts):
+                employee.work_contact_id = work_contact
 
     @api.model
     def _search(self, domain, offset=0, limit=None, order=None, **kwargs):
