@@ -26,7 +26,7 @@ class PurchaseManagementViewObservationsWizard(models.TransientModel):
     observation_line_ids = fields.One2many(
         'purchase.management.view.observation.wizard.line', 'wizard_id', string='Líneas de observaciones')
     quotation_id = fields.Many2one(
-        'quotation.quotation', string='Cotización', required=True, ondelete='cascade')
+        'quotation.quotation', string='Cotización', ondelete='cascade')
     supplier_name = fields.Char(
         string='Proveedor', related='quotation_id.supplier_name', readonly=True)
     team = fields.Selection([
