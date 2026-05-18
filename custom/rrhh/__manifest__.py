@@ -17,6 +17,7 @@ Long description of module's purpose
     # for the full list
     'category': 'TSG',
     'version': '0.1',
+    'pre_init_hook': 'pre_init_hook',
 
     # any module necessary for this one to work correctly
     'depends': ['base', 'hr', 'contacts_management', 'utils', 'project_management', 'website'],
