@@ -13,16 +13,7 @@ class HrExperience(models.Model):
     _description = 'Experiencia Laboral'
     _rec_name = 'enterprise'
     _order = 'start_date desc, id desc'
-
-    def init(self):
-        self.env.cr.execute("""
-            ALTER TABLE hr_experience
-            DROP CONSTRAINT IF EXISTS hr_experience_employee_id_fkey;
-            ALTER TABLE hr_experience
-            ADD CONSTRAINT hr_experience_employee_id_fkey
-            FOREIGN KEY (employee_id) REFERENCES hr_employee(id) ON DELETE CASCADE;
-        """)
-
+    
     """MANY2ONE"""
     employee_id = fields.Many2one(
         'hr.employee', string='Empleado', ondelete='cascade',)    

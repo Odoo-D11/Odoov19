@@ -23,16 +23,6 @@ class PurchaseManagementViewObservationsWizard(models.TransientModel):
     _transient_max_count = 100
     _transient_max_hours = 1
 
-    def init(self):
-        self.env.cr.execute("""
-            ALTER TABLE purchase_management_view_observations_wizard
-            DROP CONSTRAINT IF EXISTS purchase_management_view_observations_wizard_quotation_id_fkey;
-            DELETE FROM purchase_management_view_observations_wizard;
-            ALTER TABLE purchase_management_view_observations_wizard
-            ADD CONSTRAINT purchase_management_view_observations_wizard_quotation_id_fkey
-            FOREIGN KEY (quotation_id) REFERENCES quotation_quotation(id) ON DELETE CASCADE;
-        """)
-
     observation_line_ids = fields.One2many(
         'purchase.management.view.observation.wizard.line', 'wizard_id', string='Líneas de observaciones')
     quotation_id = fields.Many2one(
